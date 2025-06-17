@@ -2,8 +2,6 @@ const Product = require('../models/Product');
 const prisma = require('../prismaClient');
 
 
-
-
 export const registerProduct = async (req, res) => {
       const {name, description, price, category, stock} = req.body;
       try{
@@ -26,6 +24,8 @@ export const registerProduct = async (req, res) => {
             res.status(500).json({message: "Internal server error"});
       }}
 
+
+      
 export const getProductById = async (req, res) =>{
       const {id} = req.params;
       try{
