@@ -63,10 +63,10 @@ export default function Hero() {
 
 
   return (
-      <section className="flex items-start justify-center w-screen h-140  overflow-hidden select-none bg-gray-100 relative">
+      <section className="flex items-start justify-center w-screen h-140  overflow-hidden selelc-">
             <div className="relative w-full h-full overflow-hidden">
 
-                  <div className="inset-0 bg-cover bg-center w-full h-full flex flex-col items-center justify-center mt-15" style={{ backgroundColor: slide.background }}>
+                  <div className="inset-0 bg-cover bg-center w-full h-full flex flex-col items-center justify-center" style={{ backgroundColor: slide.background }}>
                         <h2 className="text-3xl font-bold mb-4 text-gray-800 w-full text-center">{slide.title}</h2>
                         
                         <p className="text-lg text-gray-600 w-full text-center">{slide.description}</p>

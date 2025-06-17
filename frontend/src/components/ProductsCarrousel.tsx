@@ -2,6 +2,7 @@
 import React from "react";
 
 export default function ProductsCarrousel() {
+  // Lista de produtos para o carrossel
   const products = [
     { name: "Product 1", description: "This is a great product.", price: "$19.99" },
     { name: "Product 2", description: "This product is even better.", price: "$29.99" },
@@ -15,27 +16,31 @@ export default function ProductsCarrousel() {
     { name: "Product 10", description: "This product is limited edition.", price: "$109.99" }
   ];
 
-  const visibleCount = 5;
-  const [startIndex, setStartIndex] = React.useState(0);
+  const visibleCount = 5; // Quantos produtos mostrar por vez
+  const [startIndex, setStartIndex] = React.useState(0); // Índice do primeiro produto visível
 
-  // Carrossel infinito
+  // Função para obter os produtos visíveis no carrossel (carrossel infinito)
   const getVisibleProducts = () => {
     const result = [];
     for (let i = 0; i < visibleCount; i++) {
+      // Calcula o índice real do produto, voltando ao início se passar do final
       const idx = (startIndex + i) % products.length;
       result.push(products[idx]);
     }
     return result;
   };
 
+  // Avança para o próximo grupo de produtos
   const next = () => {
     setStartIndex((prev) => (prev + 1) % products.length);
   };
 
+  // Volta para o grupo anterior de produtos
   const prev = () => {
     setStartIndex((prev) => (prev - 1 + products.length) % products.length);
   };
 
+  // Produtos que serão exibidos no carrossel no momento
   const visibleProducts = getVisibleProducts();
 
   return (
@@ -47,6 +52,7 @@ export default function ProductsCarrousel() {
         <div className="flex-1 border-b border-neutral-200 ml-4" />
       </div>
       <div className="flex items-center w-full max-w-6xl justify-center gap-0">
+        {/* Botão para voltar */}
         <button
           onClick={prev}
           className="group p-2 rounded-full border border-neutral-200 bg-white hover:bg-neutral-100 transition-colors duration-200 mx-2 shadow-sm flex items-center justify-center cursor-pointer"
@@ -63,6 +69,7 @@ export default function ProductsCarrousel() {
             <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
           </svg>
         </button>
+        {/* Renderiza os produtos visíveis */}
         <div className="flex gap-8 w-full justify-center">
           {visibleProducts.map((product) => (
             <div
@@ -76,6 +83,7 @@ export default function ProductsCarrousel() {
             </div>
           ))}
         </div>
+        {/* Botão para avançar */}
         <button
           onClick={next}
           className="group p-2 rounded-full border border-neutral-200 bg-white hover:bg-neutral-100 transition-colors duration-200 mx-2 shadow-sm flex items-center justify-center cursor-pointer"
