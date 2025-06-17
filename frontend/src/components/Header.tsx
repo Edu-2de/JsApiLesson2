@@ -47,8 +47,13 @@ export default function Header(){
                         </ul>
                    
                         <div className="flex items-center space-x-4">
-                              <Link href="/login" className="hover:underline">Login</Link>
-                              <Link href="/signup" className="hover:underline">Sign Up</Link>
+                              <button>
+                                    <Link href="/Login" className="bg-gray-800 text-white px-4 py-3 rounded hover:bg-white hover:text-gray-800 transition-all duration-500 ">
+                                          Login
+                                    </Link>
+                              </button>
+                            
+                            
                         </div>
                   </div>
             </div>
