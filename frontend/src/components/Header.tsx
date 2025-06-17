@@ -15,10 +15,11 @@ export default function Header(){
                   {name: "Feedback", href: "/contact/feedback"},
             ]},
       ]
+      
 
 
       return(
-            <div className=" bg-transparent text-gray-800 fixed top-0 left-0 w-full shadow-md">
+            <div className=" bg-transparent text-gray-800 fixed top-0 left-0 w-full z-10">
                   <div className="flex items-center justify-between p-4 max-w-7xl mx-auto">
                         <div className="text-lg font-bold">
                               <Link href="/">My Website</Link>
