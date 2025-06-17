@@ -11,12 +11,12 @@ export default function Hero() {
     {
       title: "Explore Our Services",
       description: "We offer a wide range of services to meet your needs.",
-      background: "#e0e0e0"
+      background: "#f0f0f0"
     },
     {
       title: "Join Our Community",
       description: "Connect with like-minded individuals and grow together.",
-      background: "#d0d0d0"
+      background: "#f0f0f0"
     }
   ];
 
