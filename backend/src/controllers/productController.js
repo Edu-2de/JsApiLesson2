@@ -1,4 +1,3 @@
-const Product = require('../models/Product');
 const prisma = require('../prismaClient');
 
 
