@@ -2,7 +2,7 @@
 import { useState, useRef } from "react";
 import { FiUser, FiMail, FiLock, FiArrowLeft, FiX, FiEye, FiEyeOff } from "react-icons/fi";
 
-const siteName = "PaimContab";
+const siteName = "MeuSite";
 
 export default function LoginRegisterPage() {
   const [mode, setMode] = useState<"login" | "register">("login");
@@ -139,8 +139,8 @@ export default function LoginRegisterPage() {
         </h1>
         <p className="text-gray-500 mb-7 text-center" style={{ fontSize: "1.13rem" }}>
           {mode === "login"
-            ? "Acesse sua conta para gerenciar sua contabilidade."
-            : "Crie sua conta e simplifique sua gestão MEI."}
+            ? "Acesse sua conta."
+            : "Crie sua conta."}
         </p>
         <form
           className="w-full flex flex-col gap-4 transition-all"
