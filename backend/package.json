@@ -1,9 +1,10 @@
 {
   "name": "backend",
   "version": "0.0.0",
-  "private": true,
+  "type": "module",
   "scripts": {
-    "start": "node ./bin/www"
+    "dev": "nodemon src/app.js",
+    "start": "node src/app.js"
   },
   "dependencies": {
     "@prisma/client": "^6.9.0",
