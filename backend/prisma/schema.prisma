@@ -15,6 +15,7 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   orders    Order[]
+  role      String   @default("user") 
   cash      Float    @default(100.0) 
   reviews   Review[]
 }

@@ -17,7 +17,7 @@ export default function Header(){
             ]},
       ]
 
-      const [user, setUser] = useState<{name: string} | null>(null);
+      const [user, setUser] = useState<{name: string, role: string} | null>(null);
 
       useEffect(() =>{
             const stored = localStorage.getItem("user");
@@ -51,9 +51,17 @@ export default function Header(){
                                                       </li>
                                                       ))}
                                                 </ul>
-                                          )}
+                                          )}   
                                     </li>
-                              ))}
+                                    ))}
+                                    <li className="px-4 py-2 hover:bg-gray-100">
+                                          {user?.role === "admin" ? (
+                                                <Link href="/admin" className="block">
+                                                      Admin Panel
+                                                </Link>
+                                          ) : null}
+                                    </li>
+                                 
                         </ul>
                    
                         <div className="flex items-center space-x-4">
