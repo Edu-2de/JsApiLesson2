@@ -56,7 +56,7 @@ export default function Header(){
                                     ))}
                                     <li className="px-4 py-2 hover:bg-gray-100">
                                           {user?.role === "admin" ? (
-                                                <Link href="/admin" className="block">
+                                                <Link href="/Admin" className="block">
                                                       Admin Panel
                                                 </Link>
                                           ) : null}
