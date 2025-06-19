@@ -13,9 +13,8 @@ export default function AdminPage() {
   }, [router]);
 
   return (
-    <div>
-      <h1>Página de Admin</h1>
-      {/* Conteúdo restrito */}
+    <div className="p-4 bg-gray-100 min-h-screen flex items-center justify-center">
+      <h1 className="text-3xl font-bold text-gray-800">Página de Admin</h1>
     </div>
   );
 }

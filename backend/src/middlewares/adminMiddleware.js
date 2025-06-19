@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 const JWT_SECRET = process.env.JWT_SECRET || "mysecret";
 
-// Use jwt.verify diretamente
+
 function requireAdmin(req, res, next) {
   const auth = req.headers.authorization;
   if (!auth) return res.status(401).json({ message: "No token" });
