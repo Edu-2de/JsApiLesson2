@@ -1,9 +1,9 @@
-const express = require("express");
-const requireAdmin = require("../middleware/adminMiddleware");
-const router = express.Router();
+import { Router } from "express";
+import requireAdmin from "../middlewares/adminMiddleware.js";
+const router = Router();
 
 router.get("/admin", requireAdmin, (req, res) => {
   res.json({ message: "Bem-vindo, admin!" });
 });
 
-module.exports = router;
+export default router;
