@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { useState, useEffect } from "react";
 
 export default function Header(){
       const menuItems = [
@@ -15,7 +16,16 @@ export default function Header(){
                   {name: "Feedback", href: "/contact/feedback"},
             ]},
       ]
-      
+
+      const [user, setUser] = useState<{name: string} | null>(null);
+
+      useEffect(() =>{
+            const stored = localStorage.getItem("user");
+            if(stored){
+                  setUser(JSON.parse(stored));
+            }
+      }, []);
+
 
 
       return(
@@ -47,11 +57,25 @@ export default function Header(){
                         </ul>
                    
                         <div className="flex items-center space-x-4">
-                              <button>
-                                    <Link href="/Login" className="bg-gray-800 text-white px-4 py-3 rounded hover:bg-white hover:text-gray-800 transition-all duration-500 ">
-                                          Login
-                                    </Link>
-                              </button>
+                              {!user ?(
+                                    <button>
+                                          <Link href="/Login" className="bg-gray-800 text-white px-4 py-3 rounded hover:bg-white hover:text-gray-800 transition-all duration-500 ">
+                                                Login
+                                          </Link>
+                                    </button>
+
+                              ) : (
+                                    <div className="flex items-center space-x-2">
+                                          <span className="text-gray-800">Welcome, {user.name}</span>
+                                          <button onClick={() => {
+                                                localStorage.removeItem("user");
+                                                setUser(null);
+                                          }} className="bg-gray-800 text-white px-4 py-3 rounded hover:bg-white hover:text-gray-800 transition-all duration-500">
+                                                Logout
+                                          </button>
+                                    </div>
+                              )}
+                              
                             
                             
                         </div>
