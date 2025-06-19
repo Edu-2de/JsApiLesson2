@@ -5,7 +5,7 @@ const JWT_SECRET = process.env.JWT_SECRET || "mysecret";
 
 // Função de registro
 export const register = async (req, res) => {
-  const { username, email, password } = req.body;
+  const { name, email, password } = req.body;
   try {
     const userExists = await User.findUnique({ where: { email } });
     if (userExists) {
@@ -13,11 +13,11 @@ export const register = async (req, res) => {
     }
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await User.create({
-      data: { username, email, password: hashedPassword }
+      data: { name, email, password: hashedPassword }
     });
     res.status(201).json({
       message: "User registered successfully",
-      user: { id: user.id, username: user.username, email: user.email }
+      user: { id: user.id, name: user.name, email: user.email }
     });
   } catch (error) {
     console.error("Error during registration:", error);
@@ -27,10 +27,10 @@ export const register = async (req, res) => {
 
 // Função de login
 export const login = async (req, res) => {
-  const { email, username, password } = req.body;
+  const { email, name, password } = req.body;
   try {
     const user = await User.findUnique({
-      where: email ? { email } : { username }
+      where: email ? { email } : { name }
     });
     if (!user) return res.status(400).json({ message: "Invalid credentials" });
 
@@ -39,7 +39,7 @@ export const login = async (req, res) => {
 
     const token = jwt.sign({ userId: user.id, email: user.email }, JWT_SECRET, { expiresIn: "1h" });
 
-    res.json({ token, user: { id: user.id, email: user.email, username: user.username } });
+    res.json({ token, user: { id: user.id, email: user.email, name: user.name } });
   } catch (error) {
     console.error("Error during login:", error);
     res.status(500).json({ message: "Internal server error" });
