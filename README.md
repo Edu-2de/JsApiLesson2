@@ -4,7 +4,7 @@
 
 Este projeto é uma aplicação fullstack de exemplo, composta por um backend em Node.js com Express e Prisma (conectado ao PostgreSQL) e um frontend em React (Next.js) com Tailwind CSS. O objetivo é demonstrar a estrutura de um sistema moderno de autenticação, cadastro de usuários e exibição de produtos em um carrossel.
 
-----
+---
 
 ## Tecnologias Utilizadas
 
