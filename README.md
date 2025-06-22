@@ -146,7 +146,7 @@ O frontend estará rodando em `http://localhost:3000`.
 
 ---
 
-## Observações
+## Observações --
 
 - Certifique-se de que o banco de dados está rodando antes de iniciar o backend.
 - Para adicionar mais modelos/tabelas, edite o arquivo `prisma/schema.prisma` e rode `npx prisma migrate dev`.
