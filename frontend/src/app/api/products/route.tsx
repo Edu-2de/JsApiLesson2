@@ -36,3 +36,19 @@ export async function DELETE(req: Request) {
   }
   return NextResponse.json(data);
 }
+
+export async function PUT(req: Request) {
+  const body = await req.json();
+  const { searchParams } = new URL(req.url);
+  const productId = searchParams.get("id");
+  const res = await fetch(`${apiUrl}/api/products/${productId}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  const data = await res.json();
+  if (!res.ok) {
+    return NextResponse.json(data, { status: res.status });
+  }
+  return NextResponse.json(data);
+}
