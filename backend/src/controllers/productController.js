@@ -2,13 +2,13 @@ import prisma from '../prismaClient.js';
 
 
 export const registerProduct = async (req, res) => {
-      const {name, description, price, category, stock, image} = req.body;
+      const {name, description, price, category, stock, image: imageUrl} = req.body;
       try{
             const productExists = await prisma.product.findUnique({where : {name}});
             if(productExists){
                   return res.status(400).json({message: "Product already exists"});
             }
-            const product = await prisma.product.create({data: {name, description, price, category, stock, image}});
+            const product = await prisma.product.create({data: {name, description, price, category, stock, imageUrl}});
             res.status(201).json({
                   message: "Product registered successfully",
                   product:{
@@ -19,10 +19,10 @@ export const registerProduct = async (req, res) => {
                         image: product.image,
                         category: product.category
                   }
-            })
+            });
       }catch(error){
             console.error("Error during product registration:", error);
-            res.status(500).json({message: "Internal server error"});
+            res.status(500).json({ message: "Internal server error", error: error.message, stack: error.stack });
       }
 };
 
