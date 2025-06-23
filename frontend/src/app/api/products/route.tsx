@@ -14,3 +14,13 @@ export async function POST(req: Request) {
   }
   return NextResponse.json(data);
 }
+
+export async function GET() {
+  const res = await fetch(`${apiUrl}/api/products`);
+  const data = await res.json();
+  if (!res.ok) {
+    return NextResponse.json(data, { status: res.status });
+  }
+  return NextResponse.json(data);
+}
+
