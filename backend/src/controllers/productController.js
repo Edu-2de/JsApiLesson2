@@ -2,7 +2,7 @@ import prisma from '../prismaClient.js';
 
 
 export const registerProduct = async (req, res) => {
-      const {name, description, price, category, stock} = req.body;
+      const {name, description, price, category, stock, image} = req.body;
       try{
             const productExists = await prisma.product.findUnique({where : {name}});
             if(productExists){

@@ -33,7 +33,7 @@ model Product {
   category    String?
   isActive    Boolean  @default(true)
   rating      Float    @default(0.0)
-  reviews     Review[]
+  reviews     Review[] 
 }
 
 model Review {
