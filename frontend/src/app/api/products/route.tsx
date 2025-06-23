@@ -68,3 +68,14 @@ export async function PATCH(req: Request) {
   }
   return NextResponse.json(data);
 }
+
+export async function GET_BY_ID(req: Request) {
+  const { searchParams } = new URL(req.url);
+  const productId = searchParams.get("id");
+  const res = await fetch(`${apiUrl}/api/products/${productId}`);
+  const data = await res.json();
+  if (!res.ok) {
+    return NextResponse.json(data, { status: res.status });
+  }
+  return NextResponse.json(data);
+}
