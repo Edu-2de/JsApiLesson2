@@ -41,3 +41,72 @@ export const getProductById = async (req, res) =>{
             res.status(500).json({message: "Internal server error"});
       }
 }
+
+export const getAllProducts = async (req, res) => {
+      try{
+            const products = await prisma.product.findMany();
+            res.status(200).json(products);
+      }catch(error){
+            console.error("Error fetching products:", error);
+            res.status(500).json({message: "Internal server error"});
+      }
+}
+
+export const updateProduct = async (req, res) => {
+      const {id} = req.params;
+      const {name, description, price, category, stock, image: imageUrl} = req.body;      
+      try{
+            const product = await prisma.product.update({
+                  where: {id: parseInt(id)},
+                  data: {name, description, price, category, stock, imageUrl}
+            });
+            res.status(200).json(product);
+      }catch(error){
+            console.error("Error updating product:", error);
+            res.status(500).json({message: "Internal server error", error: error.message, stack: error.stack});
+      }
+};
+
+export const deleteProduct = async (req, res) => {
+      const {id} = req.params;
+      try{
+            const product = await prisma.product.delete({where: {id: parseInt(id)}});
+            res.status(200).json({message: "Product deleted successfully", product});
+      }catch(error){
+            console.error("Error deleting product:", error);
+            res.status(500).json({message: "Internal server error", error: error.message, stack: error.stack});
+      }
+};
+
+export const searchProducts = async (req, res) => {
+      const {query} = req.query;
+      try{
+            const products = await prisma.product.findMany({
+                  where: {
+                        OR: [
+                              {name: {contains: query, mode: 'insensitive'}},
+                              {description: {contains: query, mode: 'insensitive'}}
+                        ]
+                  }
+            });
+            res.status(200).json(products);
+      }catch(error){
+            console.error("Error searching products:", error);
+            res.status(500).json({message: "Internal server error", error: error.message, stack: error.stack});
+      }
+};
+
+export const getProductsByCategory = async (req, res) => {
+      const {category} = req.params;
+      try{
+            const products = await prisma.product.findMany({
+                  where: {
+                        category: {equals: category, mode: 'insensitive'}
+                  }
+            });
+            res.status(200).json(products);
+      }catch(error){
+            console.error("Error fetching products by category:", error);
+            res.status(500).json({message: "Internal server error", error: error.message, stack: error.stack});
+      }
+};
