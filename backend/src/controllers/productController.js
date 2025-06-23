@@ -66,3 +66,14 @@ export const updateProduct = async (req, res) => {
             res.status(500).json({message: "Internal server error", error: error.message, stack: error.stack});
       }
 };
+
+export const deleteProduct = async (req, res) => {
+      const {id} = req.params;
+      try{
+            const product = await prisma.product.delete({where: {id: parseInt(id)}});
+            res.status(200).json({message: "Product deleted successfully", product});
+      }catch(error){
+            console.error("Error deleting product:", error);
+            res.status(500).json({message: "Internal server error", error: error.message, stack: error.stack});
+      }
+};
