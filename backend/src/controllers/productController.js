@@ -95,3 +95,18 @@ export const searchProducts = async (req, res) => {
             res.status(500).json({message: "Internal server error", error: error.message, stack: error.stack});
       }
 };
+
+export const getProductsByCategory = async (req, res) => {
+      const {category} = req.params;
+      try{
+            const products = await prisma.product.findMany({
+                  where: {
+                        category: {equals: category, mode: 'insensitive'}
+                  }
+            });
+            res.status(200).json(products);
+      }catch(error){
+            console.error("Error fetching products by category:", error);
+            res.status(500).json({message: "Internal server error", error: error.message, stack: error.stack});
+      }
+};
