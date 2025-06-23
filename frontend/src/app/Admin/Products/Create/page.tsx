@@ -9,11 +9,11 @@ export default function CreateProductPage() {
             const productData = {
                   name: formData.get("name"),
                   description: formData.get("description"),
-                  price: formData.get("price"),
-                  stock: formData.get("stock"),
+                  price: Number(formData.get("price")),
+                  stock: Number(formData.get("stock")),
                   image: formData.get("image"),
                   category: formData.get("category"),
-            };
+                  };
             const response = await fetch("/api/products", {
                   method: "POST",
                   headers: {
