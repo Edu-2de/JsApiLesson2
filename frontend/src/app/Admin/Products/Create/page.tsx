@@ -10,6 +10,7 @@ export default function CreateProductPage() {
                   name: formData.get("name"),
                   description: formData.get("description"),
                   price: formData.get("price"),
+                  stock: formData.get("stock"),
                   image: formData.get("image"),
                   category: formData.get("category"),
             };
@@ -54,6 +55,14 @@ export default function CreateProductPage() {
                                     type="number"
                                     className="w-full px-3 py-2 border border-gray-300 text-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-800"
                                     placeholder="Enter product price"
+                              />
+                        </div>
+                        <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-2">Stock</label>
+                              <input
+                                    type="number"
+                                    className="w-full px-3 py-2 border border-gray-300 text-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-800"
+                                    placeholder="Enter product stock"
                               />
                         </div>
                         <div>
