@@ -35,49 +35,63 @@ export default function CreateProductPage() {
                   <p className="text-gray-600 mb-6">Fill in the details below to create a new product.</p>
                   <form className="space-y-4" onSubmit={handleSubmit}>
                         <div>
-                              <label className="block text-sm font-medium text-gray-700 mb-2">Product Name</label>
-                              <input
-                                    type="text"
-                                    className="w-full px-3 py-2 border border-gray-300 text-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-800"
-                                    placeholder="Enter product name"    
-                              />
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Product Name</label>
+                        <input
+                              type="text"
+                              name="name" // <-- Adicione isto
+                              className="w-full px-3 py-2 border border-gray-300 text-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-800"
+                              placeholder="Enter product name"    
+                        />
                         </div>
                         <div>
-                              <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
-                              <textarea
-                                    className="w-full px-3 py-2 border border-gray-300 text-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-800"
-                                    placeholder="Enter product description"
-                              ></textarea>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                        <textarea
+                              name="description" // <-- Adicione isto
+                              className="w-full px-3 py-2 border border-gray-300 text-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-800"
+                              placeholder="Enter product description"
+                        ></textarea>
                         </div>
                         <div>
-                              <label className="block text-sm font-medium text-gray-700 mb-2">Price</label>
-                              <input
-                                    type="number"
-                                    className="w-full px-3 py-2 border border-gray-300 text-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-800"
-                                    placeholder="Enter product price"
-                              />
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Price</label>
+                        <input
+                              type="number"
+                              name="price" // <-- Adicione isto
+                              className="w-full px-3 py-2 border border-gray-300 text-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-800"
+                              placeholder="Enter product price"
+                        />
                         </div>
                         <div>
-                              <label className="block text-sm font-medium text-gray-700 mb-2">Stock</label>
-                              <input
-                                    type="number"
-                                    className="w-full px-3 py-2 border border-gray-300 text-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-800"
-                                    placeholder="Enter product stock"
-                              />
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Stock</label>
+                        <input
+                              type="number"
+                              name="stock" // <-- Adicione isto
+                              className="w-full px-3 py-2 border border-gray-300 text-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-800"
+                              placeholder="Enter product stock"
+                        />
                         </div>
                         <div>
-                              <label className="block text-sm font-medium text-gray-700 mb-2">Image URL</label>
-                              <input
-                                    type="text"
-                                    className="w-full px-3 py-2 border border-gray-300 text-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-800"
-                                    placeholder="Enter image URL"
-                              />
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Image URL</label>
+                        <input
+                              type="text"
+                              name="image" // <-- Adicione isto
+                              className="w-full px-3 py-2 border border-gray-300 text-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-800"
+                              placeholder="Enter image URL"
+                        />
+                        </div>
+                        <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                        <input
+                              type="text"
+                              name="category" // <-- Adicione isto
+                              className="w-full px-3 py-2 border border-gray-300 text-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-800"
+                              placeholder="Enter product category"
+                        />
                         </div>
                         <button
-                              type="submit"
-                              className="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-600 transition-colors"
+                        type="submit"
+                        className="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-600 transition-colors"
                         >
-                              Create Product
+                        Create Product
                         </button>
                   </form>
             </div>
