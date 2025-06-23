@@ -77,3 +77,21 @@ export const deleteProduct = async (req, res) => {
             res.status(500).json({message: "Internal server error", error: error.message, stack: error.stack});
       }
 };
+
+export const searchProducts = async (req, res) => {
+      const {query} = req.query;
+      try{
+            const products = await prisma.product.findMany({
+                  where: {
+                        OR: [
+                              {name: {contains: query, mode: 'insensitive'}},
+                              {description: {contains: query, mode: 'insensitive'}}
+                        ]
+                  }
+            });
+            res.status(200).json(products);
+      }catch(error){
+            console.error("Error searching products:", error);
+            res.status(500).json({message: "Internal server error", error: error.message, stack: error.stack});
+      }
+};
