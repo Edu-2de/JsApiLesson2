@@ -1,7 +1,7 @@
 "use client";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-
+import Link from "next/link";
 export default function AdminPage() {
   const router = useRouter();
 
@@ -13,8 +13,10 @@ export default function AdminPage() {
   }, [router]);
 
   return (
+    <>
     <div className="p-4 bg-gray-100 min-h-screen flex items-center justify-center">
-      <h1 className="text-3xl font-bold text-gray-800">Página de Admin</h1>
+      <Link href="/Admin/Products" className="text-blue-500 hover:underline">Manage Products</Link>
     </div>
+    </>
   );
 }
