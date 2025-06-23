@@ -51,3 +51,18 @@ export const getAllProducts = async (req, res) => {
             res.status(500).json({message: "Internal server error"});
       }
 }
+
+export const updateProduct = async (req, res) => {
+      const {id} = req.params;
+      const {name, description, price, category, stock, image: imageUrl} = req.body;      
+      try{
+            const product = await prisma.product.update({
+                  where: {id: parseInt(id)},
+                  data: {name, description, price, category, stock, imageUrl}
+            });
+            res.status(200).json(product);
+      }catch(error){
+            console.error("Error updating product:", error);
+            res.status(500).json({message: "Internal server error", error: error.message, stack: error.stack});
+      }
+};
