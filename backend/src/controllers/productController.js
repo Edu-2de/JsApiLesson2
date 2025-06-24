@@ -2,28 +2,39 @@ import prisma from '../prismaClient.js';
 
 
 export const registerProduct = async (req, res) => {
-      const {name, description, price, category, stock, image: imageUrl} = req.body;
-      try{
-            const productExists = await prisma.product.findUnique({where : {name}});
-            if(productExists){
-                  return res.status(400).json({message: "Product already exists"});
-            }
-            const product = await prisma.product.create({data: {name, description, price, category, stock, imageUrl}});
-            res.status(201).json({
-                  message: "Product registered successfully",
-                  product:{
-                        id: product.id,
-                        name: product.name,
-                        description: product.description,
-                        price: product.price,
-                        image: product.image,
-                        category: product.category
-                  }
-            });
-      }catch(error){
-            console.error("Error during product registration:", error);
-            res.status(500).json({ message: "Internal server error", error: error.message, stack: error.stack });
+      console.log("req.body:", req.body);
+      console.log("req.file:", req.file);
+      
+  const { name, description, price, category, stock } = req.body;
+  const imageUrl = req.file ? `/images/${req.file.filename}` : null;
+
+  if (!name) {
+    return res.status(400).json({ message: "Product name is required" });
+  }
+
+  try {
+    const productExists = await prisma.product.findUnique({ where: { name } });
+    if (productExists) {
+      return res.status(400).json({ message: "Product already exists" });
+    }
+    const product = await prisma.product.create({
+      data: {
+        name,
+        description,
+        price: price ? Number(price) : null,
+        category,
+        stock: stock ? Number(stock) : null,
+        imageUrl
       }
+    });
+    res.status(201).json({
+      message: "Product registered successfully",
+      product
+    });
+  } catch (error) {
+    console.error("Error during product registration:", error);
+    res.status(500).json({ message: "Internal server error", error: error.message, stack: error.stack });
+  }
 };
 
       

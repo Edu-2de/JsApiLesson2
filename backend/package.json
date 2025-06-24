@@ -17,6 +17,7 @@
     "jade": "^0.29.0",
     "jsonwebtoken": "^9.0.2",
     "morgan": "~1.9.1",
+    "multer": "^2.0.1",
     "prisma": "^6.9.0"
   }
 }

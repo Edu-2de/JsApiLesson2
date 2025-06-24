@@ -77,7 +77,10 @@ export default function LoginRegisterPage() {
         if (!res.ok) {
           setError(data.message || "E-mail ou senha inválidos.");
         } else {
-          localStorage.setItem("user", JSON.stringify(data.user));
+          localStorage.setItem("user", JSON.stringify({
+            ...data.user,
+            token: data.token
+          }));
           window.location.href = "/";
         }
       }

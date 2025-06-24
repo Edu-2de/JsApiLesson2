@@ -25,7 +25,7 @@ model Product {
   name        String   @unique
   description String?
   price       Float
-  imageUrl    String?
+  imageUrl    String? 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   orderItems  OrderItem[]

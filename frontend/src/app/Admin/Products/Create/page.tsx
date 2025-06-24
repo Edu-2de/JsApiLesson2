@@ -1,26 +1,33 @@
 "use client";
-
+import { useEffect } from "react";
 
 export default function CreateProductPage() {
+
+      useEffect(() => {
+          const user = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("user") || "null") : null;
+          if (!user || user.role !== "admin") {
+            window.location.href = "/Login"; 
+          }
+      }, []);
 
       async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
             event.preventDefault();
             const formData = new FormData(event.currentTarget);
-            const productData = {
-                  name: formData.get("name"),
-                  description: formData.get("description"),
-                  price: Number(formData.get("price")),
-                  stock: Number(formData.get("stock")),
-                  image: formData.get("image"),
-                  category: formData.get("category"),
-                  };
+
+            // Se for enviar imagem, não use JSON, use FormData direto!
+            const user = JSON.parse(localStorage.getItem("user") || "null");
+            const token = user?.token;
+
+            // Envie o FormData diretamente (para upload funcionar)
             const response = await fetch("/api/products", {
-                  method: "POST",
-                  headers: {
-                        "Content-Type": "application/json",
-                  },
-                  body: JSON.stringify(productData),
+            method: "POST",
+            headers: {
+                  Authorization: `Bearer ${token}`,
+                  // NÃO coloque 'Content-Type': 'application/json' aqui!
+            },
+            body: formData,
             });
+
             const data = await response.json();
             console.log(data);
       }
@@ -70,9 +77,9 @@ export default function CreateProductPage() {
                         />
                         </div>
                         <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Image URL</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Image</label>
                         <input
-                              type="text"
+                              type="file"
                               name="image" // <-- Adicione isto
                               className="w-full px-3 py-2 border border-gray-300 text-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-800"
                               placeholder="Enter image URL"
