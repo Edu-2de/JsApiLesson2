@@ -2,15 +2,30 @@ import prisma from '../prismaClient.js';
 
 
 export const registerProduct = async (req, res) => {
+      console.log("req.body:", req.body);
+      console.log("req.file:", req.file);
+      
   const { name, description, price, category, stock } = req.body;
   const imageUrl = req.file ? `/images/${req.file.filename}` : null;
+
+  if (!name) {
+    return res.status(400).json({ message: "Product name is required" });
+  }
+
   try {
     const productExists = await prisma.product.findUnique({ where: { name } });
     if (productExists) {
       return res.status(400).json({ message: "Product already exists" });
     }
     const product = await prisma.product.create({
-      data: { name, description, price, category, stock, imageUrl }
+      data: {
+        name,
+        description,
+        price: price ? Number(price) : null,
+        category,
+        stock: stock ? Number(stock) : null,
+        imageUrl
+      }
     });
     res.status(201).json({
       message: "Product registered successfully",

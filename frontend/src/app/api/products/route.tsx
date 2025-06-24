@@ -2,12 +2,16 @@ import { NextResponse } from "next/server";
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export async function POST(req: Request) {
-  const body = await req.json();
-  const res = await fetch(`${apiUrl}/api/products/register`, { 
+  const res = await fetch(`${apiUrl}/api/products/register`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
+    headers: {
+      Authorization: req.headers.get("authorization") || "",
+      // NÃO coloque 'Content-Type' aqui!
+    },
+    body: req.body,
+    duplex: "half",
   });
+
   const data = await res.json();
   if (!res.ok) {
     return NextResponse.json(data, { status: res.status });

@@ -13,21 +13,21 @@ export default function CreateProductPage() {
       async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
             event.preventDefault();
             const formData = new FormData(event.currentTarget);
-            const productData = {
-                  name: formData.get("name"),
-                  description: formData.get("description"),
-                  price: Number(formData.get("price")),
-                  stock: Number(formData.get("stock")),
-                  image: formData.get("image"),
-                  category: formData.get("category"),
-                  };
+
+            // Se for enviar imagem, não use JSON, use FormData direto!
+            const user = JSON.parse(localStorage.getItem("user") || "null");
+            const token = user?.token;
+
+            // Envie o FormData diretamente (para upload funcionar)
             const response = await fetch("/api/products", {
-                  method: "POST",
-                  headers: {
-                        "Content-Type": "application/json",
-                  },
-                  body: JSON.stringify(productData),
+            method: "POST",
+            headers: {
+                  Authorization: `Bearer ${token}`,
+                  // NÃO coloque 'Content-Type': 'application/json' aqui!
+            },
+            body: formData,
             });
+
             const data = await response.json();
             console.log(data);
       }
