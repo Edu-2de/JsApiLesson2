@@ -19,13 +19,10 @@ export default function CreateProductPage() {
             const token = user?.token;
 
             // Envie o FormData diretamente (para upload funcionar)
-            const response = await fetch("/api/products", {
-            method: "POST",
-            headers: {
-                  Authorization: `Bearer ${token}`,
-                  // NÃO coloque 'Content-Type': 'application/json' aqui!
-            },
-            body: formData,
+            const response = await fetch("http://localhost:4000/api/products/register", {
+                  method: "POST",
+                  headers: { Authorization: `Bearer ${token}` },
+                  body: formData,
             });
 
             const data = await response.json();

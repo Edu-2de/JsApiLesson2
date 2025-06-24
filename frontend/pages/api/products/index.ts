@@ -10,14 +10,12 @@ export const config = {
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === "POST") {
-    // Proxy multipart para o backend
     const response = await fetch(`${apiUrl}/api/products/register`, {
       method: "POST",
       headers: {
         authorization: req.headers.authorization || "",
-        // NÃO coloque 'Content-Type' aqui!
       },
-      body: req, // repassa o stream
+      body: req,
       duplex: "half",
     });
     const data = await response.json();
@@ -44,8 +42,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const data = await response.json();
     return res.status(response.status).json(data);
   }
-
-  // Se quiser tratar GET_BY_ID, crie uma rota separada: pages/api/products/[id].ts
 
   return res.status(405).json({ message: "Method Not Allowed" });
 }
