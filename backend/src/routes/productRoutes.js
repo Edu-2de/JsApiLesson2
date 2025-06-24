@@ -8,8 +8,8 @@ router.get('/', getAllProducts);
 router.get('/search', searchProducts);
 router.get('/category/:category', getProductsByCategory);
 router.get('/:id', getProductById);
-router.put('/:id', updateProduct);
-router.delete('/:id', deleteProduct);
+router.put('/edit/:id', updateProduct);
+router.delete('/delete/:id', deleteProduct);
 
 
 export default router;
