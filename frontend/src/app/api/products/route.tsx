@@ -16,7 +16,10 @@ export async function POST(req: Request) {
 }
 
 export async function GET() {
-  const res = await fetch(`${apiUrl}/api/products`);
+  const res = await fetch(`${apiUrl}/api/products`, {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+  });
   const data = await res.json();
   if (!res.ok) {
     return NextResponse.json(data, { status: res.status });
