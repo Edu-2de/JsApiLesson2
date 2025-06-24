@@ -77,9 +77,9 @@ export default function CreateProductPage() {
                         />
                         </div>
                         <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Image URL</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Image</label>
                         <input
-                              type="text"
+                              type="file"
                               name="image" // <-- Adicione isto
                               className="w-full px-3 py-2 border border-gray-300 text-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-800"
                               placeholder="Enter image URL"

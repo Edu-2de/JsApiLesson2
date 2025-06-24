@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import upload from "../middlewares/uploadImage.js"; 
 import { registerProduct, getAllProducts, searchProducts, getProductsByCategory, getProductById, updateProduct, deleteProduct} from '../controllers/productController.js';
 import requireAdmin from "../middlewares/adminMiddleware.js";
 
