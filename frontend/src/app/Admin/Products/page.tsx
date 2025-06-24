@@ -1,7 +1,21 @@
-
+"use client";
 import Link from "next/link";
+import { useEffect } from "react";
 
 export default function ProductsPage() {
+  useEffect(() => {
+    const response = fetch("/api/products", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    response
+      .then(res => res.json())
+      .then(data => console.log(data));
+  }, []);
+
+
   return (
     <div className="p-4 bg-gray-100 min-h-screen flex items-center justify-center">
       <div className="max-w-2xl w-full bg-white shadow-md rounded-lg p-6">
