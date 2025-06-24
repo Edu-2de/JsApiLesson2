@@ -15,6 +15,16 @@ type Product = {
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
 
+  async function handleDelete(productId: number) {
+    const response = await fetch(`/api/products/${productId}`, {
+      method: "DELETE",
+    });
+    // Optionally refresh products after delete
+    if (response.ok) {
+      setProducts(products => products.filter(p => p.id !== productId));
+    }
+  }
+
   useEffect(() => {
     fetch("/api/products")
       .then(res => res.json())
@@ -42,9 +52,9 @@ export default function ProductsPage() {
             <Link href={`/Admin/Products/edit/${product.id}`} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors mr-2">
               Edit
             </Link>
-            <Link href={`/Admin/Products/delete/${product.id}`} className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors">
+            <button onClick={() => handleDelete(product.id)} className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors">
               Delete
-            </Link>
+            </button>
           </div>
         </div>
       ))}
