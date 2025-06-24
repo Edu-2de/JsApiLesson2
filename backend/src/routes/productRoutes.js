@@ -4,7 +4,12 @@ import requireAdmin from "../middlewares/adminMiddleware.js";
 
 const router = Router();
 
-router.post('/register', requireAdmin, registerProduct);
+router.post(
+  "/register",
+  requireAdmin,
+  upload.single("image"), // 'image' é o nome do campo do formulário
+  registerProduct
+);
 router.get('/', getAllProducts);
 router.get('/search', searchProducts);
 router.get('/category/:category', getProductsByCategory);
