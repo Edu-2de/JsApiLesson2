@@ -13,6 +13,15 @@ type Product = {
 };
 
 export default function ProductsPage() {
+
+  useEffect(() => {
+    const user = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("user") || "null") : null;
+    if (!user || user.role !== "admin") {
+      window.location.href = "/Login"; 
+    }
+  }, []);
+
+
   const [products, setProducts] = useState<Product[]>([]);
 
   async function handleDelete(productId: number) {

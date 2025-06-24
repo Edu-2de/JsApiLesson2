@@ -1,7 +1,14 @@
 "use client";
-
+import { useEffect } from "react";
 
 export default function CreateProductPage() {
+
+      useEffect(() => {
+          const user = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("user") || "null") : null;
+          if (!user || user.role !== "admin") {
+            window.location.href = "/Login"; 
+          }
+      }, []);
 
       async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
             event.preventDefault();
