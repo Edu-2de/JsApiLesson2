@@ -69,17 +69,28 @@ export default function EditProductPage() {
               (userCash !== null && userCash < product.price ? " opacity-50 cursor-not-allowed" : "")
             }
             disabled={userCash !== null && userCash < product.price}
-            onClick={() => {
+            onClick={async () => {
               if (userCash !== null && userCash >= product.price) {
                 // Lógica para comprar o produto
                 const user = JSON.parse(localStorage.getItem("user") || "null");
-                if (user) {
-                  // Atualiza o cash do usuário
-                  user.cash -= product.price;
-                  localStorage.setItem("user", JSON.stringify(user));
-                  setUserCash(user.cash);
+                const res = await fetch(`/api/products/${product.id}`, {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${user?.token}`
+                  },
+                  body: JSON.stringify({ quantity: 1 })
+                });
+                const data = await res.json();
+                if (res.ok) {
                   alert("Produto comprado com sucesso!");
+                  // Atualiza o cash local
+                  setUserCash((prev) => prev !== null ? prev - product.price : null);
+                } else {
+                  alert(data.message || "Erro ao comprar produto.");
                 }
+              } else {
+                alert("Saldo insuficiente para comprar este produto.");
               }
             }}
           >
