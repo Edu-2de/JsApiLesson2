@@ -7,6 +7,7 @@ import productRoutes from './routes/productRoutes.js';
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use('/images', express.static('public/images'));
 
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
