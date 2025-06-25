@@ -5,7 +5,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const { id } = req.query;
 
   if (req.method === "DELETE") {
-    const response = await fetch(`${apiUrl}/api/products/${id}`, { method: "DELETE" });
+    const response = await fetch(`${apiUrl}/api/products/${id}`, {
+      method: "DELETE",
+      headers: {
+        authorization: Array.isArray(req.headers.authorization)
+          ? req.headers.authorization[0]
+          : req.headers.authorization ||
+            (Array.isArray(req.headers.Authorization)
+              ? req.headers.Authorization[0]
+              : req.headers.Authorization) ||
+            "",
+      },
+    });
     const data = await response.json();
     return res.status(response.status).json(data);
   }

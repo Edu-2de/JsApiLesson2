@@ -25,10 +25,15 @@ export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
 
   async function handleDelete(productId: number) {
+    const user = JSON.parse(localStorage.getItem("user") || "null");
+    const token = user?.token;
+
     const response = await fetch(`/api/products/${productId}`, {
       method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
-    // Optionally refresh products after delete
     if (response.ok) {
       setProducts(products => products.filter(p => p.id !== productId));
     }
