@@ -64,11 +64,18 @@ export const getAllProducts = async (req, res) => {
 
 export const updateProduct = async (req, res) => {
       const {id} = req.params;
-      const {name, description, price, category, stock, image: imageUrl} = req.body;      
+      // Atualiza apenas os campos enviados (sem imagem)
+      const fields = ['name', 'description', 'price', 'category', 'stock'];
+      let data = {};
+      for (const field of fields) {
+        if (req.body[field] !== undefined) {
+          data[field] = field === 'price' || field === 'stock' ? Number(req.body[field]) : req.body[field];
+        }
+      }
       try{
             const product = await prisma.product.update({
                   where: {id: parseInt(id)},
-                  data: {name, description, price, category, stock, imageUrl}
+                  data
             });
             res.status(200).json(product);
       }catch(error){

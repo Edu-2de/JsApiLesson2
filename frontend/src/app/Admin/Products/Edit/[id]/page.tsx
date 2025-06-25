@@ -32,20 +32,35 @@ export default function EditProductPage() {
     );
   }
 
-async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
-    const data = Object.fromEntries(formData);
     const user = JSON.parse(localStorage.getItem("user") || "null");
     const token = user?.token;
-    const response = await fetch(`/api/products/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(data),
-    });
+    // Se o usuário selecionou uma nova imagem, envie como multipart/form-data
+    const hasImage = formData.get("image") && (formData.get("image") as File).name !== "";
+    let response;
+    if (hasImage) {
+      // Envia como multipart/form-data
+      response = await fetch(`/api/products/${id}`, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+    } else {
+      // Envia como JSON
+      const data = Object.fromEntries(formData);
+      response = await fetch(`/api/products/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(data),
+      });
+    }
     const updatedProduct = await response.json();
     console.log(updatedProduct);
   }
@@ -93,23 +108,6 @@ async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
                         defaultValue={product.stock}
                   />
                   </div>
-                  <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Image</label>
-                  {/* Mostra a imagem atual, se houver */}
-                  {product.imageUrl && (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={product.imageUrl}
-                      alt={product.name}
-                      className="mb-2 w-full h-32 object-contain rounded border"
-                    />
-                  )}
-                  <input
-                    type="file"
-                    name="image"
-                    className="w-full px-3 py-2 border border-gray-300 text-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-800"
-                  />
-                </div>
                   <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
                   <input
