@@ -36,10 +36,13 @@ async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const data = Object.fromEntries(formData);
+    const user = JSON.parse(localStorage.getItem("user") || "null");
+    const token = user?.token;
     const response = await fetch(`/api/products/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(data),
     });
@@ -67,6 +70,7 @@ async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
                         name="description" // <-- Adicione isto
                         className="w-full px-3 py-2 border border-gray-300 text-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-800"
                         placeholder="Enter product description"
+                        defaultValue={product.description}
                   ></textarea>
                   </div>
                   <div>
@@ -76,6 +80,7 @@ async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
                         name="price" // <-- Adicione isto
                         className="w-full px-3 py-2 border border-gray-300 text-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-800"
                         placeholder="Enter product price"
+                        defaultValue={product.price}
                   />
                   </div>
                   <div>
@@ -85,6 +90,7 @@ async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
                         name="stock" // <-- Adicione isto
                         className="w-full px-3 py-2 border border-gray-300 text-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-800"
                         placeholder="Enter product stock"
+                        defaultValue={product.stock}
                   />
                   </div>
                   <div>
@@ -94,6 +100,7 @@ async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
                         name="image" // <-- Adicione isto
                         className="w-full px-3 py-2 border border-gray-300 text-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-800"
                         placeholder="Enter image URL"
+                        defaultValue={product.imageUrl}
                   />
                   </div>
                   <div>
@@ -103,13 +110,14 @@ async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
                         name="category" // <-- Adicione isto
                         className="w-full px-3 py-2 border border-gray-300 text-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-800"
                         placeholder="Enter product category"
+                        defaultValue={product.category}
                   />
                   </div>
                   <button
                   type="submit"
                   className="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-600 transition-colors"
                   >
-                  Create Product
+                  Update Product
                   </button>
             </form>
     </div>
