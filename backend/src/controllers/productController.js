@@ -2,8 +2,6 @@ import prisma from '../prismaClient.js';
 
 
 export const registerProduct = async (req, res) => {
-      console.log("req.body:", req.body);
-      console.log("req.file:", req.file);
       // Monta a URL completa da imagem usando variável de ambiente ou localhost
       const backendUrl = process.env.BACKEND_URL || 'http://localhost:4000';
       const { name, description, price, category, stock } = req.body;
