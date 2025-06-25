@@ -24,10 +24,26 @@ export default function EditProductPage() {
     fetch(`/api/products/${id}`)
       .then(res => res.json())
       .then(data => setProduct(data));
-    // Busca o cash do usuário logado
+    // Busca o cash atualizado do usuário logado
     if (typeof window !== "undefined") {
       const user = JSON.parse(localStorage.getItem("user") || "null");
-      setUserCash(user?.cash ?? null);
+      if (user?.token) {
+        fetch("/api/auth/me", {
+          headers: { Authorization: `Bearer ${user.token}` }
+        })
+          .then(res => res.json())
+          .then(data => {
+            if (data.cash !== undefined) {
+              setUserCash(data.cash);
+              localStorage.setItem("user", JSON.stringify({ ...user, cash: data.cash }));
+            } else {
+              setUserCash(user.cash ?? null);
+            }
+          })
+          .catch(() => setUserCash(user.cash ?? null));
+      } else {
+        setUserCash(user?.cash ?? null);
+      }
     }
   }, [id]);
 
@@ -69,17 +85,32 @@ export default function EditProductPage() {
               (userCash !== null && userCash < product.price ? " opacity-50 cursor-not-allowed" : "")
             }
             disabled={userCash !== null && userCash < product.price}
-            onClick={() => {
+            onClick={async () => {
               if (userCash !== null && userCash >= product.price) {
-                // Lógica para comprar o produto
                 const user = JSON.parse(localStorage.getItem("user") || "null");
-                if (user) {
-                  // Atualiza o cash do usuário
-                  user.cash -= product.price;
-                  localStorage.setItem("user", JSON.stringify(user));
-                  setUserCash(user.cash);
+                const res = await fetch(`/api/products/${product.id}`, {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${user?.token}`
+                  },
+                  body: JSON.stringify({ quantity: 1 })
+                });
+                const data = await res.json();
+                if (res.ok) {
                   alert("Produto comprado com sucesso!");
+                  // Atualiza o cash local e no localStorage se vier do backend
+                  if (data.user && typeof data.user.cash === 'number') {
+                    setUserCash(data.user.cash);
+                    localStorage.setItem("user", JSON.stringify({ ...user, cash: data.user.cash }));
+                  } else {
+                    setUserCash((prev) => prev !== null ? prev - product.price : null);
+                  }
+                } else {
+                  alert(data.message || "Erro ao comprar produto.");
                 }
+              } else {
+                alert("Saldo insuficiente para comprar este produto.");
               }
             }}
           >
@@ -90,7 +121,7 @@ export default function EditProductPage() {
         <div className="w-full md:w-60 flex-shrink-0">
           <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 shadow flex flex-col items-center">
             <span className="text-gray-500 text-sm mb-1">Seu saldo</span>
-            <span className="text-3xl font-bold text-blue-700 mb-2">{userCash !== null ? `R$ ${userCash}` : '--'}</span>
+            <span className="text-3xl font-bold text-blue-700 mb-2">{userCash !== null ? `$ ${userCash}` : '--'}</span>
             <span className="text-xs text-gray-400">(cash disponível)</span>
           </div>
         </div>

@@ -127,3 +127,43 @@ export const getProductsByCategory = async (req, res) => {
             res.status(500).json({message: "Internal server error", error: error.message, stack: error.stack});
       }
 };
+
+export const buyProduct = async (req, res) => {
+      const {userId} = req.user; // Assuming userId is available in req.user
+      if (!userId) {
+            return res.status(401).json({message: "Unauthorized"});
+      }
+      const {id} = req.params;
+      const {quantity} = req.body;
+      try {
+            const product = await prisma.product.findUnique({where: {id: parseInt(id)}});
+            if (!product) {
+                  return res.status(404).json({message: "Product not found"});
+            }
+            if (product.stock < quantity) {
+                  return res.status(400).json({message: "Insufficient stock"});
+            }
+            const user = await prisma.user.findUnique({where: {id: userId}});
+            if (!user) {
+                  return res.status(404).json({message: "User not found"});
+            }
+            const totalPrice = product.price * quantity;
+            if (user.cash < totalPrice) {
+                  return res.status(400).json({message: "Insufficient cash"});
+            }
+            const updatedStock = product.stock - quantity;
+            const updatedCash = user.cash - totalPrice;
+            const updatedProduct = await prisma.product.update({
+                  where: {id: parseInt(id)},
+                  data: {stock: updatedStock}
+            });
+            await prisma.user.update({
+                  where: {id: userId},
+                  data: {cash: updatedCash}
+            });
+            res.status(200).json({message: "Product bought successfully", product: updatedProduct});
+      } catch (error) {
+            console.error("Error buying product:", error);
+            res.status(500).json({message: "Internal server error", error: error.message, stack: error.stack});
+            }
+};
