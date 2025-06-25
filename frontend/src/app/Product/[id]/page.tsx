@@ -62,7 +62,27 @@ export default function EditProductPage() {
             <span className="text-gray-700"><b>Estoque:</b> {product.stock}</span>
             <span className="text-gray-700"><b>Categoria:</b> {product.category}</span>
           </div>
-          <button type="button" className="bg-green-600 text-white px-6 py-3 rounded-lg text-lg font-semibold hover:bg-green-700 transition-colors shadow-md">
+          <button
+            type="button"
+            className={
+              "bg-green-600 text-white px-6 py-3 rounded-lg text-lg font-semibold hover:bg-green-700 transition-colors shadow-md" +
+              (userCash !== null && userCash < product.price ? " opacity-50 cursor-not-allowed" : "")
+            }
+            disabled={userCash !== null && userCash < product.price}
+            onClick={() => {
+              if (userCash !== null && userCash >= product.price) {
+                // Lógica para comprar o produto
+                const user = JSON.parse(localStorage.getItem("user") || "null");
+                if (user) {
+                  // Atualiza o cash do usuário
+                  user.cash -= product.price;
+                  localStorage.setItem("user", JSON.stringify(user));
+                  setUserCash(user.cash);
+                  alert("Produto comprado com sucesso!");
+                }
+              }
+            }}
+          >
             Comprar Produto
           </button>
         </div>
