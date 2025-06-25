@@ -95,14 +95,21 @@ async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
                   </div>
                   <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Image</label>
+                  {/* Mostra a imagem atual, se houver */}
+                  {product.imageUrl && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={product.imageUrl}
+                      alt={product.name}
+                      className="mb-2 w-full h-32 object-contain rounded border"
+                    />
+                  )}
                   <input
-                        type="file"
-                        name="image" // <-- Adicione isto
-                        className="w-full px-3 py-2 border border-gray-300 text-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-800"
-                        placeholder="Enter image URL"
-                        defaultValue={product.imageUrl}
+                    type="file"
+                    name="image"
+                    className="w-full px-3 py-2 border border-gray-300 text-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-800"
                   />
-                  </div>
+                </div>
                   <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
                   <input
