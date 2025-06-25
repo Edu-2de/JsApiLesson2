@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import Image from "next/image";
 
 type Product = {
   id: number;
@@ -25,10 +26,15 @@ export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
 
   async function handleDelete(productId: number) {
+    const user = JSON.parse(localStorage.getItem("user") || "null");
+    const token = user?.token;
+
     const response = await fetch(`/api/products/${productId}`, {
       method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
-    // Optionally refresh products after delete
     if (response.ok) {
       setProducts(products => products.filter(p => p.id !== productId));
     }
@@ -55,8 +61,15 @@ export default function ProductsPage() {
           <p className="text-gray-600">{product.description}</p>
           <p className="text-gray-600">Price: ${product.price}</p>
           <p className="text-gray-600">Stock: {product.stock}</p>
-          <p className="text-gray-600">Category: {product.category}</p>
-          <p className="text-gray-600">Image: {product.imageUrl}</p>
+          <Image
+            src={product.imageUrl}
+            alt={product.name}
+            width={800}
+            height={384}
+            className="w-full h-48 object-cover mt-4 rounded"
+            style={{ width: "100%", height: "12rem" }}
+          />
+        
           <div className="mt-4">
             <Link href={`/Admin/Products/edit/${product.id}`} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors mr-2">
               Edit
