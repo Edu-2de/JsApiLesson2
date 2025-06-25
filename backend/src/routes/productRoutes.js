@@ -15,7 +15,7 @@ router.get('/', getAllProducts);
 router.get('/search', searchProducts);
 router.get('/category/:category', getProductsByCategory);
 router.get('/:id', getProductById);
-router.put('/:id', requireAdmin, upload.single("image"), updateProduct);
+router.put('/:id', requireAdmin, updateProduct);
 router.delete('/:id', requireAdmin, deleteProduct);
 
 

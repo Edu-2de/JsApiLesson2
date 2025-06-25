@@ -21,11 +21,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(response.status).json(data);
   }
 
-  if (req.method === "PUT" || req.method === "PATCH") {
+  if (req.method === "PUT") {
     const { id } = req.query;
-    const body = req.body;
+    let body = req.body;
+    // Garante que o body seja um objeto (parse se vier como string)
+    if (typeof body === "string") {
+      body = JSON.parse(body);
+    }
     const response = await fetch(`${apiUrl}/api/products/${id}`, {
-      method: req.method,
+      method: "PUT",
       headers: {
         authorization: Array.isArray(req.headers.authorization)
           ? req.headers.authorization[0]
@@ -34,6 +38,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
               ? req.headers.Authorization[0]
               : req.headers.Authorization) ||
             "",
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(body),
     });
