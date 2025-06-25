@@ -1,7 +1,8 @@
 "use client";
 import React from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, } from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function ProductsCarrousel() {
   type Product = {
@@ -119,6 +120,12 @@ export default function ProductsCarrousel() {
                 <span className="text-xl font-bold text-neutral-700">
                   {product.price}
                 </span>
+                <Link
+                  className="mt-4 px-4 py-2 bg-neutral-800 text-white rounded hover:bg-neutral-700 transition-colors duration-200"
+                  href={`/Product/${product.id}`}
+                >
+                  Comprar
+                </Link>
               </div>
             ) : null
           )}
