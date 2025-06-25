@@ -71,7 +71,7 @@ export default function ProductsPage() {
           />
         
           <div className="mt-4">
-            <Link href={`/Admin/Products/edit/${product.id}`} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors mr-2">
+            <Link href={`/Admin/Products/Edit/${product.id}`} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors mr-2">
               Edit
             </Link>
             <button onClick={() => handleDelete(product.id)} className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors">
