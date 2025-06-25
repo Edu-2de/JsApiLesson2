@@ -55,5 +55,26 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(response.status).json(data);
   }
 
+  if (req.method === "POST") {
+    const response = await fetch(`${apiUrl}/api/products/${id}`, { // Corrija o endpoint se necessário!
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: Array.isArray(req.headers.authorization)
+          ? req.headers.authorization[0]
+          : req.headers.authorization ||
+            (Array.isArray(req.headers.Authorization)
+              ? req.headers.Authorization[0]
+              : req.headers.Authorization) ||
+            "",
+      },
+      body: JSON.stringify(req.body),
+    });
+    const data = await response.json();
+    return res.status(response.status).json(data);
+  }
+
   return res.status(405).json({ message: "Method Not Allowed" });
+
+
 }
