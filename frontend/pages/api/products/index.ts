@@ -9,18 +9,6 @@ export const config = {
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method === "POST") {
-    const response = await fetch(`${apiUrl}/api/products/register`, {
-      method: "POST",
-      headers: {
-        authorization: req.headers.authorization || "",
-      },
-      body: req,
-      duplex: "half",
-    });
-    const data = await response.json();
-    return res.status(response.status).json(data);
-  }
 
   if (req.method === "GET") {
     const response = await fetch(`${apiUrl}/api/products`, {
