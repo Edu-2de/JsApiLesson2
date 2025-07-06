@@ -13,3 +13,8 @@ INSERT INTO users (name, email, password_hash, role, balance) VALUES
 ('bank manager', 'admin@system.com', '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'full_access', 10000.00)
 ON CONFLICT (email) DO NOTHING;
 
+INSERT INTO users (name, email, password_hash, role, balance) VALUES
+('bank employee', 'employee@system.com', '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at4.uheWG/igi', 'limit_access', 10000.00)
+ON CONFLICT (email) DO NOTHING;
+
+
