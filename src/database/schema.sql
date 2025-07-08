@@ -57,7 +57,6 @@ CREATE TABLE IF NOT EXISTS transactions(
     transaction_type VARCHAR(20) DEFAULT 'deposit' CHECK(transaction_type IN ('deposit', 'withdrawal', 'transfer')),
     amount DECIMAL(10,2) DEFAULT 0.00,
     description TEXT,
-    destination_account_id INTEGER REFERENCES account(id) ON DELETE SET NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 );
 
@@ -71,4 +70,12 @@ CREATE TABLE IF NOT EXISTS cards(
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     update_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     cvv VARCHAR(5) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS transfers(
+    id SERIAL PRIMARY KEY,
+    transaction_id REFERENCES transactions(id) ON DELETE SET NULL,
+    destination_account_id INTEGER REFERENCES account(id) ON DELETE SET NULL,
+    amount_sent DECIMAL(10,2) DEFAULT 0.00,
+    amount received DECIMAL(10,2) DEFAULT 0.00
 );
