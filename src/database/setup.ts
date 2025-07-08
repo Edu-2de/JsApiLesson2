@@ -2,7 +2,9 @@ import pool from './connection';
 import fs from 'fs';
 import path from 'path';
 
-export const checkIfTablesExist = async () =>{
+
+
+export const checkIfTablesExist = async() =>{
     try {
         const result = await pool.query(`
             SELECT EXISTS(
@@ -17,9 +19,11 @@ export const checkIfTablesExist = async () =>{
     }
 }
 
+
+
 let setupExecuted = false;
 
-export const setupDatabase = async () =>{
+export const setupDatabase = async() =>{
     if(setupExecuted){
         console.log("⏭️ Database setup already completed, skipping...")
         return;
@@ -44,6 +48,26 @@ export const setupDatabase = async () =>{
         setupExecuted = true;
 
     }catch(error){
+        console.error('❌ Database setup error:', error);
 
+        if(error instanceof Error && error.message.includes('already exists')){
+            console.log('⚠️ Tables already exist, continuing...');
+            setupExecuted = true;
+            return;
+        }
+        throw error;
+    }
+}
+
+
+
+export const testConnection = async() =>{
+    try{
+        const result = await pool.query('SELECT NOW()');
+        console.log('✅ Database connection test successful:', result.rows[0].now);
+        return true;
+    }catch(error){
+        console.log('❌ Database connection test failed:', error);
+        return false;
     }
 }
