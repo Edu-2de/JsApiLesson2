@@ -21,15 +21,37 @@ INSERT INTO users (name, email, age, password_hash, role) VALUES
 ('Ronnie', 'ronnie@gmail.com', 20, '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at6.uheWG/igi', 'user')
 ON CONFLICT (email) DO NOTHING;
 
+
+
+
 CREATE TABLE IF NOT EXISTS account_types (
     id SERIAL PRIMARY KEY,
-    type VARCHAR(20) DEFAULT 'current' CHECK(type IN ('current', 'savings', 'premium', 'kids')),
+    type VARCHAR(20) UNIQUE DEFAULT 'current' CHECK(type IN ('current', 'savings', 'premium', 'kids')),
     daily_withdrawal_limit DECIMAL(10,2) DEFAULT 0.00,
     daily_transfer_limit DECIMAL(10,2) DEFAULT 0.00,
     monthly_withdrawal_limit DECIMAL(10,2) DEFAULT 0.00,
     monthly_transfer_limit DECIMAL(10,2) DEFAULT 0.00
     
 );
+
+INSERT INTO account_types(type, daily_withdrawal_limit, daily_transfer_limit, monthly_withdrawal_limit, monthly_transfer_limit) VALUES
+('current', 1000.00, 5000.00, 15000.00, 50000.00)
+ON CONFLICT (type) DO NOTHING;
+
+INSERT INTO account_types(type, daily_withdrawal_limit, daily_transfer_limit, monthly_withdrawal_limit, monthly_transfer_limit) VALUES
+('savings', 500.00, 2000.00, 8000.00, 20000.00)
+ON CONFLICT (type) DO NOTHING;
+
+INSERT INTO account_types(type, daily_withdrawal_limit, daily_transfer_limit, monthly_withdrawal_limit, monthly_transfer_limit) VALUES
+('premium', 5000.00, 20000.00, 100000.00, 500000.00)
+ON CONFLICT (type) DO NOTHING;
+
+INSERT INTO account_types(type, daily_withdrawal_limit, daily_transfer_limit, monthly_withdrawal_limit, monthly_transfer_limit) VALUES
+('kids', 100.00, 200.00, 1000.00, 2000.00)
+ON CONFLICT (type) DO NOTHING;
+
+
+
 
 CREATE TABLE IF NOT EXISTS interest_and_fees (
     id SERIAL PRIMARY KEY,
@@ -50,6 +72,9 @@ CREATE TABLE IF NOT EXISTS accounts(
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     update_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+
+
 
 CREATE TABLE IF NOT EXISTS transactions(
     id SERIAL PRIMARY KEY,
