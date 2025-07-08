@@ -4,6 +4,7 @@ import path from 'path';
 
 
 
+
 export const checkIfTablesExist = async() =>{
     try {
         const result = await pool.query(`
@@ -18,6 +19,7 @@ export const checkIfTablesExist = async() =>{
         return false;
     }
 }
+
 
 
 
@@ -58,6 +60,7 @@ export const setupDatabase = async() =>{
         throw error;
     }
 }
+
 
 
 
