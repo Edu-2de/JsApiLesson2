@@ -61,5 +61,78 @@ export class AuthController{
     }
 
 
-  
+    static register = async(req: Request, res:Response): Promise<void> =>{
+        try{
+            const{name, email, age, password} = req.body;
+            if(!name || !email || !age || !password){
+                res.status(400).json({message: 'Name, email, age and password are required'})
+            }
+
+
+            const emailRegex =  /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if(!emailRegex.test(email)){
+                res.status(400).json({ message: 'Invalid email format' });
+                return;
+            }
+
+
+            if (password.length < 6 ){
+                res.status(400).json({ message: 'Password must be at least 6 characters long' });
+                return;
+            }
+
+
+            if(age >= 99|| age <= 11){
+                res.status(400).json({ message: "Age must be between 12 and 98"})
+                return;
+            }
+
+
+            const existingUser = await pool.query('SELECT id FROM users WHERE email = $1', [email]);
+            if (existingUser.rows.length > 0) {
+                res.status(400).json({ message: 'Email already exists' });
+                return;
+            }
+
+
+            const saltRounds = 10;
+            const hashedPassword = await bcrypt.hash(password, saltRounds)
+            const result = await pool.query(
+                'INSERT INTO users(name, email, age, password_hash, role) VALUES ($1, $2, $3, $4, $5) RETURNING id, name, email, age',
+                [name, email, age, hashedPassword, 'user']
+            );
+
+
+            const newUser = result.rows[0]
+
+
+            const token = jwt.sign(
+                {
+                    id: newUser.id,
+                    email: newUser.email,
+                    age: newUser.age,
+                    role: newUser.role
+                },
+                JWT_SECRET,
+                {expiresIn : '24h'}
+            );
+
+
+            res.status(201).json({
+                message: 'User registered successfully',
+                token,
+                user: {
+                    id:newUser.id,
+                    email: newUser.email,
+                    age: newUser.age,
+                    role: newUser.role
+                }
+            });
+        }catch(error){
+            res.status(500).json({
+                message: 'Error during registration',
+                error: error instanceof Error ? error.message : String(error)
+            });
+        }
+    }
 }
