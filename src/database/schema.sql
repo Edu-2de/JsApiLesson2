@@ -62,6 +62,25 @@ CREATE TABLE IF NOT EXISTS interest_and_fees (
     interest_rate  DECIMAL(5,2) DEFAULT 0.00
 );
 
+INSERT INTO interest_and_fees(account_type_id, monthly_maintenance_fee, withdrawal_fee, transfer_fee, interest_rate)VALUES
+(1, 2.50, 1.00, 0.50, 0.00)
+ON CONFLICT (account_type_id) DO NOTHING;
+
+INSERT INTO interest_and_fees(account_type_id, monthly_maintenance_fee, withdrawal_fee, transfer_fee, interest_rate)VALUES
+(2, 0.00, 2.00, 1.50, 0.50)
+ON CONFLICT (account_type_id) DO NOTHING;
+
+INSERT INTO interest_and_fees(account_type_id, monthly_maintenance_fee, withdrawal_fee, transfer_fee, interest_rate)VALUES
+(3, 0.00, 0.00, 0.00, 0.75)
+ON CONFLICT (account_type_id) DO NOTHING;
+
+INSERT INTO interest_and_fees(account_type_id, monthly_maintenance_fee, withdrawal_fee, transfer_fee, interest_rate)VALUES
+(4, 0.00, 0.00, 0.00, 1.00)
+ON CONFLICT (account_type_id) DO NOTHING;
+
+
+
+
 CREATE TABLE IF NOT EXISTS accounts(
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
@@ -72,6 +91,18 @@ CREATE TABLE IF NOT EXISTS accounts(
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     update_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+INSERT INTO accounts(user_id, account_type_id, balance, account_number)VALUES
+(1, 3, 999999999.99, '001-98765-4')
+ON CONFLICT (account_number) DO NOTHING;
+
+INSERT INTO accounts(user_id, account_type_id, balance, account_number)VALUES
+(2, 3, 99000.00, '001-55443-2')
+ON CONFLICT (account_number) DO NOTHING;
+
+INSERT INTO accounts(user_id, account_type_id, balance, account_number)VALUES
+(3, 2, 3000.00, '001-12345-6')
+ON CONFLICT (account_number) DO NOTHING;
 
 
 
