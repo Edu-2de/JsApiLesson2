@@ -43,5 +43,10 @@ CREATE TABLE IF NOT EXISTS interest_and_fees (
 CREATE TABLE IF NOT EXISTS account(
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
-    account_types_id INTEGER REFERENCES account_types(id) ON DELETE SET NULL
-)
+    account_type_id INTEGER REFERENCES account_types(id) ON DELETE SET NULL,
+    balance DECIMAL(10,2) DEFAULT 0.00,
+    account_number VARCHAR(20) UNIQUE NOT NULL,
+    status VARCHAR(20) DEFAULT 'active' CHECK(status IN ('active', 'blocked', 'closed')),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    update_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
