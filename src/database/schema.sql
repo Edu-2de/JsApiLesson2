@@ -18,7 +18,7 @@ INSERT INTO users (name, email, age, password_hash, role) VALUES
 ON CONFLICT (email) DO NOTHING;
 
 INSERT INTO users (name, email, age, password_hash, role) VALUES
-('Ronnie', 'employee@system.com', 20, '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at6.uheWG/igi', 'user')
+('Ronnie', 'ronnie@gmail.com', 20, '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at6.uheWG/igi', 'user')
 ON CONFLICT (email) DO NOTHING;
 
 CREATE TABLE IF NOT EXISTS account_types (
@@ -57,7 +57,8 @@ CREATE TABLE IF NOT EXISTS transactions(
     transaction_type VARCHAR(20) DEFAULT 'deposit' CHECK(transaction_type IN ('deposit', 'withdrawal', 'transfer')),
     amount DECIMAL(10,2) DEFAULT 0.00,
     description TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    reference_number VARCHAR(20) UNIQUE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS cards(
@@ -74,8 +75,8 @@ CREATE TABLE IF NOT EXISTS cards(
 
 CREATE TABLE IF NOT EXISTS transfers(
     id SERIAL PRIMARY KEY,
-    transaction_id REFERENCES transactions(id) ON DELETE SET NULL,
-    destination_account_id INTEGER REFERENCES account(id) ON DELETE SET NULL,
-    amount_sent DECIMAL(10,2) DEFAULT 0.00,
-    amount received DECIMAL(10,2) DEFAULT 0.00
+    transaction_id INTEGER REFERENCES transactions(id) ON DELETE SET NULL,
+    destination_account_id INTEGER REFERENCES accounts(id) ON DELETE SET NULL,
+    fee DECIMAL(5,2) DEFAULT 0.00,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
