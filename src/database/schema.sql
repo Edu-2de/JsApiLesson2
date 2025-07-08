@@ -31,7 +31,6 @@ CREATE TABLE IF NOT EXISTS account_types (
     
 );
 
-
 CREATE TABLE IF NOT EXISTS interest_and_fees (
     id SERIAL PRIMARY KEY,
     account_type_id INTEGER REFERENCES account_types(id) ON DELETE SET NULL,
@@ -40,3 +39,9 @@ CREATE TABLE IF NOT EXISTS interest_and_fees (
     transfer_fee DECIMAL(5,2) DEFAULT 0.00,
     interest_rate  DECIMAL(5,2) DEFAULT 0.00
 );
+
+CREATE TABLE IF NOT EXISTS account(
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+    account_types_id INTEGER REFERENCES account_types(id) ON DELETE SET NULL
+)
