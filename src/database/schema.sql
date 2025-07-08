@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS interest_and_fees (
     interest_rate  DECIMAL(5,2) DEFAULT 0.00
 );
 
-CREATE TABLE IF NOT EXISTS account(
+CREATE TABLE IF NOT EXISTS accounts(
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
     account_type_id INTEGER REFERENCES account_types(id) ON DELETE SET NULL,
@@ -49,4 +49,26 @@ CREATE TABLE IF NOT EXISTS account(
     status VARCHAR(20) DEFAULT 'active' CHECK(status IN ('active', 'blocked', 'closed')),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     update_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS transactions(
+    id SERIAL PRIMARY KEY,
+    account_id INTEGER REFERENCES accounts(id) ON DELETE SET NULL,
+    transaction_type VARCHAR(20) DEFAULT 'deposit' CHECK(transaction_type IN ('deposit', 'withdrawal', 'transfer')),
+    amount DECIMAL(10,2) DEFAULT 0.00,
+    description TEXT,
+    destination_account_id INTEGER REFERENCES account(id) ON DELETE SET NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+);
+
+CREATE TABLE IF NOT EXISTS cards(
+    id SERIAL PRIMARY KEY,
+    account_id INTEGER REFERENCES accounts(id) ON DELETE SET NULL,
+    card_number VARCHAR(20) UNIQUE NOT NULL,
+    card_type VARCHAR(20) DEFAULT 'credit' CHECK(card_type IN('credit', 'debit', 'prepaid')),
+    status VARCHAR(20) DEFAULT 'active' CHECK(status IN('active', 'blocked', 'expired')),
+    expiry_date DATE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    update_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    cvv VARCHAR(5) NOT NULL
 );
