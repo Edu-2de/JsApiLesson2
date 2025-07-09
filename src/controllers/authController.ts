@@ -21,6 +21,7 @@ export class AuthController{
             )
             if (result.rows.length == 0){
                 res.status(401).json({message: 'Invalid email or password!'})
+                return;
             }
             const user = result.rows[0]
 
@@ -66,6 +67,7 @@ export class AuthController{
             const{name, email, age, password} = req.body;
             if(!name || !email || !age || !password){
                 res.status(400).json({message: 'Name, email, age and password are required'})
+                return;
             }
 
 
@@ -82,7 +84,7 @@ export class AuthController{
             }
 
 
-            if(age >= 99|| age <= 11){
+            if(age > 98|| age < 12){
                 res.status(400).json({ message: "Age must be between 12 and 98"})
                 return;
             }
@@ -98,7 +100,7 @@ export class AuthController{
             const saltRounds = 10;
             const hashedPassword = await bcrypt.hash(password, saltRounds)
             const result = await pool.query(
-                'INSERT INTO users(name, email, age, password_hash, role) VALUES ($1, $2, $3, $4, $5) RETURNING id, name, email, age',
+                'INSERT INTO users(name, email, age, password_hash, role) VALUES ($1, $2, $3, $4, $5) RETURNING id, name, email, age, role',
                 [name, email, age, hashedPassword, 'user']
             );
 
