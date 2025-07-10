@@ -11,6 +11,7 @@ router.get('/myaccount', AccountMiddleware.authenticateToken,  AccountController
 router.patch('/myaccount', AccountMiddleware.requireAdminOrOwner, AccountController.updateAccount);
 router.delete('/myaccount', AccountMiddleware.requireAdminOrOwner, AccountController.deleteAccount);
 
+router.get('/admin/:accountId', AccountMiddleware.requireAdmin, AccountController.getAccountById);
 router.patch('/admin/:accountId', AccountMiddleware.requireAdmin, AccountController.updateAccountById);
 router.delete('/admin/:accountId', AccountMiddleware.requireAdmin, AccountController.deleteAccountById);
 

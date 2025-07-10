@@ -150,6 +150,38 @@ export class AccountController {
         }
     };
 
+    static getAccountById = async(req: Request, res:Response): Promise<void> =>{
+        try{
+            const {accountId} = req.params;
+            const result = await pool.query(
+                `SELECT 
+                    a.id, a.balance, a.account_number, a.status, a.created_at,
+                    u.name, u.email, u.age, u.role,
+                    at.type, at.daily_withdrawal_limit, at.daily_transfer_limit
+                    FROM accounts a 
+                    INNER JOIN users u ON a.user_id = u.id 
+                    INNER JOIN account_types at ON a.account_type_id = at.id 
+                WHERE a.id = $1`,
+                [accountId]
+            );
+
+            if(result.rows.length === 0){
+                res.status(404).json({message: 'Account not found'});
+                return;
+            }
+
+            res.json({
+                message: 'Account retrieved succesfully',
+                account: result.rows[0]
+            });
+        }catch(error){
+            res.status(500).json({
+                message: 'Error fetching account',
+                error: error instanceof Error ? error.message : String(error)
+            });
+        }
+    };
+
 
     static getAccount = async(req: any, res:Response): Promise<void> =>{
         try{
