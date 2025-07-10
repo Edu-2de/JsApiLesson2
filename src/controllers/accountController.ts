@@ -280,6 +280,11 @@ export class AccountController {
                 message: 'Account updated successfully',
                 account: result.rows[0]
             });
+        }catch(error){
+            res.status(500).json({
+                message: 'Error updating account',
+                error: error instanceof Error ? error.message : String(error)
+            })
         }
     }
 }
