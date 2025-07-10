@@ -15,23 +15,9 @@ const loginAccount = async(req:Request, res:Response): Promise<void> =>{
 
         const result = await pool.query(
             `SELECT 
-                a.id,
-                a.user_id, 
-                a.account_type_id, 
-                a.balance, 
-                a.account_number, 
-                a.status, 
-                a.created_at, 
-                a.update_at,
-                u.name,
-                u.email,
-                u.age,
-                u.role,
-                at.type,
-                at.daily_withdrawal_limit,
-                at.daily_transfer_limit,
-                at.monthly_withdrawal_limit,
-                at.monthly_transfer_limit
+                a.*,
+                u.name, u.email, u.age, u.role,
+                at.*
             FROM accounts a 
             INNER JOIN users u ON a.user_id = u.id 
             INNER JOIN account_types at ON a.account_type_id = at.id 
@@ -51,10 +37,53 @@ const loginAccount = async(req:Request, res:Response): Promise<void> =>{
 
         const token = jwt.sign(
             {
+                account: {
+                    id: account.id,
+                    balance: account.balance,
+                    account_number: account.account_number,
+                    status: account.status
+                },
+                user: {
+                    name: account.name,
+                    email: account.email,
+                    age: account.age,
+                    role: account.role
+                },
+                account_type: {
+                    type: account.type,
+                    daily_withdrawal_limit: account.daily_withdrawal_limit,
+                    daily_transfer_limit: account.daily_transfer_limit
+                }
+            },
+            JWT_SECRET,
+            { expiresIn: '24h' }
+        );
+
+        res.json({
+            message: 'Login successful',
+            token,
+            account:{
                 id: account.id,
-                type: account.type,
-                
+                balance: account.balance,
+                account_number: account.account_number,
+                status: account.status,
+                user:{
+                    name: account.name,
+                    email: account.email,
+                    age: account.age,
+                    role: account.role
+                },
+                account_type:{
+                    type: account.type,
+                    daily_withdrawal_limit: account.daily_withdrawal_limit,
+                    daily_transfer_limit: account.daily_transfer_limit
+                }
             }
-        )
+        });
+    }catch(error){
+        res.status(500).json({
+            message: 'Error during login',
+            error: error instanceof Error ? error.message : String(error)
+        });
     }
 }
