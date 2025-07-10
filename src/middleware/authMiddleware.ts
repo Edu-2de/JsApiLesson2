@@ -38,8 +38,11 @@ export class AuthMiddleware{
     static requireAdmin = (req: AuthRequest, res: Response, next: NextFunction): void =>{
         if(!req.user){
             res.status(401).json({
-                message: 'Access denied. No user information'
-            })
+                message: 'Access denied. No user information.'
+            });
+            return;
         }
+
+        next();
     };
 }
