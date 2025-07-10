@@ -115,7 +115,19 @@ export class AccountController{
                 RETURNING user_id, account_type_id, account_number`,
                 [user_id, account_type_id, account_number]);
             
-            const newAccount = result.rows[0]
+            const newAccount = result.rows[0];
+
+            res.status(201).json({
+                message: 'Account registered successfully',
+                account:{
+                    id: newAccount.id,
+                    user_id: newAccount.user_id,
+                    account_type_id: newAccount.account_type_id,
+                    balance: newAccount.newAccount,
+                    account_number: newAccount.account_number,
+                    status: newAccount.status
+                }
+            });
         }catch(error){
             res.status(500).json({
                 message: 'Error during account registration',
