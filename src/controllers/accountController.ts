@@ -286,5 +286,8 @@ export class AccountController {
                 error: error instanceof Error ? error.message : String(error)
             })
         }
-    }
+    };
+
+
+    static deleteAccount = async(req:):Promise<void> =>{}
 }
