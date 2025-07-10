@@ -78,7 +78,6 @@ export class AccountController{
     static registerAccount = async(req: Request, res:Response): Promise<void> =>{
         try{
             const { user_id, account_type_id } = req.body;
-
             if(!user_id || !account_type_id){
                 res.status(400).json({message: 'User_id and Account_type_id are required'});
                 return;
@@ -91,6 +90,8 @@ export class AccountController{
                 res.status(400).json({message: 'This user not exists'});
                 return;
             }
+
+
             const existingAccountUser = await pool.query(
                 `SELECT user_id FROM accounts WHERE user_id = $1`,
                 [user_id]
@@ -100,6 +101,7 @@ export class AccountController{
                 return;
             }
 
+            
             const existingType = await pool.query(
                 `SELECT id from account_types WHERE id = $1`,
                 [account_type_id]);
