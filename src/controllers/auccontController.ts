@@ -14,7 +14,28 @@ const loginAccount = async(req:Request, res:Response): Promise<void> =>{
         }
 
         const result = await pool.query(
-            'SELECT id, user_id, account_type_id, balance, account_number, status, created_at, update_at FROM accounts a INNER JOIN users u ON a.user_id = u.id INNER JOIN account_types at ON a.account_type_id = at.id WHERE a.account_number = $1',
+            `SELECT 
+                a.id,
+                a.user_id, 
+                a.account_type_id, 
+                a.balance, 
+                a.account_number, 
+                a.status, 
+                a.created_at, 
+                a.update_at,
+                u.name,
+                u.email,
+                u.age,
+                u.role,
+                at.type,
+                at.daily_withdrawal_limit,
+                at.daily_transfer_limit,
+                at.monthly_withdrawal_limit,
+                at.monthly_transfer_limit
+            FROM accounts a 
+            INNER JOIN users u ON a.user_id = u.id 
+            INNER JOIN account_types at ON a.account_type_id = at.id 
+            WHERE a.account_number = $1`,
             [account_number]
         )
         if (result.rows.length == 0){
@@ -31,7 +52,8 @@ const loginAccount = async(req:Request, res:Response): Promise<void> =>{
         const token = jwt.sign(
             {
                 id: account.id,
-                type: account.
+                type: account.type,
+                
             }
         )
     }
