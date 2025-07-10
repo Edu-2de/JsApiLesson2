@@ -76,7 +76,21 @@ export class AccountController{
     }
 
     static registerAccount = async(req: Request, res:Response): Promise<void> =>{
+        try{
+            const { user_id, account_type_id } = req.body;
 
+            if(!user_id || !account_type_id){
+                res.status(400).json({message: 'User_id and Account_type_id are required'});
+                return;
+            }
+
+            const existingUser = await pool.query(
+                `SELECT id FROM users WHERE user_id = $1`,
+                [user_id]);
+            if (existingUser.rows.length > 0){
+                
+            }
+        }
     }
 
 }
