@@ -2,9 +2,6 @@ import pool from './connection';
 import fs from 'fs';
 import path from 'path';
 
-
-
-
 export const checkIfTablesExist = async() =>{
     try {
         const result = await pool.query(`
@@ -19,8 +16,6 @@ export const checkIfTablesExist = async() =>{
         return false;
     }
 }
-
-
 
 
 let setupExecuted = false;
@@ -60,8 +55,6 @@ export const setupDatabase = async() =>{
         throw error;
     }
 }
-
-
 
 
 export const testConnection = async() =>{
