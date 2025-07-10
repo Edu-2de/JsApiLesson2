@@ -85,10 +85,19 @@ export class AccountController{
             }
 
             const existingUser = await pool.query(
-                `SELECT id FROM users WHERE user_id = $1`,
+                `SELECT id FROM users WHERE id = $1`,
                 [user_id]);
-            if (existingUser.rows.length > 0){
-                
+            if (existingUser.rows.length < 0 || existingUser.rows.length > 0){
+                res.status(400).json({message: 'This user not exists or already have a account'});
+                return;
+            }
+
+            const existingType = await pool.query(
+                `SELECT id from account_types WHERE id = $1`,
+                [account_type_id]);
+            if (existingType.rows.length < 0){
+                res.status(400).json({message: 'This type not exists in table'})
+                return;
             }
         }
     }
