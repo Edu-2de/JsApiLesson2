@@ -2,11 +2,10 @@ import jwt from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
 
 interface AuthRequest extends Request{
-    user?:{
-        id: number;
-        email: string;
-        role: string;
-
+    user?: {
+        account: { id: number; balance: number; account_number: string; status: string };
+        user: { name: string; email: string; age: number; role: string };
+        account_type: { type: string; limits: any };
     }
 }
 
@@ -43,7 +42,7 @@ export class AuthMiddleware{
             return;
         }
 
-        if(req.user.role !== 'full_access'){
+        if(req.user.user.role !== 'full_access'){
             res.status(403).json({
                 message: 'Access denied. Full access required.'
             });
@@ -57,16 +56,17 @@ export class AuthMiddleware{
         const userFromToken = req.user;
         const { id } = req.params;
 
-        if (userFromToken?.role === 'full_access' || userFromToken?.role === 'limit_access'){
+        if (userFromToken?.user.role === 'full_access' || userFromToken?.user.role === 'limit_access'){            
             next();
             return;
         }
 
-        if (userFromToken && userFromToken.id === parseInt(id)){
+        if (userFromToken && userFromToken.user.id === parseInt(id)){
             next();
             return;
         }
 
         res.status(403).json({message: 'Access denied.'})
+        return;
     }
 }
