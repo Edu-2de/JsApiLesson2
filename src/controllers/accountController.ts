@@ -150,9 +150,9 @@ export class AccountController {
     };
 
 
-    static getAccount = async(req: Request, res:Response): Promise<void> =>{
+    static getAccount = async(req: any, res:Response): Promise<void> =>{
         try{
-            const {accountId} = req.params;
+            const accountId = req.account.id;
             const result = await pool.query(
                 `SELECT 
                     a.*,
