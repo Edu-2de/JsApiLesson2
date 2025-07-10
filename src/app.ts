@@ -8,7 +8,6 @@ import accountRoutes from './routes/accountRoutes';
 import authRoutes from './routes/authRoutes';
 
 
-
 dotenv.config();
 const app = express()
 const PORT = process.env.PORT || 3001;
