@@ -14,13 +14,25 @@ const loginAccount = async(req:Request, res:Response): Promise<void> =>{
         }
 
         const result = await pool.query(
-            'SELECT id, user_id, account_type_id, balance, account_number, status, created_at, update_at FROM accounts a INNER JOIN users u ON a.user_id = u.id WHERE a.account_number = $1',
+            'SELECT id, user_id, account_type_id, balance, account_number, status, created_at, update_at FROM accounts a INNER JOIN users u ON a.user_id = u.id INNER JOIN account_types at ON a.account_type_id = at.id WHERE a.account_number = $1',
             [account_number]
         )
         if (result.rows.length == 0){
             res.status(401).json({message: 'Invalid account_number or password!'})
             return;
         }
-        const user = result.rows[0];
+        const account = result.rows[0];
+
+        if(account.status !== 'active'){
+            res.status(401).json({message: 'Account is blocked or closed!'});
+            return;
+        }
+
+        const token = jwt.sign(
+            {
+                id: account.id,
+                type: account.
+            }
+        )
     }
 }
