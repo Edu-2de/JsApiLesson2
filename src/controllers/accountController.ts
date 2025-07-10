@@ -150,9 +150,9 @@ export class AccountController {
     };
 
 
-    static getAccount = async(req: any, res:Response): Promise<void> =>{
+    static getAccount = async(req: Request, res:Response): Promise<void> =>{
         try{
-            const accountId = req.account.id;
+            const {accountId} = req.params;
             const result = await pool.query(
                 `SELECT 
                     a.*,
@@ -183,9 +183,9 @@ export class AccountController {
     };
 
 
-    static updateAccountAdmin = async(req: any, res:Response): Promise<void> =>{
+    static updateAccountAdmin = async(req: Request, res:Response): Promise<void> =>{
         try{
-            const accountId = req.account.id;
+            const {accountId} = req.params;
             const check = await pool.query(
                 `SELECT 
                     a.*,
@@ -241,9 +241,9 @@ export class AccountController {
     };
 
 
-    static updateAccountUser = async(req: any, res:Response): Promise<void> =>{
+    static updateAccountUser = async(req: Request, res:Response): Promise<void> =>{
         try{
-            const accountId = req.account.id;
+            const {accountId} = req.params;
             const check = await pool.query(
                 `SELECT 
                     a.*,
@@ -289,5 +289,38 @@ export class AccountController {
     };
 
 
-    static deleteAccount = async(req:):Promise<void> =>{}
+    static deleteAccount = async(req:Request, res:Response):Promise<void> =>{
+        try{
+            const {accountId} = req.params;
+            const check = await pool.query(
+                `SELECT 
+                    a.*,
+                    u.*,
+                    at.*
+                    FROM accounts a 
+                    INNER JOIN users u ON a.user_id = u.id 
+                    INNER JOIN account_types at ON a.account_type_id = at.id 
+                WHERE a.id = $1`,
+                [accountId]
+            );
+
+            if(check.rows.length === 0){
+                res.status(404).json({message: 'Account not found'});
+                return;
+            }
+
+            const result = await pool.query(
+                `DELETE FROM accounts WHERE id = $1 RETURNING *`,
+                [accountId]
+            );
+            res.json({
+                message: 'Account deleted successfully',
+            });
+        }catch(error){
+            res.status(500).json({
+                message: 'Error deleting account',
+                error: error instanceof Error ? error.message : String(error)
+            });
+        }
+    };
 }
