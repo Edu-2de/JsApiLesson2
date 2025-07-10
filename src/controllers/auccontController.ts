@@ -6,7 +6,7 @@ import pool from '../database/connection'
 const JWT_SECRET = process.env.JWT_SECRET || '';
 
 export class AccountController{
-    
+
     static loginAccount = async(req:Request, res:Response): Promise<void> =>{
         try{
             const{account_number, password} = req.body;
@@ -18,7 +18,7 @@ export class AccountController{
             const result = await pool.query(
                 `SELECT 
                     a.*,
-                    u.name, u.email, u.age, u.role, u.password_hash,
+                    u.*,
                     at.*
                 FROM accounts a 
                 INNER JOIN users u ON a.user_id = u.id 
@@ -73,6 +73,10 @@ export class AccountController{
                 error: error instanceof Error ? error.message : String(error)
             });
         }
+    }
+
+    static registerAccount = async(req: Request, res:Response): Promise<void> =>{
+
     }
 
 }
