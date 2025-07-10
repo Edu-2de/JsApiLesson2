@@ -4,6 +4,10 @@ import helmet from 'helmet';
 import dotenv from 'dotenv';
 import { setupDatabase, testConnection } from './database/setup';
 
+import accountRoutes from './routes/accountRoutes';
+import authRoutes from './routes/authRoutes';
+
+
 
 dotenv.config();
 const app = express()
@@ -22,6 +26,9 @@ const startServer = async() =>{
 
         await setupDatabase();
         console.log('✅ Database setup completed');
+
+        app.use('/account', accountRoutes);
+        app.use('/user', authRoutes)
 
         app.listen(PORT, () =>{
             console.log(`Server running on port ${PORT}`);

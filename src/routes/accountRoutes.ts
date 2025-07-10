@@ -3,6 +3,7 @@ import { AccountController } from "../controllers/accountController";
 
 const router = Router();
 
-router.post('/login', AccountController.loginAccount)
+router.post('/login', AccountController.loginAccount);
+router.post('/register', AccountController.registerAccount);
 
-router.post('/register', AccountController.registerAccount)
+export default router;
