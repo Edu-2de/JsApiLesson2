@@ -3,9 +3,21 @@ import { Request, Response, NextFunction } from 'express';
 
 interface AccountAuthRequest extends Request{
     account?:{
-        account: { id:number, balance:number, account_number:string, status:string },
-        user: { name:string, email:string, age:number, role:string },
-        account_type: { type: string; limits: any }
+        id: number,        
+        balance: number,   
+        account_number: string, 
+        status: string,      
+        user: { 
+            name: string; 
+            email: string; 
+            age: number; 
+            role: string; 
+        };
+        account_type: { 
+            type: string; 
+            limits: any; 
+        };
+   
     }
 }
 
@@ -62,7 +74,7 @@ export class AccountMiddleware{
             return;
         }
 
-        if (userFromToken && userFromToken.account.id === parseInt(id)){
+        if (userFromToken && userFromToken.id === parseInt(id)){
             next();
             return;
         }
