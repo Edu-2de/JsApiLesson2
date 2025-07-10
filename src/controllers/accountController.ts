@@ -217,7 +217,7 @@ export class AccountController {
                 return;
             }
 
-            if(status !== 'active' || status !== 'blocked'|| status !== 'closed'){
+            if(status !== 'active' && status !== 'blocked' && status !== 'closed'){
                 res.status(400).json({ message: 'This satatus dont exists'});
                 return;
             }
