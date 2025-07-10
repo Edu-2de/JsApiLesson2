@@ -183,7 +183,7 @@ export class AccountController {
     };
 
 
-    static updateAccountAdmin = async(req: Request, res:Response): Promise<void> =>{
+    static updateAccountById = async(req: Request, res:Response): Promise<void> =>{
         try{
             const {accountId} = req.params;
             const check = await pool.query(
@@ -241,7 +241,7 @@ export class AccountController {
     };
 
 
-    static updateAccountUser = async(req: any, res:Response): Promise<void> =>{
+    static updateAccount = async(req: any, res:Response): Promise<void> =>{
         try{
             const accountId = req.account.id;
             const check = await pool.query(
@@ -289,7 +289,7 @@ export class AccountController {
     };
 
 
-    static deleteAccountAdmin = async(req:Request, res:Response):Promise<void> =>{
+    static deleteAccountById = async(req:Request, res:Response):Promise<void> =>{
         try{
             const {accountId} = req.params;
             const check = await pool.query(
@@ -325,7 +325,7 @@ export class AccountController {
     };
 
 
-    static deleteAccountUser = async(req:any, res:Response):Promise<void> =>{
+    static deleteAccount = async(req:any, res:Response):Promise<void> =>{
         try{
             const accountId = req.account.id;
             const check = await pool.query(
