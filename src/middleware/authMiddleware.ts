@@ -43,6 +43,13 @@ export class AuthMiddleware{
             return;
         }
 
+        if(req.user.role !== 'full_access'){
+            res.status(403).json({
+                message: 'Access denied. Full access required.'
+            });
+            return;
+        }
+
         next();
     };
 }
