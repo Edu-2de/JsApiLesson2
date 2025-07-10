@@ -52,4 +52,21 @@ export class AuthMiddleware{
 
         next();
     };
+
+    static requireAdminOrOwner = (req: AuthRequest, res: Response, next: NextFunction): void =>{
+        const userFromToken = req.user;
+        const { id } = req.params;
+
+        if (userFromToken?.role === 'full_access' || userFromToken?.role === 'limit_access'){
+            next();
+            return;
+        }
+
+        if (userFromToken && userFromToken.id === parseInt(id)){
+            next();
+            return;
+        }
+
+        res.status(403).json({message: 'Access denied.'})
+    }
 }
