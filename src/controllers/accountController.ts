@@ -183,10 +183,10 @@ export class AccountController {
     };
 
 
-    static updateAccount = async(req: any, res:Response): Promise<void> =>{
+    static updateAccountAdmin = async(req: any, res:Response): Promise<void> =>{
         try{
             const accountId = req.account.id;
-            const result = await pool.query(
+            const check = await pool.query(
                 `SELECT 
                     a.*,
                     u.*,
@@ -198,7 +198,7 @@ export class AccountController {
                 [accountId]
             );
 
-            if(result.rows.length === 0){
+            if(check.rows.length === 0){
                 res.status(404).json({message: 'Account not found'});
                 return;
             }
@@ -216,6 +216,18 @@ export class AccountController {
                 res.status(400).json({ message: "This type not exists in table" });
                 return;
             }
+
+            if(status !== 'active' || status !== 'blocked'|| status !== 'closed'){
+                res.status(400).json({ message: 'This satatus dont exists'});
+                return;
+            }
+
+            const result = await pool.query(
+                `UPDATE accounts SET account_type_id = $1, balance = $2, status = $3, updated_at = CURRENT_TIMESTAMP WHERE id = $4 RETURNING *`,
+                [account_type_id, balance, status, accountId]
+            );
+
+            res.json
             
         }
 
