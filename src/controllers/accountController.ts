@@ -150,7 +150,24 @@ export class AccountController {
     };
 
 
-    static getAccount = async(): Promise<void> =>{
+    static getAccount = async(req: any, res:Response): Promise<void> =>{
+        try{
+            const accountId = req.account.id;
+            const result = await pool.query(
+                `SELECT 
+                    a.*,
+                    u.*,
+                    at.*
+                    FROM accounts a 
+                    INNER JOIN users u ON a.user_id = u.id 
+                    INNER JOIN account_types at ON a.account_type_id = at.id 
+                WHERE a.id = $1`,
+                [accountId]
+            );
 
+            if(result.rows.length === 0){
+                res.status(404).json({message: 'Account not found'})
+            }
+        }
     }
 }
