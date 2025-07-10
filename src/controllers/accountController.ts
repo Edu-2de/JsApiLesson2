@@ -263,7 +263,7 @@ export class AccountController {
 
             const {balance, status} = req.body
             if (!balance || !status){
-                res.status(400).json({ message: 'account_type_id, balance or status are required' });
+                res.status(400).json({ message: 'balance or status are required' });
                 return;
             }
 
