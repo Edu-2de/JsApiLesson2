@@ -16,7 +16,7 @@ const loginAccount = async(req:Request, res:Response): Promise<void> =>{
         const result = await pool.query(
             `SELECT 
                 a.*,
-                u.name, u.email, u.age, u.role,
+                u.name, u.email, u.age, u.role, u.password_hash,
                 at.*
             FROM accounts a 
             INNER JOIN users u ON a.user_id = u.id 
@@ -32,6 +32,12 @@ const loginAccount = async(req:Request, res:Response): Promise<void> =>{
 
         if(account.status !== 'active'){
             res.status(401).json({message: 'Account is blocked or closed!'});
+            return;
+        }
+
+        const isPasswordValid = await bcrypt.compare(password, account.password_hash);
+        if (!isPasswordValid){
+            res.status(401).json({message: 'Invalid account_number or password!'})
             return;
         }
 
