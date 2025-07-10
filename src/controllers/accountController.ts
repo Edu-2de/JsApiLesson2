@@ -18,13 +18,13 @@ export class AccountController {
 
             const result = await pool.query(
                 `SELECT 
-                            a.*,
-                            u.*,
-                            at.*
-                        FROM accounts a 
-                        INNER JOIN users u ON a.user_id = u.id 
-                        INNER JOIN account_types at ON a.account_type_id = at.id 
-                        WHERE a.account_number = $1`,
+                    a.id, a.balance, a.account_number, a.status, a.created_at,
+                    u.name, u.email, u.age, u.role, u.password_hash,  // ← Só para verificação
+                    at.type, at.daily_withdrawal_limit, at.daily_transfer_limit
+                    FROM accounts a 
+                    INNER JOIN users u ON a.user_id = u.id 
+                    INNER JOIN account_types at ON a.account_type_id = at.id 
+                    WHERE a.account_number = $1`,
                 [account_number]
             );
             if (result.rows.length == 0) {
@@ -124,8 +124,9 @@ export class AccountController {
                 .toString()
                 .slice(-5)}-${Math.floor(Math.random() * 10)}`;
             const result = await pool.query(
-                `INSERT INTO accounts(user_id, account_type_id, account_number) VALUES ($1, $2, $3)
-                        RETURNING id, user_id, account_type_id, balance, account_number, status`,
+                `INSERT INTO accounts(user_id, account_type_id, account_number) 
+                VALUES ($1, $2, $3)
+                RETURNING id, user_id, account_type_id, balance, account_number, status`,
                 [user_id, account_type_id, account_number]
             );
 
@@ -155,9 +156,9 @@ export class AccountController {
             const accountId = req.account.id;
             const result = await pool.query(
                 `SELECT 
-                    a.*,
-                    u.*,
-                    at.*
+                    a.id, a.balance, a.account_number, a.status, a.created_at,
+                    u.name, u.email, u.age, u.role,
+                    at.type, at.daily_withdrawal_limit, at.daily_transfer_limit
                     FROM accounts a 
                     INNER JOIN users u ON a.user_id = u.id 
                     INNER JOIN account_types at ON a.account_type_id = at.id 
@@ -188,9 +189,9 @@ export class AccountController {
             const {accountId} = req.params;
             const check = await pool.query(
                 `SELECT 
-                    a.*,
-                    u.*,
-                    at.*
+                    a.id, a.balance, a.account_number, a.status, a.created_at,
+                    u.name, u.email, u.age, u.role,
+                    at.type, at.daily_withdrawal_limit, at.daily_transfer_limit
                     FROM accounts a 
                     INNER JOIN users u ON a.user_id = u.id 
                     INNER JOIN account_types at ON a.account_type_id = at.id 
@@ -205,7 +206,7 @@ export class AccountController {
 
             const {account_type_id, balance, status} = req.body
             if (!account_type_id || !balance || !status){
-                res.status(400).json({ message: 'account_type_id, balance or status are required' });
+                res.status(400).json({ message: 'account_type_id, balance and status are required' });
                 return;
             }
 
@@ -218,7 +219,7 @@ export class AccountController {
             }
 
             if(status !== 'active' && status !== 'blocked' && status !== 'closed'){
-                res.status(400).json({ message: 'This satatus dont exists'});
+                res.status(400).json({ message: 'This status does not exist'});
                 return;
             }
 
@@ -246,9 +247,9 @@ export class AccountController {
             const accountId = req.account.id;
             const check = await pool.query(
                 `SELECT 
-                    a.*,
-                    u.*,
-                    at.*
+                    a.id, a.balance, a.account_number, a.status, a.created_at,
+                    u.name, u.email, u.age, u.role,
+                    at.type, at.daily_withdrawal_limit, at.daily_transfer_limit
                     FROM accounts a 
                     INNER JOIN users u ON a.user_id = u.id 
                     INNER JOIN account_types at ON a.account_type_id = at.id 
@@ -268,7 +269,7 @@ export class AccountController {
             }
 
             if(status !== 'active' && status !== 'blocked' && status !== 'closed'){
-                res.status(400).json({ message: 'This satatus dont exists'});
+                res.status(400).json({ message: 'This status does not exist'});
                 return;
             }
 
@@ -294,9 +295,9 @@ export class AccountController {
             const {accountId} = req.params;
             const check = await pool.query(
                 `SELECT 
-                    a.*,
-                    u.*,
-                    at.*
+                    a.id, a.balance, a.account_number, a.status, a.created_at,
+                    u.name, u.email, u.age, u.role,
+                    at.type, at.daily_withdrawal_limit, at.daily_transfer_limit
                     FROM accounts a 
                     INNER JOIN users u ON a.user_id = u.id 
                     INNER JOIN account_types at ON a.account_type_id = at.id 
@@ -330,9 +331,9 @@ export class AccountController {
             const accountId = req.account.id;
             const check = await pool.query(
                 `SELECT 
-                    a.*,
-                    u.*,
-                    at.*
+                    a.id, a.balance, a.account_number, a.status, a.created_at,
+                    u.name, u.email, u.age, u.role,
+                    at.type, at.daily_withdrawal_limit, at.daily_transfer_limit
                     FROM accounts a 
                     INNER JOIN users u ON a.user_id = u.id 
                     INNER JOIN account_types at ON a.account_type_id = at.id 
@@ -360,5 +361,28 @@ export class AccountController {
         }
     };
 
-    
+    static getAllAccounts = async(req: Request, res:Response): Promise<void> =>{
+        try{
+            const result = await pool.query(
+            `SELECT 
+                a.id, a.balance, a.account_number, a.status, a.created_at,
+                u.name, u.email, u.age, u.role,
+                at.type, at.daily_withdrawal_limit, at.daily_transfer_limit
+                FROM accounts a 
+                INNER JOIN users u ON a.user_id = u.id 
+                INNER JOIN account_types at ON a.account_type_id = at.id 
+                ORDER BY a.created_at DESC LIMIT 50`,
+            );
+            res.json({
+            message: 'Accounts retrieved successfully',
+                accounts: result.rows
+            });
+        }catch (error) {
+            res.status(500).json({
+                message: 'Error fetching accounts',
+                error: error instanceof Error ? error.message : String(error)
+            });
+        }
+    }
 }
+
