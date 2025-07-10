@@ -112,7 +112,7 @@ export class AccountController{
             const account_number = `001-${Date.now().toString().slice(-5)}-${Math.floor(Math.random() * 10)}`;
             const result = await pool.query(
                 `INSERT INTO accounts(user_id, account_type_id, account_number) VALUES ($1, $2, $3)
-                RETURNING user_id, account_type_id, account_number`,
+                RETURNING id, user_id, account_type_id, balance, account_number, status`,
                 [user_id, account_type_id, account_number]);
             
             const newAccount = result.rows[0];
@@ -123,7 +123,7 @@ export class AccountController{
                     id: newAccount.id,
                     user_id: newAccount.user_id,
                     account_type_id: newAccount.account_type_id,
-                    balance: newAccount.newAccount,
+                    balance: newAccount.balance,
                     account_number: newAccount.account_number,
                     status: newAccount.status
                 }
