@@ -108,6 +108,19 @@ export class AccountController{
                 res.status(400).json({message: 'This type not exists in table'})
                 return;
             }
+
+            const account_number = `001-${Date.now().toString().slice(-5)}-${Math.floor(Math.random() * 10)}`;
+            const result = await pool.query(
+                `INSERT INTO accounts(user_id, account_type_id, account_number) VALUES ($1, $2, $3)
+                RETURNING user_id, account_type_id, account_number`,
+                [user_id, account_type_id, account_number]);
+            
+            const newAccount = result.rows[0]
+        }catch(error){
+            res.status(500).json({
+                message: 'Error during account registration',
+                error: error instanceof Error ? error.message : String(error)
+            });
         }
     }
 
