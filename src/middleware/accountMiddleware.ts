@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
 
 interface AccountAuthRequest extends Request{
-    user?:{
+    account?:{
         account: { id:number, balance:number, account_number:string, status:string },
         user: { name:string, email:string, age:number, role:string },
         account_type: { type: string; limits: any }
@@ -25,7 +25,7 @@ export class AccountMiddleware{
 
         try{
             const decoded = jwt.verify(token, JWT_SECRET) as any;
-            req.user = decoded;
+            req.account = decoded;
             next();
         }catch(error){
             res.status(403).json({
@@ -35,14 +35,14 @@ export class AccountMiddleware{
     };
 
     static requireAdmin = (req: AccountAuthRequest, res: Response, next: NextFunction): void =>{
-        if(!req.user){
+        if(!req.account){
             res.status(401).json({
                 message: 'Access denied. No user information.'
             });
             return;
         }
 
-        if(req.user.user.role !== 'full_access'){
+        if(req.account.user.role !== 'full_access'){
             res.status(403).json({
                 message: 'Access denied. Full access required.'
             });
@@ -54,7 +54,7 @@ export class AccountMiddleware{
 
 
     static requireAdminOrOwner = (req: AccountAuthRequest, res: Response, next: NextFunction): void =>{
-        const userFromToken = req.user;
+        const userFromToken = req.account;
         const { id } = req.params;
 
         if (userFromToken?.user.role === 'full_access' || userFromToken?.user.role === 'limit_access'){
