@@ -238,5 +238,48 @@ export class AccountController {
             })
         }
 
+    };
+
+
+    static updateAccountUser = async(req: any, res:Response): Promise<void> =>{
+        try{
+            const accountId = req.account.id;
+            const check = await pool.query(
+                `SELECT 
+                    a.*,
+                    u.*,
+                    at.*
+                    FROM accounts a 
+                    INNER JOIN users u ON a.user_id = u.id 
+                    INNER JOIN account_types at ON a.account_type_id = at.id 
+                WHERE a.id = $1`,
+                [accountId]
+            );
+
+            if(check.rows.length === 0){
+                res.status(404).json({message: 'Account not found'});
+                return;
+            }
+
+            const {balance, status} = req.body
+            if (!balance || !status){
+                res.status(400).json({ message: 'account_type_id, balance or status are required' });
+                return;
+            }
+
+            if(status !== 'active' && status !== 'blocked' && status !== 'closed'){
+                res.status(400).json({ message: 'This satatus dont exists'});
+                return;
+            }
+
+            const result = await pool.query(
+                `UPDATE accounts SET balance = $1, status = $2, updated_at = CURRENT_TIMESTAMP WHERE id = $3 RETURNING *`,
+                [balance, status, accountId]
+            );
+            res.json({
+                message: 'Account updated successfully',
+                account: result.rows[0]
+            });
+        }
     }
 }
