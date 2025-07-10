@@ -180,5 +180,44 @@ export class AccountController {
                 error: error instanceof Error ? error.message : String(error)
             });
         }
+    };
+
+
+    static updateAccount = async(req: any, res:Response): Promise<void> =>{
+        try{
+            const accountId = req.account.id;
+            const result = await pool.query(
+                `SELECT 
+                    a.*,
+                    u.*,
+                    at.*
+                    FROM accounts a 
+                    INNER JOIN users u ON a.user_id = u.id 
+                    INNER JOIN account_types at ON a.account_type_id = at.id 
+                WHERE a.id = $1`,
+                [accountId]
+            );
+
+            if(result.rows.length === 0){
+                res.status(404).json({message: 'Account not found'});
+                return;
+            }
+
+            const {account_type_id, balance, status} = req.body
+            if (!account_type_id || !balance || !status){
+                res.status(400).json({ message: 'account_type_id, balance or status are required' });
+                return;
+            }
+
+            const existingAccountType = await pool.query(
+               `SELECT id from account_types WHERE id = $1`,
+               [account_type_id]);
+            if(existingAccountType.rows.length === 0){
+                res.status(400).json({ message: "This type not exists in table" });
+                return;
+            }
+            
+        }
+
     }
 }
