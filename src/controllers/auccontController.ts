@@ -94,14 +94,13 @@ export class AccountController{
 
             const existingAccountUser = await pool.query(
                 `SELECT user_id FROM accounts WHERE user_id = $1`,
-                [user_id]
-            )
+                [user_id]);
             if ( existingAccountUser.rows.length > 0){
                 res.status(400).json({message: 'This user already have a account'});
                 return;
             }
 
-            
+
             const existingType = await pool.query(
                 `SELECT id from account_types WHERE id = $1`,
                 [account_type_id]);
