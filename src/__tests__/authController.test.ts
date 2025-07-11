@@ -116,12 +116,12 @@ describe('AuthController', () => {
   });
 
   describe('register', () => {
-    it('should be return 400 if user_id or account_type_id is missing', async() => {
-      mockReq.body = { user_id: 1 }
+    it('should be return 400 if user_id or account_type_id is missing', async () => {
+      mockReq.body = { user_id: 1 };
 
       await AuthController.register(mockReq, mockRes);
       expect(mockRes.status).toHaveBeenCalledWith(400);
       expect(mockRes.json).toHaveBeenCalledWith({ message: 'User_id and Account_type_id are required' });
-    })
-  })
+    });
+  });
 });
