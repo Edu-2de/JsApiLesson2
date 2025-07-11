@@ -131,7 +131,7 @@ export class AuthController {
       const userId = req.user.id;
       const result = await pool.query(
         `SELECT
-          u.name, u.email, u.age, u.role, u.created_at, u.update_at
+          u.id, u.name, u.email, u.age, u.role, u.created_at, u.update_at
           FROM users u
         WHERE u.id = $1`,
         [userId]
@@ -159,7 +159,7 @@ export class AuthController {
       const {userId} = req.params;
       const result = await pool.query(
         `SELECT
-          u.name, u.email, u.age, u.role, u.created_at, u.update_at
+          u.id, u.name, u.email, u.age, u.role, u.created_at, u.update_at
           FROM users u
         WHERE u.id = $1`,
         [userId]
@@ -181,4 +181,17 @@ export class AuthController {
       });
     }
   };
+
+  static getAllUsers = async(req: Request, res: Response): Promise<void> =>{
+    try{
+      const result = await pool.query(
+        `SELECT
+          u.id, u.name, u.email, u.age, u.role, u.created_at, u.update_at
+          FROM users u
+        ORDER BY a.created_at DESC LIMIT 50`
+      )
+    }catch(error){
+      
+    }
+  }
 }
