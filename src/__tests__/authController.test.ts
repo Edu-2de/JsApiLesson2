@@ -19,18 +19,22 @@ describe('AuthController', () => {
   beforeEach(() => {
     mockReq = {
       body: {},
-      user: undefined
+      user: undefined,
     };
 
     mockRes = {
       json: jest.fn(),
-      status: jest.fn().mockReturnThis()
+      status: jest.fn().mockReturnThis(),
     };
 
     jest.clearAllMocks();
   });
 
   describe('login', () => {
-    it('should be return 400 if email or password is missing')
-  })
+    it('should be return 400 if email or password is missing', async () => {
+      mockReq.body = { email: 'test@test.com' };
+
+      await AuthController.login(mockReq, mockRes);
+    });
+  });
 });
