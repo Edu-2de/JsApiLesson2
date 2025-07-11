@@ -10,15 +10,15 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 INSERT INTO users (name, email, age, password_hash, role) VALUES
-('bank manager', 'admin@system.com', 30, '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'full_access')
+('bank manager', 'admin@system.com', 30, '$2b$10$hxrKnQby/FyLhdEjrOpc5OqUg2t9hvQ66tAPTq1InkPtnOlb4Spn6', 'full_access')
 ON CONFLICT (email) DO NOTHING;
 
 INSERT INTO users (name, email, age, password_hash, role) VALUES
-('bank employee', 'employee@system.com', 22, '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at4.uheWG/igi', 'limit_access')
+('bank employee', 'employee@system.com', 22, '$2b$10$LeoE2tYbQ.oRpyJnv3BQ0e.TuePBdWESnbn5Qkl2jraHLTZKVEwfq', 'limit_access')
 ON CONFLICT (email) DO NOTHING;
 
 INSERT INTO users (name, email, age, password_hash, role) VALUES
-('Ronnie', 'ronnie@gmail.com', 20, '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at6.uheWG/igi', 'user')
+('Ronnie', 'ronnie@gmail.com', 20, '$2b$10$kEfGZ2hSNipy4h0rDkyogeLNGoEYzkgapxqwzMuTQxTlOLmUbxOBS', 'user')
 ON CONFLICT (email) DO NOTHING;
 
 
