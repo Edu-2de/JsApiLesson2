@@ -1,4 +1,3 @@
-// scripts/generatePasswords.js
 const bcrypt = require('bcryptjs');
 
 const generateHash = async (password) => {
@@ -6,6 +5,6 @@ const generateHash = async (password) => {
     console.log(`Password: ${password} -> Hash: ${hash}`);
 };
 
-generateHash('admin123');    // Para admin@system.com
-generateHash('employee123'); // Para employee@system.com  
-generateHash('ronnie123');   // Para ronnie@gmail.com
+generateHash('admin123'); 
+generateHash('employee123'); 
+generateHash('ronnie123');  
