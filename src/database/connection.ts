@@ -19,7 +19,7 @@ const pool = new Pool({
 });
 
 pool.on('connect', () => {
-  console.log('Connected to PostgreeSQL');
+  console.log('Connected to PostgreeSQL'); 
 });
 
 pool.on('error', err => {
