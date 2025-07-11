@@ -249,8 +249,8 @@ export class AccountController {
         return;
       }
 
-      const { account_type_id, balance, status } = req.body;
-      if (!account_type_id || !balance || !status) {
+      const { account_type_id, status } = req.body;
+      if (!account_type_id || !status) {
         res.status(400).json({
           message: 'account_type_id, balance and status are required',
         });
@@ -272,7 +272,7 @@ export class AccountController {
 
       const result = await pool.query(
         `UPDATE accounts SET account_type_id = $1, balance = $2, status = $3, updated_at = CURRENT_TIMESTAMP WHERE id = $4 RETURNING *`,
-        [account_type_id, balance, status, accountId]
+        [account_type_id, status, accountId]
       );
 
       res.json({
@@ -307,8 +307,8 @@ export class AccountController {
         return;
       }
 
-      const { balance, status } = req.body;
-      if (!balance || !status) {
+      const { status } = req.body;
+      if (!status) {
         res.status(400).json({
           message: 'balance or status are required',
         });
@@ -322,7 +322,7 @@ export class AccountController {
 
       const result = await pool.query(
         `UPDATE accounts SET balance = $1, status = $2, updated_at = CURRENT_TIMESTAMP WHERE id = $3 RETURNING *`,
-        [balance, status, accountId]
+        [status, accountId]
       );
       res.json({
         message: 'Account updated successfully',
