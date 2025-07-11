@@ -19,14 +19,14 @@ export class AuthController {
         [email]
       );
       if (result.rows.length == 0) {
-        res.status(401).json({ message: 'Invalid email or password!' });
+        res.status(401).json({ message: 'User not found' });
         return;
       }
       const user = result.rows[0];
 
       const isPasswordValid = await bcrypt.compare(password, user.password_hash);
       if (!isPasswordValid) {
-        res.status(401).json({ message: 'Invalid email or password' });
+        res.status(402).json({ message: 'Invalid password' });
         return;
       }
 

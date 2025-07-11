@@ -49,13 +49,37 @@ describe('AuthController', () => {
       expect(mockRes.json).toHaveBeenCalledWith({ message: 'Email and password are required' });
     });
 
-    it('should be return 401 if email or password is invalid', async () => {
+    it('should be return 401 if user not found', async () => {
       mockReq.body = { email: 'test@test.com', password: 'test1234' };
 
       await AuthController.login(mockReq, mockRes);
 
       expect(mockRes.status).toHaveBeenCalledWith(401);
-      expect(mockRes.json).toHaveBeenCalledWith({ message: 'Invalid email or password!' });
+      expect(mockRes.json).toHaveBeenCalledWith({ message: 'user not found' });
+    });
+
+    it('should be return 402 if password is invalid', async () => {
+      mockReq.body = { email: 'test@test.com', password: 'wrongPassword' };
+
+      mockPool.query.mockResolvedValueOnce({
+        rows: [
+          {
+            id: 1,
+            name: 'Test User',
+            email: 'test@test.com',
+            age: 21,
+            password_hash: 'hashedPassword',
+            role: 'user',
+          },
+        ],
+      });
+
+      mockBcrypt.compare.mockResolvedValueOnce(false);
+
+      await AuthController.login(mockReq, mockRes);
+
+      expect(mockRes.status).toHaveBeenCalledWith(402);
+      expect(mockRes.json).toHaveBeenCalledWith({ message: 'Invalid password' });
     });
   });
 });
