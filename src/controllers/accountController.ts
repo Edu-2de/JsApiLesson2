@@ -166,7 +166,7 @@ export class AccountController {
       }
 
       res.json({
-        message: 'Account retrieved succesfully',
+        message: 'Account retrieved successfully',
         account: result.rows[0],
       });
     } catch (error) {
