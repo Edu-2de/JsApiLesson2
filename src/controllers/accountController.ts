@@ -47,7 +47,7 @@ export class AccountController {
         res.status(401).json({
           message: 'Invalid account_number or password!',
         });
-        return; //NOTE: fix
+        return; 
       }
 
       const accountData = {
