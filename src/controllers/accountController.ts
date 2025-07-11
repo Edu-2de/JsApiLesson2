@@ -15,7 +15,7 @@ export class AccountController {
                 .json({ message: "account_number and password are required!" });
                 return;
             }
-
+            
             const result = await pool.query(
                 `SELECT 
                     a.id, a.balance, a.account_number, a.status, a.created_at,
@@ -243,8 +243,8 @@ export class AccountController {
             }
 
             const existingAccountType = await pool.query(
-               `SELECT id from account_types WHERE id = $1`,
-               [account_type_id]);
+                `SELECT id from account_types WHERE id = $1`,
+                [account_type_id]);
             if(existingAccountType.rows.length === 0){
                 res.status(400).json({ message: "This type not exists in table" });
                 return;
