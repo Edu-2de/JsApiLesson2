@@ -50,6 +50,8 @@ describe('AuthController', () => {
 
     it('should be return 401 if user not found', async () => {
       mockReq.body = { email: 'test@test.com', password: 'test1234' };
+      
+      mockPool.query.mockResolvedValueOnce({ rows: [] });
 
       await AuthController.login(mockReq, mockRes);
 
