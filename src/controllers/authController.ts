@@ -125,4 +125,8 @@ export class AuthController {
       });
     }
   };
+
+  static getProfile = async(req: any, res: Response): Promise<void> =>{
+
+  }
 }
