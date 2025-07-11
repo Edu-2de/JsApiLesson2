@@ -26,7 +26,7 @@ export class AccountController {
           INNER JOIN account_types at ON a.account_type_id = at.id 
           WHERE a.account_number = $1`,
         [account_number]
-      )
+      );
       if (result.rows.length == 0) {
         res.status(401).json({
           message: 'Invalid account_number or password!',
@@ -47,7 +47,7 @@ export class AccountController {
         res.status(401).json({
           message: 'Invalid account_number or password!',
         });
-        return;//TODO fix
+        return; //NOTE: fix
       }
 
       const accountData = {
@@ -229,6 +229,30 @@ export class AccountController {
     }
   };
 
+  static getAllAccounts = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const result = await pool.query(
+        `SELECT 
+          a.id, a.balance, a.account_number, a.status, a.created_at,
+          u.name, u.email, u.age, u.role,
+          at.type, at.daily_withdrawal_limit, at.daily_transfer_limit
+          FROM accounts a 
+          INNER JOIN users u ON a.user_id = u.id 
+          INNER JOIN account_types at ON a.account_type_id = at.id 
+        ORDER BY a.created_at DESC LIMIT 50`
+      );
+      res.json({
+        message: 'Accounts retrieved successfully',
+        accounts: result.rows,
+      });
+    } catch (error) {
+      res.status(500).json({
+        message: 'Error fetching accounts',
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+  };
+
   static updateAccountById = async (req: Request, res: Response): Promise<void> => {
     try {
       const { accountId } = req.params;
@@ -395,30 +419,6 @@ export class AccountController {
     } catch (error) {
       res.status(500).json({
         message: 'Error deleting account',
-        error: error instanceof Error ? error.message : String(error),
-      });
-    }
-  };
-
-  static getAllAccounts = async (req: Request, res: Response): Promise<void> => {
-    try {
-      const result = await pool.query(
-        `SELECT 
-          a.id, a.balance, a.account_number, a.status, a.created_at,
-          u.name, u.email, u.age, u.role,
-          at.type, at.daily_withdrawal_limit, at.daily_transfer_limit
-          FROM accounts a 
-          INNER JOIN users u ON a.user_id = u.id 
-          INNER JOIN account_types at ON a.account_type_id = at.id 
-        ORDER BY a.created_at DESC LIMIT 50`
-      );
-      res.json({
-        message: 'Accounts retrieved successfully',
-        accounts: result.rows,
-      });
-    } catch (error) {
-      res.status(500).json({
-        message: 'Error fetching accounts',
         error: error instanceof Error ? error.message : String(error),
       });
     }
