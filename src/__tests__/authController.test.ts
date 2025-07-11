@@ -44,8 +44,18 @@ describe('AuthController', () => {
       mockReq.body = { password: 'test1234' };
 
       await AuthController.login(mockReq, mockRes);
+
       expect(mockRes.status).toHaveBeenCalledWith(400);
       expect(mockRes.json).toHaveBeenCalledWith({ message: 'Email and password are required' });
+    });
+
+    it('should be return 401 if email or password is invalid', async () => {
+      mockReq.body = { email: 'test@test.com', password: 'test1234' };
+
+      await AuthController.login(mockReq, mockRes);
+
+      expect(mockRes.status).toHaveBeenCalledWith(401);
+      expect(mockRes.json).toHaveBeenCalledWith({ message: 'Invalid email or password!' });
     });
   });
 });
