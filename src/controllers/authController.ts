@@ -125,4 +125,86 @@ export class AuthController {
       });
     }
   };
+
+  static getUser = async (req: any, res: Response): Promise<void> => {
+    try {
+      const userId = req.user.id;
+      const result = await pool.query(
+        `SELECT
+          u.id, u.name, u.email, u.age, u.role, u.created_at, u.update_at
+          FROM users u
+        WHERE u.id = $1`,
+        [userId]
+      );
+
+      if (result.rows.length === 0) {
+        res.status(404).json({ message: 'User not found' });
+        return;
+      }
+
+      res.json({
+        message: 'User retrieved successfully',
+        account: result.rows[0],
+      });
+    } catch (error) {
+      res.status(500).json({
+        message: 'Error fetching user',
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+  };
+
+  static getUserById = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { userId } = req.params;
+      const result = await pool.query(
+        `SELECT
+          u.id, u.name, u.email, u.age, u.role, u.created_at, u.update_at
+          FROM users u
+        WHERE u.id = $1`,
+        [userId]
+      );
+
+      if (result.rows.length === 0) {
+        res.status(404).json({ message: 'User not found' });
+        return;
+      }
+
+      res.json({
+        message: 'User retrieved successfully',
+        account: result.rows[0],
+      });
+    } catch (error) {
+      res.status(500).json({
+        message: 'Error fetching user',
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+  };
+
+  static getAllUsers = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const result = await pool.query(
+        `SELECT
+          u.id, u.name, u.email, u.age, u.role, u.created_at, u.update_at
+          FROM users u
+        ORDER BY u.created_at DESC LIMIT 50`
+      );
+
+      if (result.rows.length === 0) {
+        res.status(404).json({ message: 'No users found' });
+        return;
+      }
+
+      res.json({
+        message: 'Users retrieved successfully',
+        accounts: result.rows,
+      });
+    } catch (error) {
+      res.status(500).json({
+        message: 'Error fetching accounts',
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+  };
 }

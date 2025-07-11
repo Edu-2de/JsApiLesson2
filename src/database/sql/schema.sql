@@ -10,15 +10,15 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 INSERT INTO users (name, email, age, password_hash, role) VALUES
-('bank manager', 'admin@system.com', 30, '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'full_access')
+('bank manager', 'admin@system.com', 30, '$2b$10$hxrKnQby/FyLhdEjrOpc5OqUg2t9hvQ66tAPTq1InkPtnOlb4Spn6', 'full_access')
 ON CONFLICT (email) DO NOTHING;
 
 INSERT INTO users (name, email, age, password_hash, role) VALUES
-('bank employee', 'employee@system.com', 22, '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at4.uheWG/igi', 'limit_access')
+('bank employee', 'employee@system.com', 22, '$2b$10$LeoE2tYbQ.oRpyJnv3BQ0e.TuePBdWESnbn5Qkl2jraHLTZKVEwfq', 'limit_access')
 ON CONFLICT (email) DO NOTHING;
 
 INSERT INTO users (name, email, age, password_hash, role) VALUES
-('Ronnie', 'ronnie@gmail.com', 20, '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at6.uheWG/igi', 'user')
+('Ronnie', 'ronnie@gmail.com', 20, '$2b$10$kEfGZ2hSNipy4h0rDkyogeLNGoEYzkgapxqwzMuTQxTlOLmUbxOBS', 'user')
 ON CONFLICT (email) DO NOTHING;
 
 
@@ -55,7 +55,7 @@ ON CONFLICT (type) DO NOTHING;
 
 CREATE TABLE IF NOT EXISTS interest_and_fees (
     id SERIAL PRIMARY KEY,
-    account_type_id INTEGER REFERENCES account_types(id) ON DELETE SET NULL,
+    account_type_id INTEGER UNIQUE REFERENCES account_types(id) ON DELETE SET NULL,
     monthly_maintenance_fee DECIMAL(5,2) DEFAULT 0.00,
     withdrawal_fee DECIMAL(5,2) DEFAULT 0.00,
     transfer_fee DECIMAL(5,2) DEFAULT 0.00,
@@ -93,11 +93,11 @@ CREATE TABLE IF NOT EXISTS accounts(
 );
 
 INSERT INTO accounts(user_id, account_type_id, balance, account_number)VALUES
-(1, 3, 999999999.99, '001-98765-4')
+(1, 3, 9999.99, '001-98765-4')
 ON CONFLICT (account_number) DO NOTHING;
 
 INSERT INTO accounts(user_id, account_type_id, balance, account_number)VALUES
-(2, 3, 99000.00, '001-55443-2')
+(2, 3, 9999.00, '001-55443-2')
 ON CONFLICT (account_number) DO NOTHING;
 
 INSERT INTO accounts(user_id, account_type_id, balance, account_number)VALUES
