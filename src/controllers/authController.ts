@@ -153,4 +153,32 @@ export class AuthController {
       });
     }
   };
+
+  static getProfileById = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const {userId} = req.params;
+      const result = await pool.query(
+        `SELECT
+          u.name, u.email, u.age, u.role, u.created_at, u.update_at
+          FROM users u
+        WHERE u.id = $1`,
+        [userId]
+      );
+
+      if (result.rows.length === 0) {
+        res.status(404).json({ message: 'User not found' });
+        return;
+      }
+
+      res.json({
+        message: 'Account retrieved successfully',
+        account: result.rows[0],
+      });
+    } catch (error) {
+      res.status(500).json({
+        message: 'Error fetching user',
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+  };
 }
