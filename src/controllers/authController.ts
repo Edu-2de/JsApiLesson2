@@ -126,7 +126,7 @@ export class AuthController {
     }
   };
 
-  static getProfile = async (req: any, res: Response): Promise<void> => {
+  static getUser = async (req: any, res: Response): Promise<void> => {
     try {
       const userId = req.user.id;
       const result = await pool.query(
@@ -154,7 +154,7 @@ export class AuthController {
     }
   };
 
-  static getProfileById = async (req: Request, res: Response): Promise<void> => {
+  static getUserById = async (req: Request, res: Response): Promise<void> => {
     try {
       const {userId} = req.params;
       const result = await pool.query(
