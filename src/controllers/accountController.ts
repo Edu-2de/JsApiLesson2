@@ -26,7 +26,7 @@ export class AccountController {
           INNER JOIN account_types at ON a.account_type_id = at.id 
           WHERE a.account_number = $1`,
         [account_number]
-      );
+      )
       if (result.rows.length == 0) {
         res.status(401).json({
           message: 'Invalid account_number or password!',
