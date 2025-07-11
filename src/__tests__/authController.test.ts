@@ -50,13 +50,13 @@ describe('AuthController', () => {
 
     it('should be return 401 if user not found', async () => {
       mockReq.body = { email: 'test@test.com', password: 'test1234' };
-      
+
       mockPool.query.mockResolvedValueOnce({ rows: [] });
 
       await AuthController.login(mockReq, mockRes);
 
       expect(mockRes.status).toHaveBeenCalledWith(401);
-      expect(mockRes.json).toHaveBeenCalledWith({ message: 'user not found' });
+      expect(mockRes.json).toHaveBeenCalledWith({ message: 'User not found' });
     });
 
     it('should be return 402 if password is invalid', async () => {
@@ -97,7 +97,7 @@ describe('AuthController', () => {
 
       mockPool.query.mockResolvedValueOnce({ rows: [mockUser] });
       mockBcrypt.compare.mockResolvedValueOnce(true);
-      mockJwt.sign.mockResolvedValueOnce('mockedToken');
+      mockJwt.sign.mockReturnValue('mockedToken');
 
       await AuthController.login(mockReq, mockRes);
 
