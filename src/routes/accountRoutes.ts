@@ -15,4 +15,6 @@ router.get('/admin/:accountId', AccountMiddleware.requireAdmin, AccountControlle
 router.patch('/admin/:accountId', AccountMiddleware.requireAdmin, AccountController.updateAccountById);
 router.delete('/admin/:accountId', AccountMiddleware.requireAdmin, AccountController.deleteAccountById);
 
+router.get('/all', AccountMiddleware.requireAdminOrOwner, AccountController.getAllAccounts);
+
 export default router;

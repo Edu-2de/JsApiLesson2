@@ -10,4 +10,5 @@ router.post('/register', AuthController.register);
 router.get('/profile', AuthMiddleware.authenticateToken ,AuthController.getUser);
 router.get('/admin/:userId', AuthMiddleware.requireAdmin, AuthController.getUserById);
 
+
 export default router;
