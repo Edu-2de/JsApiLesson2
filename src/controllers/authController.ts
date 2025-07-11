@@ -156,7 +156,7 @@ export class AuthController {
 
   static getUserById = async (req: Request, res: Response): Promise<void> => {
     try {
-      const {userId} = req.params;
+      const { userId } = req.params;
       const result = await pool.query(
         `SELECT
           u.id, u.name, u.email, u.age, u.role, u.created_at, u.update_at
@@ -182,16 +182,29 @@ export class AuthController {
     }
   };
 
-  static getAllUsers = async(req: Request, res: Response): Promise<void> =>{
-    try{
+  static getAllUsers = async (req: Request, res: Response): Promise<void> => {
+    try {
       const result = await pool.query(
         `SELECT
           u.id, u.name, u.email, u.age, u.role, u.created_at, u.update_at
           FROM users u
-        ORDER BY a.created_at DESC LIMIT 50`
-      )
-    }catch(error){
-      
+        ORDER BY u.created_at DESC LIMIT 50`
+      );
+
+      if (result.rows.length === 0) {
+        res.status(404).json({ message: 'Does not have any account registered' });
+        return;
+      }
+
+      res.json({
+        message: 'Accounts retrieved successfully',
+        accounts: result.rows,
+      });
+    } catch (error) {
+      res.status(500).json({
+        message: 'Error fetching accounts',
+        error: error instanceof Error ? error.message : String(error),
+      });
     }
-  }
+  };
 }
