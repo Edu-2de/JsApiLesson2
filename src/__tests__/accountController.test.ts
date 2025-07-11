@@ -29,4 +29,8 @@ describe('AuthController', () => {
 
     jest.clearAllMocks();
   });
+
+  describe('login', () => {
+    it('should be return 400 if email or password is missing')
+  })
 });
