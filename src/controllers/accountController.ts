@@ -19,7 +19,7 @@ export class AccountController {
       const result = await pool.query(
         `SELECT 
           a.id, a.balance, a.account_number, a.status, a.created_at,
-          u.name, u.email, u.age, u.role, u.password_hash,  // ← Só para verificação
+          u.name, u.email, u.age, u.role, u.password_hash, 
           at.type, at.daily_withdrawal_limit, at.daily_transfer_limit
           FROM accounts a 
           INNER JOIN users u ON a.user_id = u.id 
@@ -198,7 +198,7 @@ export class AccountController {
       }
 
       res.json({
-        message: 'Account retrieved succesfully',
+        message: 'Account retrieved successfully',
         account: result.rows[0],
       });
     } catch (error) {
