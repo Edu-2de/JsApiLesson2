@@ -142,5 +142,14 @@ describe('AuthController', () => {
       expect(mockRes.status).toHaveBeenCalledWith(400);
       expect(mockRes.json).toHaveBeenCalledWith({ message: 'Name, email, age and password are required' });
     });
+
+    it('should be return 400 if name, email, age or password is missing', async () => {
+      mockReq.body = { email: 'miguel@gmail.com', age: 30, password: 'miguel1234' };
+
+      await AuthController.register(mockReq, mockRes);
+
+      expect(mockRes.status).toHaveBeenCalledWith(400);
+      expect(mockRes.json).toHaveBeenCalledWith({ message: 'Name, email, age and password are required' });
+    });
   });
 });
