@@ -19,7 +19,7 @@ module.exports = {
 
   coverageReporters: ['text', 'lcov', 'html'],
 
-  setupFilesAfterEnv: ['<rootDir>/src/__tests__/setup.ts'],
+  setupFilesAfterEnv: ['<rootDir>/src/__tests__/setup/setup.ts'],
 
   clearMocks: true,
 
