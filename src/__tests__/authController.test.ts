@@ -81,5 +81,36 @@ describe('AuthController', () => {
       expect(mockRes.status).toHaveBeenCalledWith(402);
       expect(mockRes.json).toHaveBeenCalledWith({ message: 'Invalid password' });
     });
+
+    it('should return success response with token on valid login', async () => {
+      mockReq.body = { email: 'test@test.com', password: 'test1234' };
+
+      const mockUser = {
+        id: 1,
+        name: 'Test User',
+        email: 'test@test.com',
+        age: 21,
+        password_hash: 'hashedPassword',
+        role: 'user',
+      };
+
+      mockPool.query.mockResolvedValueOnce({ rows: [mockUser] });
+      mockBcrypt.compare.mockResolvedValueOnce(true);
+      mockJwt.sign.mockResolvedValueOnce('mockedToken');
+
+      await AuthController.login(mockReq, mockRes);
+
+      expect(mockRes.json).toHaveBeenCalledWith({
+        message: 'Login successful',
+        token: 'mockedToken',
+        user: {
+          id: 1,
+          name: 'Test User',
+          email: 'test@test.com',
+          age: 21,
+          role: 'user',
+        },
+      });
+    });
   });
 });
