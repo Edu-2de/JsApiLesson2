@@ -26,7 +26,7 @@ export class AuthController {
 
       const isPasswordValid = await bcrypt.compare(password, user.password_hash);
       if (!isPasswordValid) {
-        res.status(402).json({ message: 'Invalid password' });
+        res.status(401).json({ message: 'Invalid password' });
         return;
       }
 

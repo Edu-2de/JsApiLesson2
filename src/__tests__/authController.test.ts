@@ -59,7 +59,7 @@ describe('AuthController', () => {
       expect(mockRes.json).toHaveBeenCalledWith({ message: 'User not found' });
     });
 
-    it('should be return 402 if password is invalid', async () => {
+    it('should be return 401 if password is invalid', async () => {
       mockReq.body = { email: 'test@test.com', password: 'wrongPassword' };
 
       mockPool.query.mockResolvedValueOnce({
@@ -79,7 +79,7 @@ describe('AuthController', () => {
 
       await AuthController.login(mockReq, mockRes);
 
-      expect(mockRes.status).toHaveBeenCalledWith(402);
+      expect(mockRes.status).toHaveBeenCalledWith(401);
       expect(mockRes.json).toHaveBeenCalledWith({ message: 'Invalid password' });
     });
 
@@ -116,22 +116,31 @@ describe('AuthController', () => {
   });
 
   describe('register', () => {
-    it('should be return 400 if user_id or account_type_id is missing', async () => {
-      mockReq.body = { user_id: 1 };
+    it('should be return 400 if name, email, age or password is missing', async () => {
+      mockReq.body = { name: 'Miguel' };
 
       await AuthController.register(mockReq, mockRes);
 
       expect(mockRes.status).toHaveBeenCalledWith(400);
-      expect(mockRes.json).toHaveBeenCalledWith({ message: 'User_id and Account_type_id are required' });
+      expect(mockRes.json).toHaveBeenCalledWith({ message: 'Name, email, age and password are required' });
     });
 
-    it('should be return 400 if user_id or account_type_id is missing', async () => {
-      mockReq.body = { account_type_id: 3 };
+    it('should be return 400 if name, email, age or password is missing', async () => {
+      mockReq.body = { name: 'Miguel', email: 'miguel@gmail.com' };
 
       await AuthController.register(mockReq, mockRes);
 
       expect(mockRes.status).toHaveBeenCalledWith(400);
-      expect(mockRes.json).toHaveBeenCalledWith({ message: 'User_id and Account_type_id are required' });
+      expect(mockRes.json).toHaveBeenCalledWith({ message: 'Name, email, age and password are required' });
+    });
+
+    it('should be return 400 if name, email, age or password is missing', async () => {
+      mockReq.body = { name: 'Miguel', email: 'miguel@gmail.com', age: 30 };
+
+      await AuthController.register(mockReq, mockRes);
+
+      expect(mockRes.status).toHaveBeenCalledWith(400);
+      expect(mockRes.json).toHaveBeenCalledWith({ message: 'Name, email, age and password are required' });
     });
   });
 });
