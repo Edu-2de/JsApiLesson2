@@ -197,9 +197,29 @@ export class AccountController {
         return;
       }
 
+      const account = result.rows[0];
+
+      const accountData = {
+        id: account.id,
+        balance: account.balance,
+        account_number: account.account_number,
+        status: account.status,
+        user: {
+          name: account.name,
+          email: account.email,
+          age: account.age,
+          role: account.role,
+        },
+        account_type: {
+          type: account.type,
+          daily_withdrawal_limit: account.daily_withdrawal_limit,
+          daily_transfer_limit: account.daily_transfer_limit,
+        },
+      };
+
       res.json({
         message: 'Account retrieved successfully',
-        account: result.rows[0],
+        account: accountData,
       });
     } catch (error) {
       res.status(500).json({
