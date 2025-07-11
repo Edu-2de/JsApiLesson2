@@ -1,73 +1,72 @@
 import jwt from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
 
-interface AuthRequest extends Request{
-    user?:{
-        id: number;
-        email: string;
-        role: string;
-
-    }
+interface AuthRequest extends Request {
+  user?: {
+    id: number;
+    email: string;
+    role: string;
+  };
 }
 
 const JWT_SECRET = process.env.JWT_SECRET || '';
 
-export class AuthMiddleware{
-    static authenticateToken = (req: AuthRequest, res: Response, next: NextFunction): void =>{
-        const authHeader = req.headers['authorization'];
-        const token = authHeader && authHeader.split(' ')[1];
+export class AuthMiddleware {
+  static authenticateToken = (req: AuthRequest, res: Response, next: NextFunction): void => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
 
-        if(!token){
-            res.status(401).json({
-                message: 'Access denied. No token provided.'
-            });
-            return;
-        }
-
-        try{
-            const decoded = jwt.verify(token, JWT_SECRET) as any;
-            req.user = decoded;
-            next();
-        }catch(error){
-            res.status(403).json({
-                message: 'Invalid token.'
-            });
-        }
-    };
-
-    static requireAdmin = (req: AuthRequest, res: Response, next: NextFunction): void =>{
-        if(!req.user){
-            res.status(401).json({
-                message: 'Access denied. No user information.'
-            });
-            return;
-        }
-
-        if(req.user.role !== 'full_access'){
-            res.status(403).json({
-                message: 'Access denied. Full access required.'
-            });
-            return;
-        }
-
-        next();
-    };
-
-    static requireAdminOrOwner = (req: AuthRequest, res: Response, next: NextFunction): void =>{
-        const userFromToken = req.user;
-        const { id } = req.params;
-
-        if (userFromToken?.role === 'full_access' || userFromToken?.role === 'limit_access'){
-            next();
-            return;
-        }
-
-        if (userFromToken && userFromToken.id === parseInt(id)){
-            next();
-            return;
-        }
-
-        res.status(403).json({message: 'Access denied'})
-        return;
+    if (!token) {
+      res.status(401).json({
+        message: 'Access denied. No token provided.',
+      });
+      return;
     }
+
+    try {
+      const decoded = jwt.verify(token, JWT_SECRET) as any;
+      req.user = decoded;
+      next();
+    } catch (error) {
+      res.status(403).json({
+        message: 'Invalid token.',
+      });
+    }
+  };
+
+  static requireAdmin = (req: AuthRequest, res: Response, next: NextFunction): void => {
+    if (!req.user) {
+      res.status(401).json({
+        message: 'Access denied. No user information.',
+      });
+      return;
+    }
+
+    if (req.user.role !== 'full_access') {
+      res.status(403).json({
+        message: 'Access denied. Full access required.',
+      });
+      return;
+    }
+
+    next();
+  };
+
+  static requireAdminOrOwner = (req: AuthRequest, res: Response, next: NextFunction): void => {
+    const userFromToken = req.user;
+    const { id } = req.params;
+
+    if (userFromToken?.role === 'full_access' || userFromToken?.role === 'limit_access') {
+      next();
+      return;
+    }
+
+    if (userFromToken && userFromToken.id === parseInt(id)) {
+      next();
+      return;
+    }
+
+    res.status(403).json({ message: 'Access denied' });
+    return;
+  };
 }
