@@ -100,10 +100,7 @@ export class AccountController {
         return;
       }
 
-      const existingAccountUser = await pool.query(
-        `SELECT user_id FROM accounts WHERE user_id = $1`,
-        [user_id]
-      );
+      const existingAccountUser = await pool.query(`SELECT user_id FROM accounts WHERE user_id = $1`, [user_id]);
       if (existingAccountUser.rows.length > 0) {
         res.status(400).json({
           message: 'This user already have a account',
@@ -111,9 +108,7 @@ export class AccountController {
         return;
       }
 
-      const existingType = await pool.query(`SELECT id from account_types WHERE id = $1`, [
-        account_type_id,
-      ]);
+      const existingType = await pool.query(`SELECT id from account_types WHERE id = $1`, [account_type_id]);
       if (existingType.rows.length === 0) {
         res.status(400).json({
           message: 'This type not exists in table',
@@ -121,9 +116,7 @@ export class AccountController {
         return;
       }
 
-      const account_number = `001-${Date.now().toString().slice(-5)}-${Math.floor(
-        Math.random() * 10
-      )}`;
+      const account_number = `001-${Date.now().toString().slice(-5)}-${Math.floor(Math.random() * 10)}`;
       const result = await pool.query(
         `INSERT INTO accounts(user_id, account_type_id, account_number) 
           VALUES ($1, $2, $3)
@@ -244,9 +237,7 @@ export class AccountController {
         return;
       }
 
-      const existingAccountType = await pool.query(`SELECT id from account_types WHERE id = $1`, [
-        account_type_id,
-      ]);
+      const existingAccountType = await pool.query(`SELECT id from account_types WHERE id = $1`, [account_type_id]);
       if (existingAccountType.rows.length === 0) {
         res.status(400).json({
           message: 'This type not exists in table',
@@ -345,9 +336,7 @@ export class AccountController {
         return;
       }
 
-      const result = await pool.query(`DELETE FROM accounts WHERE id = $1 RETURNING *`, [
-        accountId,
-      ]);
+      const result = await pool.query(`DELETE FROM accounts WHERE id = $1 RETURNING *`, [accountId]);
       res.json({
         message: 'Account deleted successfully',
       });
@@ -379,9 +368,7 @@ export class AccountController {
         return;
       }
 
-      const result = await pool.query(`DELETE FROM accounts WHERE id = $1 RETURNING *`, [
-        accountId,
-      ]);
+      const result = await pool.query(`DELETE FROM accounts WHERE id = $1 RETURNING *`, [accountId]);
       res.json({
         message: 'Account deleted successfully',
       });
