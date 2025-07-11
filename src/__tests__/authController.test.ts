@@ -151,5 +151,14 @@ describe('AuthController', () => {
       expect(mockRes.status).toHaveBeenCalledWith(400);
       expect(mockRes.json).toHaveBeenCalledWith({ message: 'Name, email, age and password are required' });
     });
+
+    it('should be return 400 if email has invalid format', async () => {
+      mockReq.body = { name: 'Miguel', email: 'invalid-email', age: 30, password: 'miguel1234' };
+
+      await AuthController.register(mockReq, mockRes);
+
+      expect(mockRes.status).toHaveBeenCalledWith(400);
+      expect(mockRes.json).toHaveBeenCalledWith({ message: 'Invalid email format' });
+    });
   });
 });
