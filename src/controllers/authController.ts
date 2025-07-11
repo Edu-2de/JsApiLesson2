@@ -143,7 +143,7 @@ export class AuthController {
       }
 
       res.json({
-        message: 'Account retrieved successfully',
+        message: 'User retrieved successfully',
         account: result.rows[0],
       });
     } catch (error) {
@@ -171,7 +171,7 @@ export class AuthController {
       }
 
       res.json({
-        message: 'Account retrieved successfully',
+        message: 'User retrieved successfully',
         account: result.rows[0],
       });
     } catch (error) {
@@ -192,12 +192,12 @@ export class AuthController {
       );
 
       if (result.rows.length === 0) {
-        res.status(404).json({ message: 'Does not have any account registered' });
+        res.status(404).json({ message: 'No users found' });
         return;
       }
 
       res.json({
-        message: 'Accounts retrieved successfully',
+        message: 'Users retrieved successfully',
         accounts: result.rows,
       });
     } catch (error) {
