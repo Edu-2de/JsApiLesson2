@@ -1,4 +1,3 @@
-import { json } from 'stream/consumers';
 import { AuthController } from '../controllers/authController';
 import pool from '../database/connection';
 import bcrypt from 'bcryptjs';
