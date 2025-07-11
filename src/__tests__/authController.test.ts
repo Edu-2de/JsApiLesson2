@@ -35,6 +35,9 @@ describe('AuthController', () => {
       mockReq.body = { email: 'test@test.com' };
 
       await AuthController.login(mockReq, mockRes);
+
+      expect(mockRes.status).toHaveBeenCalledWith(400);
+      expect(mockRes.json).toHaveBeenCalledWith({ message: 'Email and password are required' });
     });
   });
 });
