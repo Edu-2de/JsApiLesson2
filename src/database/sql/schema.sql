@@ -55,7 +55,7 @@ ON CONFLICT (type) DO NOTHING;
 
 CREATE TABLE IF NOT EXISTS interest_and_fees (
     id SERIAL PRIMARY KEY,
-    account_type_id INTEGER REFERENCES account_types(id) ON DELETE SET NULL,
+    account_type_id INTEGER UNIQUE REFERENCES account_types(id) ON DELETE SET NULL,
     monthly_maintenance_fee DECIMAL(5,2) DEFAULT 0.00,
     withdrawal_fee DECIMAL(5,2) DEFAULT 0.00,
     transfer_fee DECIMAL(5,2) DEFAULT 0.00,
@@ -93,11 +93,11 @@ CREATE TABLE IF NOT EXISTS accounts(
 );
 
 INSERT INTO accounts(user_id, account_type_id, balance, account_number)VALUES
-(1, 3, 999999999.99, '001-98765-4')
+(1, 3, 9999.99, '001-98765-4')
 ON CONFLICT (account_number) DO NOTHING;
 
 INSERT INTO accounts(user_id, account_type_id, balance, account_number)VALUES
-(2, 3, 99000.00, '001-55443-2')
+(2, 3, 9999.00, '001-55443-2')
 ON CONFLICT (account_number) DO NOTHING;
 
 INSERT INTO accounts(user_id, account_type_id, balance, account_number)VALUES

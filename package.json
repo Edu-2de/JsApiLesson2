@@ -4,7 +4,11 @@
   "description": "Este projeto é uma aplicação fullstack de exemplo, composta por um backend em Node.js com Express e Prisma (conectado ao PostgreSQL) e um frontend em React (Next.js) com Tailwind CSS. O objetivo é demonstrar a estrutura de um sistema moderno de autenticação, cadastro de usuários e exibição de produtos em um carrossel.",
   "main": "app.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon --exec ts-node src/app.ts",
+    "start": "node dist/app.js",
+    "build": "tsc",
+    "setup": "ts-node src/database/setup.ts"
   },
   "keywords": [],
   "author": "",
@@ -26,6 +30,9 @@
     "@types/helmet": "^4.0.0",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^24.0.10",
-    "@types/pg": "^8.15.4"
+    "@types/pg": "^8.15.4",
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
   }
 }
