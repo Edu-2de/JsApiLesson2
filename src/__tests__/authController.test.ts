@@ -160,5 +160,7 @@ describe('AuthController', () => {
       expect(mockRes.status).toHaveBeenCalledWith(400);
       expect(mockRes.json).toHaveBeenCalledWith({ message: 'Invalid email format' });
     });
+
+    it('should be return 400 if email has invalid format')
   });
 });
