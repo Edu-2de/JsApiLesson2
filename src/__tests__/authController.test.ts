@@ -225,6 +225,25 @@ describe('AuthController', () => {
       expect(mockRes.json).toHaveBeenCalledWith({ message: 'User not found' });
     });
 
-    it('should return success response with token on valid login')
+    it('should return success response with user data', async () => {
+      const mockUser = {
+        id: 1,
+        name: 'Miguel',
+        email: 'email@gmail.com',
+        age: 30,
+        role: 'user',
+      };
+
+      mockReq.user = { id: 1 };
+      mockPool.query.mockResolvedValueOnce({ rows: [mockUser]});
+
+      await AuthController.getUser(mockReq, mockRes);
+      
+      expect(mockRes.status).toHaveBeenCalledWith(201);
+      expect(mockRes.json).toHaveBeenCalledWith({
+        message: 'User retrieved successfully',
+        user: mockUser,
+      });
+    });
   });
 });

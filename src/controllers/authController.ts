@@ -133,9 +133,9 @@ export class AuthController {
         return;
       }
 
-      res.json({
+      res.status(201).json({
         message: 'User retrieved successfully',
-        account: result.rows[0],
+        user: result.rows[0],
       });
     } catch (error) {
       res.status(500).json({
