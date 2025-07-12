@@ -178,7 +178,7 @@ describe('AccountController', () => {
       expect(mockRes.status).toHaveBeenCalledWith(400);
       expect(mockRes.json).toHaveBeenCalledWith({ message: 'User_id and Account_type_id are required' });
     });
-    
+
     it('should be return 400 if user not exists', async () => {
       mockReq.body = { user_id: 1, account_type_id: 1 };
 
@@ -192,14 +192,14 @@ describe('AccountController', () => {
 
     it('should be return 400 if user already had an account', async () => {
       mockReq.body = { user_id: 1, account_type_id: 1 };
-      
-      const mockUser ={
-        id: 1
-      }
 
-      const mockAccount ={
-        user_id: 1
-      }
+      const mockUser = {
+        id: 1,
+      };
+
+      const mockAccount = {
+        user_id: 1,
+      };
 
       mockPool.query.mockResolvedValueOnce({ rows: [mockUser] }).mockResolvedValueOnce({ rows: [mockAccount] });
 
@@ -211,17 +211,62 @@ describe('AccountController', () => {
 
     it('should be return 400 if type account not exists', async () => {
       mockReq.body = { user_id: 1, account_type_id: 1 };
-      
-      const mockUser ={
-        id: 1
-      }
 
-      mockPool.query.mockResolvedValueOnce({ rows: [mockUser] }).mockResolvedValueOnce({ rows: [] }).mockResolvedValueOnce({ rows: [] });
+      const mockUser = {
+        id: 1,
+      };
+
+      mockPool.query
+        .mockResolvedValueOnce({ rows: [mockUser] })
+        .mockResolvedValueOnce({ rows: [] })
+        .mockResolvedValueOnce({ rows: [] });
 
       await AccountController.registerAccount(mockReq, mockRes);
 
       expect(mockRes.status).toHaveBeenCalledWith(400);
       expect(mockRes.json).toHaveBeenCalledWith({ message: 'This type not exists in table' });
+    });
+
+    it('should return success response with account data', async () => {
+      mockReq.body = { user_id: 1, account_type_id: 1 };
+
+      const mockUser = {
+        id: 1,
+      };
+
+      const mockType = {
+        id: 1,
+      };
+
+      const mockNewAccount = {
+        id: 1,
+        user_id: 1,
+        account_type_id: 1,
+        balance: 0.0,
+        account_number: '001-12345-6',
+        status: 'active',
+      };
+
+      mockPool.query
+        .mockResolvedValueOnce({ rows: [mockUser] })
+        .mockResolvedValueOnce({ rows: [] })
+        .mockResolvedValueOnce({ rows: [mockType] })
+        .mockResolvedValueOnce({ rows: [mockNewAccount] });
+
+      await AccountController.registerAccount(mockReq, mockRes);
+
+      expect(mockRes.status).toHaveBeenCalledWith(201);
+      expect(mockRes.json).toHaveBeenCalledWith({
+        message: 'Account registered successfully',
+        account: {
+          id: 1,
+          user_id: 1,
+          account_type_id: 1,
+          balance: 0.0,
+          account_number: '001-12345-6',
+          status: 'active',
+        },
+      });
     });
   });
 });
