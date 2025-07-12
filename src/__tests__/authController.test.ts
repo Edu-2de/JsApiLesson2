@@ -278,4 +278,15 @@ describe('AuthController', () => {
       });
     });
   });
+
+  describe('getAllUsers', () => {
+    it('should return 404 if there is no registered account', async () => {
+      mockPool.query.mockResolvedValueOnce({ rows: [] });
+
+      await AuthController.getAllUsers(mockReq, mockRes);
+
+      expect(mockRes.status).toHaveBeenCalledWith(404);
+      expect(mockReq.json).toHaveBeenCalledWith({ message: 'No users found' });
+    });
+  });
 });
