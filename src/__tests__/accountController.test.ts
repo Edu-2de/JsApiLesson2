@@ -46,5 +46,47 @@ describe('AccountController', () => {
       expect(mockRes.status).toHaveBeenCalledWith(400);
       expect(mockRes.json).toHaveBeenCalledWith({ message: 'account_number and password are required!' });
     });
+
+    it('should return 401 if the account is not found', async () => {
+      mockReq.body = { account_number: '001-98765-4', password: 'Miguel1234' };
+
+      mockPool.query.mockResolvedValueOnce({ rows: [] });
+
+      await AccountController.loginAccount(mockReq, mockRes);
+
+      expect(mockRes.status).toHaveBeenCalledWith(401);
+      expect(mockRes.json).toHaveBeenCalledWith({ message: 'Invalid account_number or password!' });
+    });
+
+    it('should return 401 if the account blocked or closed', async () => {
+      mockReq.body = { account_number: '001-98765-4', password: 'Miguel1234' };
+
+      mockPool.query.mockResolvedValueOnce({
+        rows: [
+          {
+            id: 1,
+            balance: 0.0,
+            account_number: '002-98765-4',
+            status: 'closed',
+            user: {
+              name: 'Test',
+              email: 'test@gmail.com',
+              age: 30,
+              role: 'user',
+            },
+            account_type: {
+              type: 'current',
+              daily_withdrawal_limit: 1000.0,
+              daily_transfer_limit: 5000.0,
+            },
+          },
+        ],
+      });
+
+      await AccountController.loginAccount(mockReq, mockRes);
+
+      expect(mockRes.status).toHaveBeenCalledWith(401);
+      expect(mockRes.json).toHaveBeenCalledWith({ message: 'Account is blocked or closed!' });
+    });
   });
 });

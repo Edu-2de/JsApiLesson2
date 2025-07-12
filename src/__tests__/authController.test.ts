@@ -30,7 +30,7 @@ describe('AuthController', () => {
   });
 
   describe('login', () => {
-    it('should be return 400 if email or password is missing', async () => {
+    it('should be return 400 if the account is ', async () => {
       mockReq.body = { email: 'test@test.com' };
 
       await AuthController.login(mockReq, mockRes);
