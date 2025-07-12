@@ -178,5 +178,16 @@ describe('AuthController', () => {
       expect(mockRes.status).toHaveBeenCalledWith(400);
       expect(mockRes.json).toHaveBeenCalledWith({ message: 'Age must be between 12 and 98' });
     });
+
+    it('should be return 400 if the user already has an account', async () => {
+      mockReq.body = { name: 'Miguel', email: 'email@gmail.com', age: 30, password: 'miguel1234' };
+
+      mockPool.query.mockResolvedValueOnce({ rows: [{ id: 1 }] });
+
+      await AuthController.register(mockReq, mockRes);
+
+      expect(mockRes.status).toHaveBeenCalledWith(400);
+      expect(mockRes.json).toHaveBeenCalledWith({ message: 'Email already exists' });
+    });
   });
 });
