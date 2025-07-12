@@ -128,7 +128,7 @@ describe('AccountController', () => {
 
       const mockAccount = {
         id: 1,
-        balance: 0.00,
+        balance: 0.0,
         account_number: '001-98765-4',
         status: 'active',
         user: {
@@ -152,29 +152,17 @@ describe('AccountController', () => {
 
       await AccountController.loginAccount(mockReq, mockRes);
 
-     expect(mockRes.json).toHaveBeenCalledWith(
-    expect.objectContaining({
-      message: 'Login successful',
-      token: 'mockedToken',
-      account: expect.objectContaining({
-        id: 1,
-        balance: 0.00,
-        account_number: '001-98765-4',
-        status: 'active',
-        user: expect.objectContaining({
-          name: undefined,
-          email: undefined,
-          age: undefined,
-          role: undefined
-        }),
-        account_type: expect.objectContaining({
-          type: undefined,
-          daily_withdrawal_limit: undefined,
-          daily_transfer_limit: undefined,
-        }),
-      }),
-    })
-  );
+      expect(mockRes.json).toHaveBeenCalledWith({
+        message: 'Login successful',
+        token: 'mockedToken',
+        account: mockAccount
+      });
     });
   });
+
+  describe('registerAccount', () => {
+    it('should be return 400 if User_id or Account_type_id is missing', async () => {
+      
+    })
+  })
 });
