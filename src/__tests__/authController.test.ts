@@ -274,8 +274,8 @@ describe('AuthController', () => {
 
       expect(mockRes.json).toHaveBeenCalledWith({
         message: 'User retrieved successfully',
-        user: mockUser
-      })
+        user: mockUser,
+      });
     });
   });
 });
