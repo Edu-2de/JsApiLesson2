@@ -214,7 +214,7 @@ describe('AuthController', () => {
     });
   });
 
-  describe('getProfile', () => {
+  describe('getUser', () => {
     it('should be return 404 if the user is not found', async () => {
       mockReq.user = { id: 1 };
       mockPool.query.mockResolvedValueOnce({ rows: [] });
@@ -235,15 +235,23 @@ describe('AuthController', () => {
       };
 
       mockReq.user = { id: 1 };
-      mockPool.query.mockResolvedValueOnce({ rows: [mockUser]});
+      mockPool.query.mockResolvedValueOnce({ rows: [mockUser] });
 
       await AuthController.getUser(mockReq, mockRes);
-      
+
       expect(mockRes.status).toHaveBeenCalledWith(201);
       expect(mockRes.json).toHaveBeenCalledWith({
         message: 'User retrieved successfully',
         user: mockUser,
       });
+    });
+  });
+
+  describe('getUserById', () => {
+    it('should be return 404 if the user is not found', async () => {
+      mockReq.params = { userId: '1' };
+
+      mockPool.query.mockResolvedValueOnce({ rows: [] });
     });
   });
 });
