@@ -190,7 +190,7 @@ describe('AuthController', () => {
       expect(mockRes.json).toHaveBeenCalledWith({ message: 'Email already exists' });
     });
 
-    it('should return success response with token on valid login', async () => {
+    it('should create user successfully', async () => {
       mockReq.body = { name: 'Miguel', email: 'email@gmail.com', age: 30, password: 'miguel1234' };
       const mockNewUser = {
         id: 1,
@@ -212,5 +212,19 @@ describe('AuthController', () => {
         user: mockNewUser,
       });
     });
+  });
+
+  describe('getProfile', () => {
+    it('should be return 404 if the user is not found', async () => {
+      mockReq.user = { id: 1 };
+      mockPool.query.mockResolvedValueOnce({ rows: [] });
+
+      await AuthController.getUser(mockReq, mockRes);
+
+      expect(mockRes.status).toHaveBeenCalledWith(404);
+      expect(mockRes.json).toHaveBeenCalledWith({ message: 'User not found' });
+    });
+
+    it('should return success response with token on valid login')
   });
 });
