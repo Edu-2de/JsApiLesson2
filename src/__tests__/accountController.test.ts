@@ -179,13 +179,15 @@ describe('AccountController', () => {
       expect(mockRes.json).toHaveBeenCalledWith({ message: 'User_id and Account_type_id are required' });
     });
     
-    it('should be return 400 if User_id or Account_type_id is missing', async () => {
+    it('should be return 400 if user not exists', async () => {
       mockReq.body = { user_id: 1, account_type_id: 1 };
+
+      mockPool.query.mockResolvedValueOnce({ rows: [] });
 
       await AccountController.registerAccount(mockReq, mockRes);
 
       expect(mockRes.status).toHaveBeenCalledWith(400);
-      expect(mockRes.json).toHaveBeenCalledWith({ message: 'User_id and Account_type_id are required' });
+      expect(mockRes.json).toHaveBeenCalledWith({ message: 'This user not exists' });
     });
   });
 });
