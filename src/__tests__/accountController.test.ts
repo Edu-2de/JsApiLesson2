@@ -189,5 +189,25 @@ describe('AccountController', () => {
       expect(mockRes.status).toHaveBeenCalledWith(400);
       expect(mockRes.json).toHaveBeenCalledWith({ message: 'This user not exists' });
     });
+
+    it('should be return 400 if user already had an account', async () => {
+      mockReq.body = { user_id: 1, account_type_id: 1 };
+      
+      const mockUser ={
+        id: 1
+      }
+
+      const mockAccount ={
+        user_id: 1
+      }
+
+      mockPool.query.mockResolvedValueOnce({ rows: [mockUser] });
+      mockPool.query.mockResolvedValueOnce({ rows: [mockAccount] });
+
+      await AccountController.registerAccount(mockReq, mockRes);
+
+      expect(mockRes.status).toHaveBeenCalledWith(400);
+      expect(mockRes.json).toHaveBeenCalledWith({ message: 'This user already have a account' });
+    });
   });
 });
