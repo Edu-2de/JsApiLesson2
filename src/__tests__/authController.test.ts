@@ -161,6 +161,13 @@ describe('AuthController', () => {
       expect(mockRes.json).toHaveBeenCalledWith({ message: 'Invalid email format' });
     });
 
-    it('should be return 400 if email has invalid format')
+    it('should be return 400 if if the password is less than six characters', async () => {
+      mockReq.body = { name: 'Miguel', email: 'email@gmail.com', age: 30, password: 'aaa' };
+
+      await AuthController.register(mockReq, mockRes);
+
+      expect(mockRes.status).toHaveBeenCalledWith(400);
+      expect(mockRes.json).toHaveBeenCalledWith({ message: 'Password must be at least 6 characters long' });
+    });
   });
 });
