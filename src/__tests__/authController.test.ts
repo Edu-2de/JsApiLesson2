@@ -252,6 +252,11 @@ describe('AuthController', () => {
       mockReq.params = { userId: '1' };
 
       mockPool.query.mockResolvedValueOnce({ rows: [] });
+
+      await AuthController.getUserById(mockReq, mockRes);
+
+      expect(mockRes.status).toHaveBeenCalledWith(404);
+      expect(mockRes.json).toHaveBeenCalledWith({ message: 'User not found' });
     });
   });
 });
