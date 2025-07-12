@@ -26,7 +26,7 @@ export class AuthController {
 
       const isPasswordValid = await bcrypt.compare(password, user.password_hash);
       if (!isPasswordValid) {
-        res.status(402).json({ message: 'Invalid password' });
+        res.status(401).json({ message: 'Invalid password' });
         return;
       }
 
@@ -98,22 +98,12 @@ export class AuthController {
 
       const newUser = result.rows[0];
 
-      const token = jwt.sign(
-        {
-          id: newUser.id,
-          email: newUser.email,
-          age: newUser.age,
-          role: newUser.role,
-        },
-        JWT_SECRET,
-        { expiresIn: '24h' }
-      );
 
       res.status(201).json({
         message: 'User registered successfully',
-        token,
         user: {
           id: newUser.id,
+          name: newUser.name,
           email: newUser.email,
           age: newUser.age,
           role: newUser.role,
@@ -145,7 +135,7 @@ export class AuthController {
 
       res.json({
         message: 'User retrieved successfully',
-        account: result.rows[0],
+        user: result.rows[0],
       });
     } catch (error) {
       res.status(500).json({
@@ -173,7 +163,7 @@ export class AuthController {
 
       res.json({
         message: 'User retrieved successfully',
-        account: result.rows[0],
+        user: result.rows[0],
       });
     } catch (error) {
       res.status(500).json({
@@ -199,7 +189,7 @@ export class AuthController {
 
       res.json({
         message: 'Users retrieved successfully',
-        accounts: result.rows,
+        users: result.rows,
       });
     } catch (error) {
       res.status(500).json({

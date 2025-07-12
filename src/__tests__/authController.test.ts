@@ -59,7 +59,7 @@ describe('AuthController', () => {
       expect(mockRes.json).toHaveBeenCalledWith({ message: 'User not found' });
     });
 
-    it('should be return 402 if password is invalid', async () => {
+    it('should be return 401 if password is invalid', async () => {
       mockReq.body = { email: 'test@test.com', password: 'wrongPassword' };
 
       mockPool.query.mockResolvedValueOnce({
@@ -79,7 +79,7 @@ describe('AuthController', () => {
 
       await AuthController.login(mockReq, mockRes);
 
-      expect(mockRes.status).toHaveBeenCalledWith(402);
+      expect(mockRes.status).toHaveBeenCalledWith(401);
       expect(mockRes.json).toHaveBeenCalledWith({ message: 'Invalid password' });
     });
 
@@ -111,6 +111,209 @@ describe('AuthController', () => {
           age: 21,
           role: 'user',
         },
+      });
+    });
+  });
+
+  describe('register', () => {
+    it('should be return 400 if name, email, age or password is missing', async () => {
+      mockReq.body = { name: 'Miguel' };
+
+      await AuthController.register(mockReq, mockRes);
+
+      expect(mockRes.status).toHaveBeenCalledWith(400);
+      expect(mockRes.json).toHaveBeenCalledWith({ message: 'Name, email, age and password are required' });
+    });
+
+    it('should be return 400 if name, email, age or password is missing', async () => {
+      mockReq.body = { name: 'Miguel', email: 'miguel@gmail.com' };
+
+      await AuthController.register(mockReq, mockRes);
+
+      expect(mockRes.status).toHaveBeenCalledWith(400);
+      expect(mockRes.json).toHaveBeenCalledWith({ message: 'Name, email, age and password are required' });
+    });
+
+    it('should be return 400 if name, email, age or password is missing', async () => {
+      mockReq.body = { name: 'Miguel', email: 'miguel@gmail.com', age: 30 };
+
+      await AuthController.register(mockReq, mockRes);
+
+      expect(mockRes.status).toHaveBeenCalledWith(400);
+      expect(mockRes.json).toHaveBeenCalledWith({ message: 'Name, email, age and password are required' });
+    });
+
+    it('should be return 400 if name, email, age or password is missing', async () => {
+      mockReq.body = { email: 'miguel@gmail.com', age: 30, password: 'miguel1234' };
+
+      await AuthController.register(mockReq, mockRes);
+
+      expect(mockRes.status).toHaveBeenCalledWith(400);
+      expect(mockRes.json).toHaveBeenCalledWith({ message: 'Name, email, age and password are required' });
+    });
+
+    it('should be return 400 if email has invalid format', async () => {
+      mockReq.body = { name: 'Miguel', email: 'invalid-email', age: 30, password: 'miguel1234' };
+
+      await AuthController.register(mockReq, mockRes);
+
+      expect(mockRes.status).toHaveBeenCalledWith(400);
+      expect(mockRes.json).toHaveBeenCalledWith({ message: 'Invalid email format' });
+    });
+
+    it('should be return 400 if if the password is less than six characters', async () => {
+      mockReq.body = { name: 'Miguel', email: 'email@gmail.com', age: 30, password: 'aaa' };
+
+      await AuthController.register(mockReq, mockRes);
+
+      expect(mockRes.status).toHaveBeenCalledWith(400);
+      expect(mockRes.json).toHaveBeenCalledWith({ message: 'Password must be at least 6 characters long' });
+    });
+
+    it('should be return 400 if the age is less than twelve or more than ninety eight years old', async () => {
+      mockReq.body = { name: 'Miguel', email: 'email@gmail.com', age: 100, password: 'miguel1234' };
+
+      await AuthController.register(mockReq, mockRes);
+
+      expect(mockRes.status).toHaveBeenCalledWith(400);
+      expect(mockRes.json).toHaveBeenCalledWith({ message: 'Age must be between 12 and 98' });
+    });
+
+    it('should be return 400 if the user already has an account', async () => {
+      mockReq.body = { name: 'Miguel', email: 'email@gmail.com', age: 30, password: 'miguel1234' };
+
+      mockPool.query.mockResolvedValueOnce({ rows: [{ id: 1 }] });
+
+      await AuthController.register(mockReq, mockRes);
+
+      expect(mockRes.status).toHaveBeenCalledWith(400);
+      expect(mockRes.json).toHaveBeenCalledWith({ message: 'Email already exists' });
+    });
+
+    it('should create user successfully', async () => {
+      mockReq.body = { name: 'Miguel', email: 'email@gmail.com', age: 30, password: 'miguel1234' };
+      const mockNewUser = {
+        id: 1,
+        name: 'Miguel',
+        email: 'email@gmail.com',
+        age: 30,
+        role: 'user',
+      };
+
+      mockPool.query.mockResolvedValueOnce({ rows: [] }).mockResolvedValueOnce({ rows: [mockNewUser] });
+
+      mockBcrypt.hash.mockResolvedValueOnce('hashedPassword');
+
+      await AuthController.register(mockReq, mockRes);
+
+      expect(mockRes.status).toHaveBeenCalledWith(201);
+      expect(mockRes.json).toHaveBeenCalledWith({
+        message: 'User registered successfully',
+        user: mockNewUser,
+      });
+    });
+  });
+
+  describe('getUser', () => {
+    it('should be return 404 if the user is not found', async () => {
+      mockReq.user = { id: 1 };
+      mockPool.query.mockResolvedValueOnce({ rows: [] });
+
+      await AuthController.getUser(mockReq, mockRes);
+
+      expect(mockRes.status).toHaveBeenCalledWith(404);
+      expect(mockRes.json).toHaveBeenCalledWith({ message: 'User not found' });
+    });
+
+    it('should return user data', async () => {
+      const mockUser = {
+        id: 1,
+        name: 'Miguel',
+        email: 'email@gmail.com',
+        age: 30,
+        role: 'user',
+      };
+
+      mockReq.user = { id: 1 };
+      mockPool.query.mockResolvedValueOnce({ rows: [mockUser] });
+
+      await AuthController.getUser(mockReq, mockRes);
+
+      expect(mockRes.json).toHaveBeenCalledWith({
+        message: 'User retrieved successfully',
+        user: mockUser,
+      });
+    });
+  });
+
+  describe('getUserById', () => {
+    it('should be return 404 if the user is not found', async () => {
+      mockReq.params = { userId: '1' };
+
+      mockPool.query.mockResolvedValueOnce({ rows: [] });
+
+      await AuthController.getUserById(mockReq, mockRes);
+
+      expect(mockRes.status).toHaveBeenCalledWith(404);
+      expect(mockRes.json).toHaveBeenCalledWith({ message: 'User not found' });
+    });
+
+    it('should return user data', async () => {
+      const mockUser = {
+        id: 1,
+        name: 'Miguel',
+        email: 'email@gmail.com',
+        age: 30,
+        role: 'user',
+      };
+
+      mockReq.params = { userId: '1' };
+      mockPool.query.mockResolvedValueOnce({ rows: [mockUser] });
+
+      await AuthController.getUserById(mockReq, mockRes);
+
+      expect(mockRes.json).toHaveBeenCalledWith({
+        message: 'User retrieved successfully',
+        user: mockUser,
+      });
+    });
+  });
+
+  describe('getAllUsers', () => {
+    it('should return 404 if there is no registered account', async () => {
+      mockPool.query.mockResolvedValueOnce({ rows: [] });
+
+      await AuthController.getAllUsers(mockReq, mockRes);
+
+      expect(mockRes.status).toHaveBeenCalledWith(404);
+      expect(mockRes.json).toHaveBeenCalledWith({ message: 'No users found' });
+    });
+
+    it('should return the fifty first registered accounts', async () => {
+      const mockUsers = [
+        {
+          id: 1,
+          name: 'Miguel',
+          email: 'email@gmail.com',
+          age: 30,
+          role: 'user',
+        },
+        {
+          id: 2,
+          name: 'Angelo',
+          email: 'email1@gmail.com',
+          age: 35,
+          role: 'user',
+        },
+      ];
+
+      mockPool.query.mockResolvedValueOnce({ rows: mockUsers });
+
+      await AuthController.getAllUsers(mockReq, mockRes);
+
+      expect(mockRes.json).toHaveBeenCalledWith({
+        message: 'Users retrieved successfully',
+        users: mockUsers,
       });
     });
   });
