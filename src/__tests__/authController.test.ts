@@ -286,7 +286,7 @@ describe('AuthController', () => {
       await AuthController.getAllUsers(mockReq, mockRes);
 
       expect(mockRes.status).toHaveBeenCalledWith(404);
-      expect(mockReq.json).toHaveBeenCalledWith({ message: 'No users found' });
+      expect(mockRes.json).toHaveBeenCalledWith({ message: 'No users found' });
     });
 
     it('should return the fifty first registered accounts', async () => {
@@ -307,7 +307,7 @@ describe('AuthController', () => {
         },
       ];
 
-      mockPool.query.mockResolvedValueOnce({ rows: [mockUsers] });
+      mockPool.query.mockResolvedValueOnce({ rows: mockUsers });
 
       await AuthController.getAllUsers(mockReq, mockRes);
 
