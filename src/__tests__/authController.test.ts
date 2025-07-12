@@ -290,26 +290,31 @@ describe('AuthController', () => {
     });
 
     it('should return the fifty first registered accounts', async () => {
-      const mockUsers = [{
-        id: 1,
-        name: 'Miguel',
-        email: 'email@gmail.com',
-        age: 30,
-        role: 'user',
-      },
-      {
-        id: 2,
-        name: 'Angelo',
-        email: 'email1@gmail.com',
-        age: 35,
-        role: 'user',
-      }]
+      const mockUsers = [
+        {
+          id: 1,
+          name: 'Miguel',
+          email: 'email@gmail.com',
+          age: 30,
+          role: 'user',
+        },
+        {
+          id: 2,
+          name: 'Angelo',
+          email: 'email1@gmail.com',
+          age: 35,
+          role: 'user',
+        },
+      ];
 
-      mockPool.query.mockResolvedValueOnce({ rows:[mockUsers] });
+      mockPool.query.mockResolvedValueOnce({ rows: [mockUsers] });
 
       await AuthController.getAllUsers(mockReq, mockRes);
 
-      expect(mockRes.json).toHaveBeenCalledWith()
-    })
+      expect(mockRes.json).toHaveBeenCalledWith({
+        message: 'Users retrieved successfully',
+        users: mockUsers,
+      });
+    });
   });
 });

@@ -189,7 +189,7 @@ export class AuthController {
 
       res.json({
         message: 'Users retrieved successfully',
-        accounts: result.rows,
+        users: result.rows,
       });
     } catch (error) {
       res.status(500).json({
