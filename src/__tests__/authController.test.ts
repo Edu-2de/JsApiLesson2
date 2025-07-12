@@ -169,5 +169,14 @@ describe('AuthController', () => {
       expect(mockRes.status).toHaveBeenCalledWith(400);
       expect(mockRes.json).toHaveBeenCalledWith({ message: 'Password must be at least 6 characters long' });
     });
+
+    it('should be return 400 if the age is less than twelve or more than ninety eight years old', async () => {
+      mockReq.body = { name: 'Miguel', email: 'email@gmail.com', age: 100, password: 'miguel1234' };
+
+      await AuthController.register(mockReq, mockRes);
+
+      expect(mockRes.status).toHaveBeenCalledWith(400);
+      expect(mockRes.json).toHaveBeenCalledWith({ message: 'Age must be between 12 and 98' });
+    });
   });
 });
