@@ -122,5 +122,59 @@ describe('AccountController', () => {
       expect(mockRes.status).toHaveBeenCalledWith(401);
       expect(mockRes.json).toHaveBeenCalledWith({ message: 'Invalid account_number or password!' });
     });
+
+    it('should return success response with token on valid login', async () => {
+      mockReq.body = { account_number: '001-98765-4', password: 'Miguel1234' };
+
+      const mockAccount = {
+        id: 1,
+        balance: 0.00,
+        account_number: '001-98765-4',
+        status: 'active',
+        user: {
+          name: undefined,
+          email: undefined,
+          age: undefined,
+          role: undefined,
+          password_hash: undefined,
+        },
+        account_type: {
+          type: undefined,
+          daily_withdrawal_limit: undefined,
+          daily_transfer_limit: undefined,
+        },
+      };
+
+      mockPool.query.mockResolvedValueOnce({ rows: [mockAccount] });
+
+      mockBcrypt.compare.mockResolvedValueOnce(true);
+      mockJwt.sign.mockReturnValueOnce('mockedToken');
+
+      await AccountController.loginAccount(mockReq, mockRes);
+
+     expect(mockRes.json).toHaveBeenCalledWith(
+    expect.objectContaining({
+      message: 'Login successful',
+      token: 'mockedToken',
+      account: expect.objectContaining({
+        id: 1,
+        balance: 0.00,
+        account_number: '001-98765-4',
+        status: 'active',
+        user: expect.objectContaining({
+          name: undefined,
+          email: undefined,
+          age: undefined,
+          role: undefined
+        }),
+        account_type: expect.objectContaining({
+          type: undefined,
+          daily_withdrawal_limit: undefined,
+          daily_transfer_limit: undefined,
+        }),
+      }),
+    })
+  );
+    });
   });
 });
