@@ -133,7 +133,7 @@ export class AuthController {
         return;
       }
 
-      res.status(201).json({
+      res.json({
         message: 'User retrieved successfully',
         user: result.rows[0],
       });
@@ -163,7 +163,7 @@ export class AuthController {
 
       res.json({
         message: 'User retrieved successfully',
-        account: result.rows[0],
+        user: result.rows[0],
       });
     } catch (error) {
       res.status(500).json({

@@ -225,7 +225,7 @@ describe('AuthController', () => {
       expect(mockRes.json).toHaveBeenCalledWith({ message: 'User not found' });
     });
 
-    it('should return success response with user data', async () => {
+    it('should return user data', async () => {
       const mockUser = {
         id: 1,
         name: 'Miguel',
@@ -239,7 +239,6 @@ describe('AuthController', () => {
 
       await AuthController.getUser(mockReq, mockRes);
 
-      expect(mockRes.status).toHaveBeenCalledWith(201);
       expect(mockRes.json).toHaveBeenCalledWith({
         message: 'User retrieved successfully',
         user: mockUser,
@@ -257,6 +256,26 @@ describe('AuthController', () => {
 
       expect(mockRes.status).toHaveBeenCalledWith(404);
       expect(mockRes.json).toHaveBeenCalledWith({ message: 'User not found' });
+    });
+
+    it('should return user data', async () => {
+      const mockUser = {
+        id: 1,
+        name: 'Miguel',
+        email: 'email@gmail.com',
+        age: 30,
+        role: 'user',
+      };
+
+      mockReq.params = { userId: '1' };
+      mockPool.query.mockResolvedValueOnce({ rows: [mockUser] });
+
+      await AuthController.getUserById(mockReq, mockRes);
+
+      expect(mockRes.json).toHaveBeenCalledWith({
+        message: 'User retrieved successfully',
+        user: mockUser
+      })
     });
   });
 });
