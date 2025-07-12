@@ -98,22 +98,12 @@ export class AuthController {
 
       const newUser = result.rows[0];
 
-      const token = jwt.sign(
-        {
-          id: newUser.id,
-          email: newUser.email,
-          age: newUser.age,
-          role: newUser.role,
-        },
-        JWT_SECRET,
-        { expiresIn: '24h' }
-      );
 
       res.status(201).json({
         message: 'User registered successfully',
-        token,
         user: {
           id: newUser.id,
+          name: newUser.name,
           email: newUser.email,
           age: newUser.age,
           role: newUser.role,

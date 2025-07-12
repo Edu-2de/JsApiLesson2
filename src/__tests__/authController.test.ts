@@ -189,5 +189,28 @@ describe('AuthController', () => {
       expect(mockRes.status).toHaveBeenCalledWith(400);
       expect(mockRes.json).toHaveBeenCalledWith({ message: 'Email already exists' });
     });
+
+    it('should return success response with token on valid login', async () => {
+      mockReq.body = { name: 'Miguel', email: 'email@gmail.com', age: 30, password: 'miguel1234' };
+      const mockNewUser = {
+        id: 1,
+        name: 'Miguel',
+        email: 'email@gmail.com',
+        age: 30,
+        role: 'user',
+      };
+
+      mockPool.query.mockResolvedValueOnce({ rows: [] }).mockResolvedValueOnce({ rows: [mockNewUser] });
+
+      mockBcrypt.hash.mockResolvedValueOnce('hashedPassword');
+
+      await AuthController.register(mockReq, mockRes);
+
+      expect(mockRes.status).toHaveBeenCalledWith(201);
+      expect(mockRes.json).toHaveBeenCalledWith({
+        message: 'User registered successfully',
+        user: mockNewUser,
+      });
+    });
   });
 });
