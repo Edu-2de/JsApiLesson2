@@ -8,6 +8,7 @@ jest.mock('bcryptjs');
 jest.mock('jsonwebtoken');
 
 const mockPool = pool as any;
+const mockBcrypt = bcrypt as any;
 const mockJwt = jwt as any;
 
 describe('AccountController', () => {
