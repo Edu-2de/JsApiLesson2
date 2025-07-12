@@ -159,4 +159,10 @@ describe('AccountController', () => {
       });
     });
   });
+
+  describe('registerAccount', () => {
+    it('should be return 400 if User_id or Account_type_id is missing', async () => {
+      
+    })
+  })
 });
