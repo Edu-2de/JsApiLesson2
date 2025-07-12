@@ -18,7 +18,7 @@ export class AccountController {
 
       const result = await pool.query(
         `SELECT 
-          a.id, a.balance, a.account_number, a.status, a.created_at,
+          a.id, a.balance, a.account_number, a.status,
           u.name, u.email, u.age, u.role, u.password_hash, 
           at.type, at.daily_withdrawal_limit, at.daily_transfer_limit
           FROM accounts a 
