@@ -354,4 +354,55 @@ describe('AccountController', () => {
       });
     });
   });
+
+  describe('getAllAccounts', () => {
+    it('should be return 404 if account not exists', async () => {
+      mockPool.query.mockResolvedValueOnce({ rows: [] });
+
+      await AccountController.getAllAccounts(mockReq, mockRes);
+
+      expect(mockRes.status).toHaveBeenCalledWith(404);
+      expect(mockRes.json).toHaveBeenCalledWith({ message: 'Accounts not found' });
+    });
+
+    it('should return success response with account data', async () => {
+      const mockAccounts = [
+        {
+          id: 1,
+          balance: 0.0,
+          account_number: '001-12345-6',
+          status: 'active',
+          name: 'Miguel',
+          email: 'miguel@gmail.com',
+          age: 20,
+          role: 'user',
+          type: 'current',
+          daily_withdrawal_limit: 1000.0,
+          daily_transfer_limit: 5000.0,
+        },
+        {
+          id: 2,
+          balance: 0.0,
+          account_number: '001-12333-6',
+          status: 'active',
+          name: 'Miguel1',
+          email: 'miguel1@gmail.com',
+          age: 21,
+          role: 'user',
+          type: 'current',
+          daily_withdrawal_limit: 1000.0,
+          daily_transfer_limit: 5000.0,
+        },
+      ];
+
+      mockPool.query.mockResolvedValueOnce({ rows: mockAccounts });
+
+      await AccountController.getAllAccounts(mockReq, mockRes);
+
+      expect(mockRes.json).toHaveBeenCalledWith({
+        message: 'Accounts retrieved successfully',
+        accounts: mockAccounts,
+      });
+    });
+  });
 });

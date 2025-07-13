@@ -241,6 +241,12 @@ export class AccountController {
           INNER JOIN account_types at ON a.account_type_id = at.id 
         ORDER BY a.created_at DESC LIMIT 50`
       );
+
+      if (result.rows.length === 0) {
+        res.status(404).json({ message: 'Accounts not found' });
+        return;
+      }
+
       res.json({
         message: 'Accounts retrieved successfully',
         accounts: result.rows,
