@@ -351,7 +351,7 @@ export class AccountController {
       }
 
       const result = await pool.query(
-        `UPDATE accounts SET balance = $1, status = $2, updated_at = CURRENT_TIMESTAMP WHERE id = $3 RETURNING *`,
+        `UPDATE accounts SET status = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING *`,
         [status, accountId]
       );
       res.json({
