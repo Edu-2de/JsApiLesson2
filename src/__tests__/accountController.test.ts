@@ -619,5 +619,35 @@ describe('AccountController', () => {
       expect(mockRes.status).toHaveBeenCalledWith(400);
       expect(mockRes.json).toHaveBeenCalledWith({ message: 'status are required' });
     });
+
+    it('should be return 400 if status not exists', async () => {
+      mockReq.account = { accountId: 1 };
+
+      const mockAccount = {
+        id: 1,
+        balance: 0.0,
+        account_number: '001-12345-6',
+        status: 'active',
+        user: {
+          name: 'Miguel',
+          email: 'miguel@gmail.com',
+          age: 20,
+          role: 'user',
+        },
+        account_type: {
+          type: 'current',
+          daily_withdrawal_limit: 1000.0,
+          daily_transfer_limit: 5000.0,
+        },
+      };
+  
+      mockPool.query.mockResolvedValueOnce({ rows: [mockAccount] });
+
+      mockReq.body = { status:'error' }
+      await AccountController.updateAccount(mockReq, mockRes);
+
+      expect(mockRes.status).toHaveBeenCalledWith(400);
+      expect(mockRes.json).toHaveBeenCalledWith({ message: 'This status does not exist' });
+    });
   });
 });
