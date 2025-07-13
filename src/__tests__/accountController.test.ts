@@ -281,5 +281,33 @@ describe('AccountController', () => {
       expect(mockRes.status).toHaveBeenCalledWith(404);
       expect(mockRes.json).toHaveBeenCalledWith({ message: 'Account not found' });
     });
+
+    it('should return success response with account data', async () => {
+      mockReq.params = { accountId: '1' };
+      
+      const mockAccount = {
+        id: 1,
+        balance: 0.0,
+        account_number: '001-12345-6',
+        status: 'active',
+        created_at: '2025',
+        name: 'Miguel',
+        email: 'miguel@gmail.com',
+        age: 20,
+        role: 'user',
+        type: 'current',
+        daily_withdrawal_limit: 1000.00,
+        daily_transfer_limit: 5000.00
+      };
+
+      mockPool.query.mockResolvedValueOnce({ rows: [mockAccount] });
+
+      await AccountController.getAccountById(mockReq, mockRes);
+
+      expect(mockRes.json).toHaveBeenCalledWith({ 
+        message: 'Account retrieved successfully',
+        account: mockAccount
+       });
+    });
   });
 });
