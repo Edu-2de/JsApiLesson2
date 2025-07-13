@@ -411,12 +411,41 @@ describe('AccountController', () => {
       mockReq.params = { accountId: '1' };
       mockPool.query.mockResolvedValueOnce({ rows: [] });
 
-      await AccountController.getAllAccounts(mockReq, mockRes);
+      await AccountController.updateAccountById(mockReq, mockRes);
 
       expect(mockRes.status).toHaveBeenCalledWith(404);
-      expect(mockRes.json).toHaveBeenCalledWith({ message: 'Accounts not found' });
+      expect(mockRes.json).toHaveBeenCalledWith({ message: 'Account not found' });
     });
 
-    
+    it('should be return 400 if account_type_id or status is missing', async () => {
+      mockReq.params = { accountId: '1' };
+
+      const mockAccount = {
+        id: 1,
+        balance: 0.0,
+        account_number: '001-12345-6',
+        status: 'active',
+        user: {
+          name: 'Miguel',
+          email: 'miguel@gmail.com',
+          age: 20,
+          role: 'user',
+        },
+        account_type: {
+          type: 'current',
+          daily_withdrawal_limit: 1000.0,
+          daily_transfer_limit: 5000.0,
+        },
+      };
+
+      mockPool.query.mockResolvedValueOnce({ rows: [mockAccount] });
+
+      mockReq.body = { account_type_id: 1 };
+
+      await AccountController.updateAccountById(mockReq, mockRes);
+
+      expect(mockRes.status).toHaveBeenCalledWith(400);
+      expect(mockRes.json).toHaveBeenCalledWith({ message: 'account_type_id, balance and status are required' });
+    });
   });
 });
