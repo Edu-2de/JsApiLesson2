@@ -75,18 +75,21 @@ export class TransactionsController {
     try {
       if (!req.account) {
         res.status(400).json({ error: 'Account information is missing.' });
-        return
+        return;
       }
 
       const accountId = req.account.id;
 
-      const result = await pool.query(
-        `SELECT id, account_type_id, balance, status FROM accounts a WHERE a.id = $1`,
-        [accountId]
-      );
+      const result = await pool.query(`SELECT id, account_type_id, balance, status FROM accounts a WHERE a.id = $1`, [
+        accountId,
+      ]);
       const account = result.rows[0];
 
-      
+      const { deposit } = req.body;
+      if (!deposit) {
+        res.status(400).json({ error: 'deposit is missing' });
+        return;
+      }
     } catch (error) {}
   };
 }
