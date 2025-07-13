@@ -340,7 +340,7 @@ export class AccountController {
       const { status } = req.body;
       if (!status) {
         res.status(400).json({
-          message: 'balance or status are required',
+          message: 'status are required',
         });
         return;
       }
