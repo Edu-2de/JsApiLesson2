@@ -577,4 +577,17 @@ describe('AccountController', () => {
       });
     });
   });
+
+  describe('updateAccount', () => {
+    it('should be return 404 if account not exists', async () => {
+      mockReq.account = { accountId: 1 };
+
+      mockPool.query.mockResolvedValueOnce({ rows: [] });
+
+      await AccountController.updateAccount(mockReq, mockRes);
+
+      expect(mockRes.status).toHaveBeenCalledWith(404);
+      expect(mockRes.json).toHaveBeenCalledWith({ message: 'Account not found' });
+    });
+  });
 });
