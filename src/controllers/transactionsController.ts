@@ -80,9 +80,15 @@ export class TransactionsController {
 
       const accountId = req.account.id;
 
-      const result = await pool.query(`SELECT id, account_type_id, balance, status FROM accounts a WHERE a.id = $1`, [
-        accountId,
-      ]);
+      const result = await pool.query(
+        `SELECT 
+          a.id, a.account_type_id, a.balance, a.status
+          fees.withdrawal_fee
+          FROM accounts a
+          INNER JOIN interest_and_fees fees ON a.account_type_id = fees.id 
+        WHERE a.id = $1`,
+        [accountId]
+      );
       const account = result.rows[0];
 
       const { deposit } = req.body;
@@ -95,6 +101,9 @@ export class TransactionsController {
         res.status(400).json({ error: 'deposit cannot be negative or equal to zero' });
         return;
       }
+
+      const newBalance = account.balance + deposit;
+  
     } catch (error) {}
   };
 }
