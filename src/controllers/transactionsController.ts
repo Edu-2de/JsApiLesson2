@@ -1,5 +1,4 @@
 import { Response } from 'express';
-import jwt from 'jsonwebtoken';
 import pool from '../database/connection';
 import { AccountAuthRequest } from '../middleware/accountMiddleware';
 
