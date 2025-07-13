@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
 
-interface AccountAuthRequest extends Request {
+export interface AccountAuthRequest extends Request {
   account?: {
     id: number;
     balance: number;
