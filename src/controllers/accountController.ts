@@ -241,6 +241,12 @@ export class AccountController {
           INNER JOIN account_types at ON a.account_type_id = at.id 
         ORDER BY a.created_at DESC LIMIT 50`
       );
+
+      if (result.rows.length === 0) {
+        res.status(404).json({ message: 'Accounts not found' });
+        return;
+      }
+
       res.json({
         message: 'Accounts retrieved successfully',
         accounts: result.rows,
@@ -276,7 +282,7 @@ export class AccountController {
       const { account_type_id, status } = req.body;
       if (!account_type_id || !status) {
         res.status(400).json({
-          message: 'account_type_id, balance and status are required',
+          message: 'account_type_id and status are required',
         });
         return;
       }
@@ -295,7 +301,7 @@ export class AccountController {
       }
 
       const result = await pool.query(
-        `UPDATE accounts SET account_type_id = $1, balance = $2, status = $3, updated_at = CURRENT_TIMESTAMP WHERE id = $4 RETURNING *`,
+        `UPDATE accounts SET account_type_id = $1, status = $2, updated_at = CURRENT_TIMESTAMP WHERE id = $3 RETURNING *`,
         [account_type_id, status, accountId]
       );
 
@@ -334,7 +340,7 @@ export class AccountController {
       const { status } = req.body;
       if (!status) {
         res.status(400).json({
-          message: 'balance or status are required',
+          message: 'status are required',
         });
         return;
       }
@@ -345,7 +351,7 @@ export class AccountController {
       }
 
       const result = await pool.query(
-        `UPDATE accounts SET balance = $1, status = $2, updated_at = CURRENT_TIMESTAMP WHERE id = $3 RETURNING *`,
+        `UPDATE accounts SET status = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING *`,
         [status, accountId]
       );
       res.json({
