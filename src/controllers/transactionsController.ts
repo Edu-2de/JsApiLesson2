@@ -70,4 +70,12 @@ export class TransactionsController {
       });
     }
   };
+
+  static deposit = async (req: AccountAuthRequest, res: Response): Promise<void> =>{
+    try{
+
+    }catch(error){
+      
+    }
+  }
 }
