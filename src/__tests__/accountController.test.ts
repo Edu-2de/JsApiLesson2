@@ -471,7 +471,7 @@ describe('AccountController', () => {
 
       mockPool.query.mockResolvedValueOnce({ rows: [mockAccount] });
 
-      mockReq.body = { account_type_id: 1, status: 'active'};
+      mockReq.body = { account_type_id: 2, status: 'active'};
 
       mockPool.query.mockResolvedValueOnce({ rows: [] });
 
@@ -480,7 +480,7 @@ describe('AccountController', () => {
       expect(mockRes.status).toHaveBeenCalledWith(400);
       expect(mockRes.json).toHaveBeenCalledWith({ message: 'This type not exists in table' });
     });
-    
+
     it('should be return 400 if account_type_id not exists', async () => {
       mockReq.params = { accountId: '1' };
 
@@ -502,16 +502,24 @@ describe('AccountController', () => {
         },
       };
 
+      const mockType = {
+        id: 2,
+        type: 'savings',
+        daily_withdrawal_limit: 500.00,
+        daily_transfer_limit: 2000.00
+
+      }
+
       mockPool.query.mockResolvedValueOnce({ rows: [mockAccount] });
 
-      mockReq.body = { account_type_id: 1, status: 'active'};
+      mockReq.body = { account_type_id: 2, status: 'error'};
 
-      mockPool.query.mockResolvedValueOnce({ rows: [] });
+      mockPool.query.mockResolvedValueOnce({ rows: [mockType] });
 
       await AccountController.updateAccountById(mockReq, mockRes);
 
       expect(mockRes.status).toHaveBeenCalledWith(400);
-      expect(mockRes.json).toHaveBeenCalledWith({ message: 'This type not exists in table' });
+      expect(mockRes.json).toHaveBeenCalledWith({ message: 'This status does not exist' });
     });
   });
 });
