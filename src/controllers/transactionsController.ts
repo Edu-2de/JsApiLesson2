@@ -16,9 +16,9 @@ export class TransactionsController {
       const result = await pool.query(
         `SELECT 
           a.id, a.account_type_id, a.balance, a.status
-          if.withdrawal_fee
+          fees.withdrawal_fee
           FROM accounts a
-          INNER JOIN interest_and_fees if ON a.account_type_id = if.id 
+          INNER JOIN interest_and_fees fees ON a.account_type_id = fees.id 
         WHERE a.id = $1`,
         [accountId]
       );
@@ -32,7 +32,9 @@ export class TransactionsController {
 
       if (withdrawal === 0 || withdrawal < 0) {
         res.status(400).json({ error: 'withdrawal cannot be negative or equal to zero ' });
+        return;
       }
+
       const fee = withdrawal * (account.withdrawal_fee / 100);
       const totalWithdrawal = withdrawal + fee;
       if (totalWithdrawal > account.balance) {
@@ -40,7 +42,33 @@ export class TransactionsController {
         return;
       }
 
-      
-    } catch (error) {}
+      const newBalance = account.balance - totalWithdrawal;
+      const result1 = await pool.query(
+        `UPDATE accounts SET balance = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING *`,
+        [newBalance, accountId]
+      );
+
+      const transaction_number = `005-${Date.now().toString().slice(-5)}-${Math.floor(Math.random() * 10)}`;
+
+      const result2 = await pool.query(
+        `INSERT INTO transactions (account_id, transaction_type, amount,       reference_number, created_at) VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP) RETURNING *`,
+        [accountId, 'withdrawal', totalWithdrawal, transaction_number]
+      );
+
+      const newBalance_result = result1.rows[0];
+      const transaction = result2.rows[0];
+
+      res.status(201).json({
+        message: 'Withdrawal successfully',
+        balance: newBalance_result.balance,
+        transaction: transaction,
+        fee: newBalance_result.withdrawal_fee
+      });
+    } catch (error) {
+      res.status(500).json({
+        message: 'Error during withdrawal',
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
   };
 }
