@@ -445,7 +445,7 @@ describe('AccountController', () => {
       await AccountController.updateAccountById(mockReq, mockRes);
 
       expect(mockRes.status).toHaveBeenCalledWith(400);
-      expect(mockRes.json).toHaveBeenCalledWith({ message: 'account_type_id, balance and status are required' });
+      expect(mockRes.json).toHaveBeenCalledWith({ message: 'account_type_id and status are required' });
     });
 
     it('should be return 400 if account_type_id not exists', async () => {
@@ -471,7 +471,7 @@ describe('AccountController', () => {
 
       mockPool.query.mockResolvedValueOnce({ rows: [mockAccount] });
 
-      mockReq.body = { account_type_id: 2, status: 'active'};
+      mockReq.body = { account_type_id: 2, status: 'active' };
 
       mockPool.query.mockResolvedValueOnce({ rows: [] });
 
@@ -481,7 +481,7 @@ describe('AccountController', () => {
       expect(mockRes.json).toHaveBeenCalledWith({ message: 'This type not exists in table' });
     });
 
-    it('should be return 400 if account_type_id not exists', async () => {
+    it('should be return 400 if status not exists', async () => {
       mockReq.params = { accountId: '1' };
 
       const mockAccount = {
@@ -505,14 +505,13 @@ describe('AccountController', () => {
       const mockType = {
         id: 2,
         type: 'savings',
-        daily_withdrawal_limit: 500.00,
-        daily_transfer_limit: 2000.00
-
-      }
+        daily_withdrawal_limit: 500.0,
+        daily_transfer_limit: 2000.0,
+      };
 
       mockPool.query.mockResolvedValueOnce({ rows: [mockAccount] });
 
-      mockReq.body = { account_type_id: 2, status: 'error'};
+      mockReq.body = { account_type_id: 2, status: 'error' };
 
       mockPool.query.mockResolvedValueOnce({ rows: [mockType] });
 
@@ -520,6 +519,62 @@ describe('AccountController', () => {
 
       expect(mockRes.status).toHaveBeenCalledWith(400);
       expect(mockRes.json).toHaveBeenCalledWith({ message: 'This status does not exist' });
+    });
+
+    it('should return success response with new account data', async () => {
+      mockReq.params = { accountId: '1' };
+
+      const mockAccount = {
+        id: 1,
+        balance: 0.0,
+        account_number: '001-12345-6',
+        status: 'active',
+        user: {
+          name: 'Miguel',
+          email: 'miguel@gmail.com',
+          age: 20,
+          role: 'user',
+        },
+        account_type: {
+          type: 'current',
+          daily_withdrawal_limit: 1000.0,
+          daily_transfer_limit: 5000.0,
+        },
+      };
+
+      const mockType = {
+        id: 2,
+        type: 'savings',
+        daily_withdrawal_limit: 500.0,
+        daily_transfer_limit: 2000.0,
+      };
+
+      mockPool.query.mockResolvedValueOnce({ rows: [mockAccount] });
+
+      mockReq.body = { account_type_id: 2, status: 'blocked' };
+
+      mockPool.query.mockResolvedValueOnce({ rows: [mockType] });
+
+      mockPool.query.mockResolvedValueOnce({
+        rows: [
+          {
+            account_type_id: 2,
+            status: 'blocked',
+            updated_at: '2025',
+          },
+        ],
+      });
+
+      await AccountController.updateAccountById(mockReq, mockRes);
+
+      expect(mockRes.json).toHaveBeenCalledWith({
+        message: 'Account updated successfully',
+        account: {
+          account_type_id: 2,
+          status: 'blocked',
+          updated_at: '2025',
+        },
+      });
     });
   });
 });
