@@ -71,11 +71,22 @@ export class TransactionsController {
     }
   };
 
-  static deposit = async (req: AccountAuthRequest, res: Response): Promise<void> =>{
-    try{
-
-    }catch(error){
-      
-    }
-  }
+  static deposit = async (req: AccountAuthRequest, res: Response): Promise<void> => {
+    try {
+      if (!req.account) {
+        res.status(400).json({ error: 'Account information is missing.' });
+        return
+      }
+      const accountId = req.account.id;
+      const result = await pool.query(
+        `SELECT 
+          a.id, a.account_type_id, a.balance, a.status
+          fees.withdrawal_fee
+          FROM accounts a
+          INNER JOIN interest_and_fees fees ON a.account_type_id = fees.id 
+        WHERE a.id = $1`,
+        [accountId]
+      );
+    } catch (error) {}
+  };
 }
