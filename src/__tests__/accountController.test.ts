@@ -736,4 +736,45 @@ describe('AccountController', () => {
       expect(mockRes.json).toHaveBeenCalledWith({ message: 'Account deleted successfully' });
     });
   });
+
+  describe('deleteAccount', () => {
+    it('should be return 404 if account not exists', async () => {
+      mockReq.account = { id: 1 };
+
+      mockPool.query.mockResolvedValueOnce({ rows: [] });
+
+      await AccountController.deleteAccount(mockReq, mockRes);
+
+      expect(mockRes.status).toHaveBeenCalledWith(404);
+      expect(mockRes.json).toHaveBeenCalledWith({ message: 'Account not found' });
+    });
+
+    it('should return success response', async () => {
+      mockReq.account = { id: 1 };
+
+      const mockAccount = {
+        id: 1,
+        balance: 0.0,
+        account_number: '001-12345-6',
+        status: 'active',
+        user: {
+          name: 'Miguel',
+          email: 'miguel@gmail.com',
+          age: 20,
+          role: 'user',
+        },
+        account_type: {
+          type: 'current',
+          daily_withdrawal_limit: 1000.0,
+          daily_transfer_limit: 5000.0,
+        },
+      };
+
+      mockPool.query.mockResolvedValueOnce({ rows: [mockAccount] });
+
+      await AccountController.deleteAccount(mockReq, mockRes);
+
+      expect(mockRes.json).toHaveBeenCalledWith({ message: 'Account deleted successfully' });
+    });
+  });
 });
