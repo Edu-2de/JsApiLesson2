@@ -90,6 +90,11 @@ export class TransactionsController {
         res.status(400).json({ error: 'deposit is missing' });
         return;
       }
+
+      if(deposit === 0 || deposit < 0){
+        res.status(400).json({ error: 'deposit cannot be negative or equal to zero' });
+        return;
+      }
     } catch (error) {}
   };
 }
