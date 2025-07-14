@@ -233,7 +233,7 @@ export class AuthController {
           res.status(400).json({ message: 'Invalid email format' });
           return;
         }
-        
+
         const result_email = await pool.query(`SELECT * FROM users Where email = $1`, [email]);
         if (result_email.rows.length != 0) {
           res.status(400).json({ error: 'this email already have an account!' });
@@ -247,6 +247,14 @@ export class AuthController {
       }
 
       if (age) {
+        if (age > 98 || age < 12) {
+          res.status(400).json({ message: 'Age must be between 12 and 98' });
+          return;
+        }
+
+        if (age === user.age){
+          res.status(400).json({ error: 'this is already the user age' });
+        }
       }
 
       const fields = [];
