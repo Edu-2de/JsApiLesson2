@@ -229,6 +229,12 @@ export class AuthController {
 
       const user = result.rows[0];
 
+      const { name, email, age, password, role} = req.body;
+
+      const fields = [];
+      const values = [];
+      let idx = 1;
+
     } catch (error) {}
   };
 }
