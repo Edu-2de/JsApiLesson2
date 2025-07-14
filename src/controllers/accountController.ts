@@ -47,7 +47,7 @@ export class AccountController {
         res.status(401).json({
           message: 'Invalid account_number or password!',
         });
-        return; 
+        return;
       }
 
       const accountData = {
@@ -148,6 +148,12 @@ export class AccountController {
   static getAccountById = async (req: Request, res: Response): Promise<void> => {
     try {
       const { accountId } = req.params;
+
+      if (!accountId) {
+        res.status(404).json({ error: 'AccountId not in params' });
+        return;
+      }
+
       const result = await pool.query(
         `SELECT 
           a.id, a.balance, a.account_number, a.status, a.created_at,
@@ -180,6 +186,12 @@ export class AccountController {
   static getAccount = async (req: any, res: Response): Promise<void> => {
     try {
       const accountId = req.account.id;
+
+      if (!accountId) {
+        res.status(404).json({ error: 'AccountId not found' });
+        return;
+      }
+
       const result = await pool.query(
         `SELECT 
           a.id, a.balance, a.account_number, a.status, a.created_at,
@@ -262,17 +274,13 @@ export class AccountController {
   static updateAccountById = async (req: Request, res: Response): Promise<void> => {
     try {
       const { accountId } = req.params;
-      const check = await pool.query(
-        `SELECT 
-          a.id, a.balance, a.account_number, a.status, a.created_at,
-          u.name, u.email, u.age, u.role,
-          at.type, at.daily_withdrawal_limit, at.daily_transfer_limit
-          FROM accounts a 
-          INNER JOIN users u ON a.user_id = u.id 
-          INNER JOIN account_types at ON a.account_type_id = at.id 
-        WHERE a.id = $1`,
-        [accountId]
-      );
+
+      if (!accountId) {
+        res.status(404).json({ error: 'AccountId not in params' });
+        return;
+      }
+
+      const check = await pool.query(`SELECT a.id FROM accounts a WHERE a.id = $1`, [accountId]);
 
       if (check.rows.length === 0) {
         res.status(404).json({ message: 'Account not found' });
@@ -280,80 +288,43 @@ export class AccountController {
       }
 
       const { account_type_id, status } = req.body;
-      if (!account_type_id || !status) {
-        res.status(400).json({
-          message: 'account_type_id and status are required',
-        });
-        return;
+
+      if (account_type_id) {
+        const existingAccountType = await pool.query(`SELECT id from account_types WHERE id = $1`, [account_type_id]);
+        if (existingAccountType.rows.length === 0) {
+          res.status(400).json({ message: 'This type not exists in table' });
+          return;
+        }
       }
 
-      const existingAccountType = await pool.query(`SELECT id from account_types WHERE id = $1`, [account_type_id]);
-      if (existingAccountType.rows.length === 0) {
-        res.status(400).json({
-          message: 'This type not exists in table',
-        });
-        return;
-      }
-
-      if (status !== 'active' && status !== 'blocked' && status !== 'closed') {
+      if (status && status !== 'active' && status !== 'blocked' && status !== 'closed') {
         res.status(400).json({ message: 'This status does not exist' });
         return;
       }
 
-      const result = await pool.query(
-        `UPDATE accounts SET account_type_id = $1, status = $2, updated_at = CURRENT_TIMESTAMP WHERE id = $3 RETURNING *`,
-        [account_type_id, status, accountId]
-      );
+      const fields = [];
+      const values = [];
+      let idx = 1;
 
-      res.json({
-        message: 'Account updated successfully',
-        account: result.rows[0],
-      });
-    } catch (error) {
-      res.status(500).json({
-        message: 'Error updating account',
-        error: error instanceof Error ? error.message : String(error),
-      });
-    }
-  };
-
-  static updateAccount = async (req: any, res: Response): Promise<void> => {
-    try {
-      const accountId = req.account.id;
-      const check = await pool.query(
-        `SELECT 
-          a.id, a.balance, a.account_number, a.status, a.created_at,
-          u.name, u.email, u.age, u.role,
-          at.type, at.daily_withdrawal_limit, at.daily_transfer_limit
-          FROM accounts a 
-          INNER JOIN users u ON a.user_id = u.id 
-          INNER JOIN account_types at ON a.account_type_id = at.id 
-        WHERE a.id = $1`,
-        [accountId]
-      );
-
-      if (check.rows.length === 0) {
-        res.status(404).json({ message: 'Account not found' });
+      if (account_type_id) {
+        fields.push(`account_type_id = $${idx++}`);
+        values.push(account_type_id);
+      }
+      if (status) {
+        fields.push(`status = $${idx++}`);
+        values.push(status);
+      }
+      if (fields.length === 0) {
+        res.status(400).json({ message: 'No fields to update' });
         return;
       }
+      fields.push(`updated_at = CURRENT_TIMESTAMP`);
 
-      const { status } = req.body;
-      if (!status) {
-        res.status(400).json({
-          message: 'status are required',
-        });
-        return;
-      }
+      values.push(accountId);
 
-      if (status !== 'active' && status !== 'blocked' && status !== 'closed') {
-        res.status(400).json({ message: 'This status does not exist' });
-        return;
-      }
+      const query = `UPDATE accounts SET ${fields.join(', ')} WHERE id = $${idx} RETURNING *`;
+      const result = await pool.query(query, values);
 
-      const result = await pool.query(
-        `UPDATE accounts SET status = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING *`,
-        [status, accountId]
-      );
       res.json({
         message: 'Account updated successfully',
         account: result.rows[0],
@@ -369,6 +340,12 @@ export class AccountController {
   static deleteAccountById = async (req: Request, res: Response): Promise<void> => {
     try {
       const { accountId } = req.params;
+
+      if (!accountId) {
+        res.status(404).json({ error: 'AccountId not in params' });
+        return;
+      }
+
       const check = await pool.query(
         `SELECT 
           a.id, a.balance, a.account_number, a.status, a.created_at,
@@ -401,6 +378,12 @@ export class AccountController {
   static deleteAccount = async (req: any, res: Response): Promise<void> => {
     try {
       const accountId = req.account.id;
+
+      if (!accountId) {
+        res.status(404).json({ error: 'AccountId not found' });
+        return;
+      }
+
       const check = await pool.query(
         `SELECT 
           a.id, a.balance, a.account_number, a.status, a.created_at,
@@ -425,6 +408,251 @@ export class AccountController {
     } catch (error) {
       res.status(500).json({
         message: 'Error deleting account',
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+  };
+
+  static BlockAccountId = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { accountId } = req.params;
+
+      if (!accountId) {
+        res.status(404).json({ error: 'AccountId not in params' });
+        return;
+      }
+
+      const result = await pool.query(
+        `SELECT id, balance, account_number, status, created_at FROM accounts WHERE id = $1`,
+        [accountId]
+      );
+      const account = result.rows[0];
+
+      if (!account) {
+        res.status(404).json({ error: 'Account not found' });
+        return;
+      }
+
+      if (account.status === 'blocked') {
+        res.status(400).json({ error: 'This account is already blocked' });
+        return;
+      }
+
+      const result1 = await pool.query(
+        `UPDATE accounts SET status = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING *`,
+        ['blocked', accountId]
+      );
+      const updateAccount = result1.rows[0];
+
+      res.status(201).json({
+        message: 'Account blocked successfully',
+        account: {
+          id: account.id,
+          account_number: account.account_number,
+          status: updateAccount.status,
+        },
+      });
+    } catch (error) {
+      res.status(500).json({
+        message: 'Error blocking account',
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+  };
+
+  static CloseAccountId = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { accountId } = req.params;
+
+      if (!accountId) {
+        res.status(404).json({ error: 'AccountId not in params' });
+        return;
+      }
+
+      const result = await pool.query(
+        `SELECT id, balance, account_number, status, created_at FROM accounts WHERE id = $1`,
+        [accountId]
+      );
+      const account = result.rows[0];
+
+      if (!account) {
+        res.status(404).json({ error: 'Account not found' });
+        return;
+      }
+
+      if (account.status === 'closed' || account.status === 'blocked') {
+        res.status(400).json({ error: 'This account is already closed or is blocked!' });
+        return;
+      }
+
+      const result1 = await pool.query(
+        `UPDATE accounts SET status = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING *`,
+        ['closed', accountId]
+      );
+      const updateAccount = result1.rows[0];
+
+      res.status(201).json({
+        message: 'Account closed successfully',
+        account: {
+          id: account.id,
+          account_number: account.account_number,
+          status: updateAccount.status,
+        },
+      });
+    } catch (error) {
+      res.status(500).json({
+        message: 'Error closing account',
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+  };
+
+  static CloseAccount = async (req: any, res: Response): Promise<void> => {
+    try {
+      const accountId = req.account.id;
+
+      if (!accountId) {
+        res.status(404).json({ error: 'AccountId not found' });
+        return;
+      }
+
+      const result = await pool.query(
+        `SELECT id, balance, account_number, status, created_at FROM accounts WHERE id = $1`,
+        [accountId]
+      );
+      const account = result.rows[0];
+
+      if (!account) {
+        res.status(404).json({ error: 'Account not found' });
+        return;
+      }
+
+      if (account.status === 'closed') {
+        res.status(400).json({ error: 'This account is already closed!' });
+        return;
+      }
+
+      if (account.status === 'blocked') {
+        res.status(400).json({ error: 'You do not have permission for this action!' });
+        return;
+      }
+
+      const result1 = await pool.query(
+        `UPDATE accounts SET status = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING *`,
+        ['closed', accountId]
+      );
+      const updateAccount = result1.rows[0];
+
+      res.status(201).json({
+        message: 'Account closed successfully',
+        account: {
+          id: account.id,
+          account_number: account.account_number,
+          status: updateAccount.status,
+        },
+      });
+    } catch (error) {
+      res.status(500).json({
+        message: 'Error closing account',
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+  };
+
+  static ActiveAccountId = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { accountId } = req.params;
+
+      if (!accountId) {
+        res.status(404).json({ error: 'AccountId not found' });
+        return;
+      }
+
+      const result = await pool.query(
+        `SELECT id, balance, account_number, status, created_at FROM accounts WHERE id = $1`,
+        [accountId]
+      );
+      const account = result.rows[0];
+
+      if (!account) {
+        res.status(404).json({ error: 'Account not found' });
+        return;
+      }
+
+      if (account.status === 'active') {
+        res.status(400).json({ error: 'This account is already active!' });
+        return;
+      }
+
+      const result1 = await pool.query(
+        `UPDATE accounts SET status = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING *`,
+        ['active', accountId]
+      );
+      const updateAccount = result1.rows[0];
+
+      res.status(201).json({
+        message: 'Account activated successfully',
+        account: {
+          id: account.id,
+          account_number: account.account_number,
+          status: updateAccount.status,
+        },
+      });
+    } catch (error) {
+      res.status(500).json({
+        message: 'Error during account activation',
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+  };
+
+  static ActiveAccount = async (req: any, res: Response): Promise<void> => {
+    try {
+      const accountId = req.account.id;
+
+      if (!accountId) {
+        res.status(404).json({ error: 'AccountId not found' });
+        return;
+      }
+
+      const result = await pool.query(
+        `SELECT id, balance, account_number, status, created_at FROM accounts WHERE id = $1`,
+        [accountId]
+      );
+      const account = result.rows[0];
+
+      if (!account) {
+        res.status(404).json({ error: 'Account not found' });
+        return;
+      }
+
+      if (account.status === 'active') {
+        res.status(400).json({ error: 'This account is already active!' });
+        return;
+      }
+
+      if (account.status === 'blocked') {
+        res.status(400).json({ error: 'You do not have permission for this action!' });
+        return;
+      }
+
+      const result1 = await pool.query(
+        `UPDATE accounts SET status = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING *`,
+        ['active', accountId]
+      );
+      const updateAccount = result1.rows[0];
+
+      res.status(201).json({
+        message: 'Account activated successfully',
+        account: {
+          id: account.id,
+          account_number: account.account_number,
+          status: updateAccount.status,
+        },
+      });
+    } catch (error) {
+      res.status(500).json({
+        message: 'Error during account activation',
         error: error instanceof Error ? error.message : String(error),
       });
     }
