@@ -153,7 +153,7 @@ export class AccountController {
         res.status(404).json({ error: 'AccountId not in params' });
         return;
       }
-      
+
       const result = await pool.query(
         `SELECT 
           a.id, a.balance, a.account_number, a.status, a.created_at,
@@ -280,17 +280,7 @@ export class AccountController {
         return;
       }
 
-      const check = await pool.query(
-        `SELECT 
-          a.id, a.balance, a.account_number, a.status, a.created_at,
-          u.name, u.email, u.age, u.role,
-          at.type, at.daily_withdrawal_limit, at.daily_transfer_limit
-          FROM accounts a 
-          INNER JOIN users u ON a.user_id = u.id 
-          INNER JOIN account_types at ON a.account_type_id = at.id 
-        WHERE a.id = $1`,
-        [accountId]
-      );
+      const check = await pool.query(`SELECT a.id FROM accounts a WHERE a.id = $1`, [accountId]);
 
       if (check.rows.length === 0) {
         res.status(404).json({ message: 'Account not found' });
@@ -298,30 +288,44 @@ export class AccountController {
       }
 
       const { account_type_id, status } = req.body;
-      if (!account_type_id || !status) {
-        res.status(400).json({
-          message: 'account_type_id and status are required',
-        });
-        return;
+
+      // Validação dos campos individualmente
+      if (account_type_id) {
+        const existingAccountType = await pool.query(`SELECT id from account_types WHERE id = $1`, [account_type_id]);
+        if (existingAccountType.rows.length === 0) {
+          res.status(400).json({ message: 'This type not exists in table' });
+          return;
+        }
       }
 
-      const existingAccountType = await pool.query(`SELECT id from account_types WHERE id = $1`, [account_type_id]);
-      if (existingAccountType.rows.length === 0) {
-        res.status(400).json({
-          message: 'This type not exists in table',
-        });
-        return;
-      }
-
-      if (status !== 'active' && status !== 'blocked' && status !== 'closed') {
+      if (status && status !== 'active' && status !== 'blocked' && status !== 'closed') {
         res.status(400).json({ message: 'This status does not exist' });
         return;
       }
 
-      const result = await pool.query(
-        `UPDATE accounts SET account_type_id = $1, status = $2, updated_at = CURRENT_TIMESTAMP WHERE id = $3 RETURNING *`,
-        [account_type_id, status, accountId]
-      );
+      // Monta dinamicamente o update
+      const fields = [];
+      const values = [];
+      let idx = 1;
+
+      if (account_type_id) {
+        fields.push(`account_type_id = $${idx++}`);
+        values.push(account_type_id);
+      }
+      if (status) {
+        fields.push(`status = $${idx++}`);
+        values.push(status);
+      }
+      if (fields.length === 0) {
+        res.status(400).json({ message: 'No fields to update' });
+        return;
+      }
+      fields.push(`updated_at = CURRENT_TIMESTAMP`);
+
+      values.push(accountId);
+
+      const query = `UPDATE accounts SET ${fields.join(', ')} WHERE id = $${idx} RETURNING *`;
+      const result = await pool.query(query, values);
 
       res.json({
         message: 'Account updated successfully',
