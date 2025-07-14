@@ -289,7 +289,6 @@ export class AccountController {
 
       const { account_type_id, status } = req.body;
 
-      // Validação dos campos individualmente
       if (account_type_id) {
         const existingAccountType = await pool.query(`SELECT id from account_types WHERE id = $1`, [account_type_id]);
         if (existingAccountType.rows.length === 0) {
@@ -303,7 +302,6 @@ export class AccountController {
         return;
       }
 
-      // Monta dinamicamente o update
       const fields = [];
       const values = [];
       let idx = 1;
