@@ -98,7 +98,6 @@ export class AuthController {
 
       const newUser = result.rows[0];
 
-
       res.status(201).json({
         message: 'User registered successfully',
         user: {
@@ -120,7 +119,7 @@ export class AuthController {
   static getUser = async (req: any, res: Response): Promise<void> => {
     try {
       const userId = req.user.id;
-      
+
       if (!userId) {
         res.status(404).json({ error: 'userId not found' });
         return;
@@ -209,5 +208,66 @@ export class AuthController {
         error: error instanceof Error ? error.message : String(error),
       });
     }
+  };
+
+  static updateUserById = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { userId } = req.params;
+      if (!userId) {
+        res.status(400).json({ error: 'userId is missing on params' });
+        return;
+      }
+
+      const result = await pool.query(`SELECT * FROM users Where id = $1`, [userId]);
+      if (result.rows.length === 0) {
+        res.status(400).json({ error: 'this user not exists' });
+        return;
+      }
+
+      const user = result.rows[0];
+
+      const { name, email, age, password, role } = req.body;
+
+      if (name) {
+        if (name === user.name) {
+          res.status(400).json({ error: 'this is already the user name' });
+          return;
+        }
+      }
+
+      if (email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+          res.status(400).json({ message: 'Invalid email format' });
+          return;
+        }
+
+        const result_email = await pool.query(`SELECT * FROM users Where email = $1`, [email]);
+        if (result_email.rows.length != 0) {
+          res.status(400).json({ error: 'this email already have an account!' });
+          return;
+        }
+
+        if (email === user.email) {
+          res.status(400).json({ error: 'this email already belongs to this user' });
+          return;
+        }
+      }
+
+      if (age) {
+        if (age > 98 || age < 12) {
+          res.status(400).json({ message: 'Age must be between 12 and 98' });
+          return;
+        }
+
+        if (age === user.age) {
+          res.status(400).json({ error: 'this is already the user age' });
+        }
+      }
+
+      const fields = [];
+      const values = [];
+      let idx = 1;
+    } catch (error) {}
   };
 }
