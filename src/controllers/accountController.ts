@@ -486,7 +486,24 @@ export class AccountController {
         return;
       }
 
-      
+      const result = await pool.query(
+        `SELECT id, balance, account_number, status, created_at FROM accounts WHERE id = $1`,
+        [accountId]
+      );
+      const account = result.rows[0];
+
+      if (!account) {
+        res.status(404).json({ error: 'Account not found' });
+        return;
+      }
+
+      if (account.status === 'closed' || account.status === 'blocked') {
+        res.status(400).json({ error: 'This account is already closed or is blocked!' });
+        return;
+      }
+
+
+
     } catch (error) {}
   };
 }
