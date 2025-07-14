@@ -180,6 +180,12 @@ export class AccountController {
   static getAccount = async (req: any, res: Response): Promise<void> => {
     try {
       const accountId = req.account.id;
+
+      if (!accountId) {
+        res.status(404).json({ error: 'AccountId not found' });
+        return;
+      }
+
       const result = await pool.query(
         `SELECT 
           a.id, a.balance, a.account_number, a.status, a.created_at,
