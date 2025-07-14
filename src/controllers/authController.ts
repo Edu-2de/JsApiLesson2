@@ -120,6 +120,12 @@ export class AuthController {
   static getUser = async (req: any, res: Response): Promise<void> => {
     try {
       const userId = req.user.id;
+      
+      if (!userId) {
+        res.status(404).json({ error: 'userId not found' });
+        return;
+      }
+
       const result = await pool.query(
         `SELECT
           u.id, u.name, u.email, u.age, u.role, u.created_at, u.update_at
