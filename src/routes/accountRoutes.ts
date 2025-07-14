@@ -7,7 +7,7 @@ const router = Router();
 router.post('/login', AccountController.loginAccount);
 router.post('/register', AccountController.registerAccount);
 
-// -------- need login account -----------
+// -------- need login account or owner/admin -----------
 router.get('/myaccount', AccountMiddleware.authenticateToken, AccountController.getAccount);
 
 router.delete('/myaccount', AccountMiddleware.requireAdminOrOwner, AccountController.deleteAccount);
