@@ -145,6 +145,10 @@ export class TransactionsController {
       );
 
       const account = result.rows[0];
+      if(account.status != 'active'){
+        res.status(404).json({error: 'You need an active account to make transfers'});
+        return;
+      }
 
       const { amount, account_transfer } = req.body;
       if (!amount || !account_transfer) {
@@ -161,6 +165,10 @@ export class TransactionsController {
       }
 
       const account1 = result1.rows[0];
+      if(account1.status != 'active'){
+        res.status(404).json({error: 'This account you are trying to transfer is not active!'});
+        return;
+      }
 
       const fee = amount * (account.transfer_fee / 100);
       const amountFee = amount + fee;
