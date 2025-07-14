@@ -47,7 +47,7 @@ export class AccountController {
         res.status(401).json({
           message: 'Invalid account_number or password!',
         });
-        return; 
+        return;
       }
 
       const accountData = {
@@ -425,6 +425,53 @@ export class AccountController {
     } catch (error) {
       res.status(500).json({
         message: 'Error deleting account',
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+  };
+
+  static BlockAccountId = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { accountId } = req.params;
+
+      if(!accountId){
+        res.status(404).json({ error: 'AccountId not in params' });
+        return;
+      }
+
+      const result = await pool.query(
+        `SELECT id, balance, account_number, status, created_at FROM accounts WHERE id = $1`,
+        [accountId]
+      );
+      const account = result.rows[0];
+
+      if (!account) {
+        res.status(404).json({ error: 'Account not found' });
+        return;
+      }
+
+      if (account.status === 'blocked') {
+        res.status(400).json({ error: 'This account is already blocked' });
+        return;
+      }
+
+      const result1 = await pool.query(
+        `UPDATE accounts SET status = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING *`,
+        ['blocked', accountId]
+      )
+      const updateAccount = result1.rows[0]
+
+      res.status(201).json({
+        message: 'Account blocked successfully',
+        account:{
+          id: account.id,
+          account_number: account.account_number,
+          status: updateAccount.status
+        }
+      })
+    } catch (error) {
+      res.status(500).json({
+        message: 'Error blocking account',
         error: error instanceof Error ? error.message : String(error),
       });
     }
