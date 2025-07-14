@@ -434,7 +434,7 @@ export class AccountController {
     try {
       const { accountId } = req.params;
 
-      if(!accountId){
+      if (!accountId) {
         res.status(404).json({ error: 'AccountId not in params' });
         return;
       }
@@ -458,22 +458,35 @@ export class AccountController {
       const result1 = await pool.query(
         `UPDATE accounts SET status = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING *`,
         ['blocked', accountId]
-      )
-      const updateAccount = result1.rows[0]
+      );
+      const updateAccount = result1.rows[0];
 
       res.status(201).json({
         message: 'Account blocked successfully',
-        account:{
+        account: {
           id: account.id,
           account_number: account.account_number,
-          status: updateAccount.status
-        }
-      })
+          status: updateAccount.status,
+        },
+      });
     } catch (error) {
       res.status(500).json({
         message: 'Error blocking account',
         error: error instanceof Error ? error.message : String(error),
       });
     }
+  };
+
+  static CloseAccount = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { accountId } = req.params;
+
+      if (!accountId) {
+        res.status(404).json({ error: 'AccountId not in params' });
+        return;
+      }
+
+      
+    } catch (error) {}
   };
 }
