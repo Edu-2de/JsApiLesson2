@@ -262,6 +262,12 @@ export class AccountController {
   static updateAccountById = async (req: Request, res: Response): Promise<void> => {
     try {
       const { accountId } = req.params;
+
+      if (!accountId) {
+        res.status(404).json({ error: 'AccountId not in params' });
+        return;
+      }
+
       const check = await pool.query(
         `SELECT 
           a.id, a.balance, a.account_number, a.status, a.created_at,
@@ -305,61 +311,6 @@ export class AccountController {
         [account_type_id, status, accountId]
       );
 
-      res.json({
-        message: 'Account updated successfully',
-        account: result.rows[0],
-      });
-    } catch (error) {
-      res.status(500).json({
-        message: 'Error updating account',
-        error: error instanceof Error ? error.message : String(error),
-      });
-    }
-  };
-
-  static updateAccount = async (req: any, res: Response): Promise<void> => {
-    try {
-      const accountId = req.account.id;
-
-      if (!accountId) {
-        res.status(404).json({ error: 'AccountId not found' });
-        return;
-      }
-
-      const check = await pool.query(
-        `SELECT 
-          a.id, a.balance, a.account_number, a.status, a.created_at,
-          u.name, u.email, u.age, u.role,
-          at.type, at.daily_withdrawal_limit, at.daily_transfer_limit
-          FROM accounts a 
-          INNER JOIN users u ON a.user_id = u.id 
-          INNER JOIN account_types at ON a.account_type_id = at.id 
-        WHERE a.id = $1`,
-        [accountId]
-      );
-
-      if (check.rows.length === 0) {
-        res.status(404).json({ message: 'Account not found' });
-        return;
-      }
-
-      const { status } = req.body;
-      if (!status) {
-        res.status(400).json({
-          message: 'status are required',
-        });
-        return;
-      }
-
-      if (status !== 'active' && status !== 'blocked' && status !== 'closed') {
-        res.status(400).json({ message: 'This status does not exist' });
-        return;
-      }
-
-      const result = await pool.query(
-        `UPDATE accounts SET status = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING *`,
-        [status, accountId]
-      );
       res.json({
         message: 'Account updated successfully',
         account: result.rows[0],
