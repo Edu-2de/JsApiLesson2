@@ -218,10 +218,7 @@ export class AuthController {
         return;
       }
 
-      const result = await pool.query(
-        `SELECT * FROM users Where id = $1`,
-        [userId]
-      );
+      const result = await pool.query(`SELECT * FROM users Where id = $1`, [userId]);
       if (result.rows.length === 0) {
         res.status(400).json({ error: 'this user not exists' });
         return;
@@ -229,12 +226,32 @@ export class AuthController {
 
       const user = result.rows[0];
 
-      const { name, email, age, password, role} = req.body;
+      const { name, email, age, password, role } = req.body;
+      if (email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+          res.status(400).json({ message: 'Invalid email format' });
+          return;
+        }
+        
+        const result_email = await pool.query(`SELECT * FROM users Where email = $1`, [email]);
+        if (result_email.rows.length != 0) {
+          res.status(400).json({ error: 'this email already have an account!' });
+          return;
+        }
+
+        if (email === user.email) {
+          res.status(400).json({ error: 'this email already belongs to this user' });
+          return;
+        }
+      }
+
+      if (age) {
+      }
 
       const fields = [];
       const values = [];
       let idx = 1;
-
     } catch (error) {}
   };
 }
