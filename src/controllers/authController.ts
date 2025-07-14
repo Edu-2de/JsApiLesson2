@@ -154,6 +154,12 @@ export class AuthController {
   static getUserById = async (req: Request, res: Response): Promise<void> => {
     try {
       const { userId } = req.params;
+
+      if (!userId) {
+        res.status(404).json({ error: 'userId not in params' });
+        return;
+      }
+
       const result = await pool.query(
         `SELECT
           u.id, u.name, u.email, u.age, u.role, u.created_at, u.update_at
