@@ -227,6 +227,14 @@ export class AuthController {
       const user = result.rows[0];
 
       const { name, email, age, password, role } = req.body;
+
+      if (name) {
+        if (name === user.name) {
+          res.status(400).json({ error: 'this is already the user name' });
+          return;
+        }
+      }
+
       if (email) {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
@@ -252,7 +260,7 @@ export class AuthController {
           return;
         }
 
-        if (age === user.age){
+        if (age === user.age) {
           res.status(400).json({ error: 'this is already the user age' });
         }
       }
