@@ -80,15 +80,9 @@ export class TransactionsController {
 
       const accountId = req.account.id;
 
-      const result = await pool.query(
-        `SELECT 
-          a.id, a.account_type_id, a.balance, a.status
-          fees.withdrawal_fee
-          FROM accounts a
-          INNER JOIN interest_and_fees fees ON a.account_type_id = fees.id 
-        WHERE a.id = $1`,
-        [accountId]
-      );
+      const result = await pool.query(`SELECT id, account_type_id, balance, status FROM accounts WHERE id = $1`, [
+        accountId,
+      ]);
       const account = result.rows[0];
 
       const { deposit } = req.body;
@@ -97,13 +91,38 @@ export class TransactionsController {
         return;
       }
 
-      if(deposit === 0 || deposit < 0){
+      if (deposit === 0 || deposit < 0) {
         res.status(400).json({ error: 'deposit cannot be negative or equal to zero' });
         return;
       }
 
       const newBalance = account.balance + deposit;
-  
-    } catch (error) {}
+      const result1 = await pool.query(
+        `UPDATE accounts SET balance = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING *`,
+        [newBalance, accountId]
+      );
+      
+      const updateAccount = result1.rows[0];
+
+      const transaction_number = `006-${Date.now().toString().slice(-5)}-${Math.floor(Math.random() * 10)}`;
+      const result2 = await pool.query(
+        `INSERT INTO transactions (account_id, transaction_type, amount, reference_number, created_at) VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP) RETURNING *`,
+        [accountId, 'deposit', deposit, transaction_number]
+      );
+
+      const transition = result2.rows[0];
+
+      res.status(201).json({
+        message: 'Deposit successfully',
+        balance: updateAccount.balance,
+        type: transition.transaction_type,
+        amount: transition.amount,
+      });
+    } catch (error) {
+      res.status(500).json({
+        message: 'Error during deposit',
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
   };
 }
