@@ -516,6 +516,11 @@ export class AccountController {
           status: updateAccount.status,
         },
       });
-    } catch (error) {}
+    } catch (error) {
+      res.status(500).json({
+        message: 'Error closing account',
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
   };
 }
