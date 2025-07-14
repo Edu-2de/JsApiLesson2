@@ -219,7 +219,7 @@ export class AuthController {
       }
 
       const result = await pool.query(
-        `SELECT id, name, email, age, role, created_at, update_at FROM users Where id = $1`,
+        `SELECT * FROM users Where id = $1`,
         [userId]
       );
       if (result.rows.length === 0) {
@@ -228,7 +228,7 @@ export class AuthController {
       }
 
       const user = result.rows[0];
-      
+
     } catch (error) {}
   };
 }
