@@ -477,7 +477,7 @@ export class AccountController {
     }
   };
 
-  static CloseAccount = async (req: Request, res: Response): Promise<void> => {
+  static CloseAccountId = async (req: Request, res: Response): Promise<void> => {
     try {
       const { accountId } = req.params;
 
@@ -502,8 +502,20 @@ export class AccountController {
         return;
       }
 
+      const result1 = await pool.query(
+        `UPDATE accounts SET status = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING *`,
+        ['closed', accountId]
+      );
+      const updateAccount = result1.rows[0];
 
-
+      res.status(201).json({
+        message: 'Account closed successfully',
+        account: {
+          id: account.id,
+          account_number: account.account_number,
+          status: updateAccount.status,
+        },
+      });
     } catch (error) {}
   };
 }
