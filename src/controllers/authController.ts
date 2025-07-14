@@ -213,6 +213,22 @@ export class AuthController {
   static updateUserById = async (req: Request, res: Response): Promise<void> => {
     try {
       const { userId } = req.params;
+      if (!userId) {
+        res.status(400).json({ error: 'userId is missing on params' });
+        return;
+      }
+
+      const result = await pool.query(
+        `SELECT id, name, email, age, role, created_at, update_at FROM users Where id = $1`,
+        [userId]
+      );
+      if (result.rows.length === 0) {
+        res.status(400).json({ error: 'this user not exists' });
+        return;
+      }
+
+      const user = result.rows[0];
+      
     } catch (error) {}
   };
 }
