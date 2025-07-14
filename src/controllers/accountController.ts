@@ -148,6 +148,12 @@ export class AccountController {
   static getAccountById = async (req: Request, res: Response): Promise<void> => {
     try {
       const { accountId } = req.params;
+
+      if (!accountId) {
+        res.status(404).json({ error: 'AccountId not in params' });
+        return;
+      }
+      
       const result = await pool.query(
         `SELECT 
           a.id, a.balance, a.account_number, a.status, a.created_at,
