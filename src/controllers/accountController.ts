@@ -523,4 +523,56 @@ export class AccountController {
       });
     }
   };
+
+  static CloseAccount = async (req: any, res: Response): Promise<void> => {
+    try {
+      const accountId = req.account.id;
+
+      if (!accountId) {
+        res.status(404).json({ error: 'AccountId not found' });
+        return;
+      }
+
+      const result = await pool.query(
+        `SELECT id, balance, account_number, status, created_at FROM accounts WHERE id = $1`,
+        [accountId]
+      );
+      const account = result.rows[0];
+
+      if (!account) {
+        res.status(404).json({ error: 'Account not found' });
+        return;
+      }
+
+      if (account.status === 'closed') {
+        res.status(400).json({ error: 'This account is already closed!' });
+        return;
+      }
+
+      if (account.status === 'blocked') {
+        res.status(400).json({ error: 'This account is blocked, you not have permission for this action!' });
+        return;
+      }
+
+      const result1 = await pool.query(
+        `UPDATE accounts SET status = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING *`,
+        ['closed', accountId]
+      );
+      const updateAccount = result1.rows[0];
+
+      res.status(201).json({
+        message: 'Account closed successfully',
+        account: {
+          id: account.id,
+          account_number: account.account_number,
+          status: updateAccount.status,
+        },
+      });
+    } catch (error) {
+      res.status(500).json({
+        message: 'Error closing account',
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+  };
 }
