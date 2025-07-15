@@ -17,7 +17,7 @@ export class TransactionsController {
           a.id, a.account_type_id, a.balance, a.status
           fees.withdrawal_fee
           FROM accounts a
-          INNER JOIN interest_and_fees fees ON a.account_type_id = fees.id 
+          INNER JOIN interest_and_fees fees ON a. = fees.id 
         WHERE a.id = $1`,
         [accountId]
       );
@@ -50,7 +50,7 @@ export class TransactionsController {
       const transaction_number = `005-${Date.now().toString().slice(-5)}-${Math.floor(Math.random() * 10)}`;
 
       const result2 = await pool.query(
-        `INSERT INTO transactions (account_id, transaction_type, amount, reference_number, created_at) VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP) RETURNING *`,
+        `INSERT INTO transactions (account_id, transaction_type, withdrawal, reference_number, created_at) VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP) RETURNING *`,
         [accountId, 'withdrawal', totalWithdrawal, transaction_number]
       );
 
@@ -60,8 +60,8 @@ export class TransactionsController {
       res.status(201).json({
         message: 'Withdrawal successfully',
         balance: newBalance_result.balance,
-        transaction: transaction,
-        fee: newBalance_result.withdrawal_fee,
+        transaction: 'withdrawal',
+        fee: fee,
       });
     } catch (error) {
       res.status(500).json({

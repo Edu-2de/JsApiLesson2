@@ -75,7 +75,7 @@ describe('TransactionsController', () => {
       mockReq.account = { id: 1 };
       const mockAccount = {
         id: 1,
-        balance: 10.00,
+        balance: 10.0,
         account_number: '001-12345-6',
         status: 'blocked',
         user: {
@@ -89,26 +89,28 @@ describe('TransactionsController', () => {
           daily_withdrawal_limit: 1000.0,
           daily_transfer_limit: 5000.0,
         },
-        withdrawal_fee:1.00
+        withdrawal_fee: 1.0,
       };
 
       mockPool.query.mockResolvedValueOnce({ rows: [mockAccount] });
 
-      mockReq.body = { withdrawal: 10.00 };
+      mockReq.body = { withdrawal: 10.0 };
 
       await TransactionsController.withdrawal(mockReq, mockRes);
 
       expect(mockRes.status).toHaveBeenCalledWith(400);
       expect(mockRes.json).toHaveBeenCalledWith({ error: 'withdrawal is bigger than balance' });
     });
-    
-    it('should be return 400 if withdrawal is bigger than balance', async () => {
+
+    it('should return success response', async () => {
       mockReq.account = { id: 1 };
       const mockAccount = {
         id: 1,
-        balance: 10.00,
+        balance: 10.0,
         account_number: '001-12345-6',
         status: 'blocked',
+        account_type_id: 1,
+        withdrawal_fee: 1.0,
         user: {
           name: 'Miguel',
           email: 'miguel@gmail.com',
@@ -116,21 +118,51 @@ describe('TransactionsController', () => {
           role: 'user',
         },
         account_type: {
+          id: 1,
           type: 'current',
           daily_withdrawal_limit: 1000.0,
           daily_transfer_limit: 5000.0,
-        },
-        withdrawal_fee:1.00
+        }
       };
+
+      const mockFee = {
+
+      }
 
       mockPool.query.mockResolvedValueOnce({ rows: [mockAccount] });
 
-      mockReq.body = { withdrawal: 10.00 };
+      mockReq.body = { withdrawal: 5.0 };
+
+      mockPool.query.mockResolvedValueOnce({
+        rows: [
+          {
+            balance: 4.5,
+            updated_at: '2025',
+          },
+        ],
+      });
+
+      mockPool.query.mockResolvedValueOnce({
+        rows: [
+          {
+            account_id: 1,
+            transaction_type: 'withdrawal',
+            amount: 5.0,
+            reference_number: '005-2025',
+            created_at: '2025',
+          },
+        ],
+      });
 
       await TransactionsController.withdrawal(mockReq, mockRes);
 
-      expect(mockRes.status).toHaveBeenCalledWith(400);
-      expect(mockRes.json).toHaveBeenCalledWith({ error: 'withdrawal is bigger than balance' });
+      expect(mockRes.status).toHaveBeenCalledWith(201);
+      expect(mockRes.json).toHaveBeenCalledWith({
+        message: 'Withdrawal successfully',
+        balance: 4.5,
+        transaction: 'withdrawal',
+        fee: 0.05,
+      });
     });
   });
 });
