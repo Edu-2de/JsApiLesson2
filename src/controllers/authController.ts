@@ -228,11 +228,9 @@ export class AuthController {
 
       const { name, email, age, password, role } = req.body;
 
-      if (name) {
-        if (name === user.name) {
-          res.status(400).json({ error: 'this is already the user name' });
-          return;
-        }
+      if (name && name === user.name) {
+        res.status(400).json({ error: 'this is already the user name' });
+        return;
       }
 
       if (email) {
@@ -276,6 +274,11 @@ export class AuthController {
           res.status(400).json({ error: 'this is already the user password' });
           return;
         }
+      }
+
+      if (role && role !== 'full_access' && role !== 'limit_access' && role !== 'user') {
+        res.status(400).json({ message: 'This role does not exist' });
+        return;
       }
 
       const fields = [];
