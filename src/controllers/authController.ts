@@ -304,6 +304,11 @@ export class AuthController {
         fields.push(`password = $${idx++}`);
         values.push(password);
       }
+
+      if (role) {
+        fields.push(`role = $${idx++}`);
+        values.push(role);
+      }
     } catch (error) {}
   };
 }
