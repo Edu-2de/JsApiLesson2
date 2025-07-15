@@ -1,11 +1,12 @@
-import express from "express";
-import cors from "cors";
-import helmet from "helmet";
-import dotenv from "dotenv";
-import { setupDatabase, testConnection } from "./database/setup";
+import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import dotenv from 'dotenv';
+import { setupDatabase, testConnection } from './database/setup';
 
-import accountRoutes from "./routes/accountRoutes";
-import authRoutes from "./routes/authRoutes";
+import accountRoutes from './routes/accountRoutes';
+import authRoutes from './routes/authRoutes';
+import transactionsRoutes from './routes/transactionsRoutes';
 
 dotenv.config();
 const app = express();
@@ -16,26 +17,27 @@ app.use(cors());
 app.use(express.json());
 
 const startServer = async () => {
-    try {
-        console.log("🔧 Starting server...");
+  try {
+    console.log('🔧 Starting server...');
 
-        await testConnection();
-        console.log("✅ Database connection successful");
+    await testConnection();
+    console.log('✅ Database connection successful');
 
-        await setupDatabase();
-        console.log("✅ Database setup completed");
+    await setupDatabase();
+    console.log('✅ Database setup completed');
 
-        app.use("/account", accountRoutes);
-        app.use("/user", authRoutes);
+    app.use('/account', accountRoutes);
+    app.use('/user', authRoutes);
+    app.use('/transaction', transactionsRoutes);
 
-        app.listen(PORT, () => {
-        console.log(`Server running on port ${PORT}`);
-        console.log(`Test DB: http://localhost:${PORT}/test-db`);
-        });
-    } catch (error) {
-        console.error("❌ Failed to start server:", error);
-        process.exit(1);
-    }
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+      console.log(`Test DB: http://localhost:${PORT}/test-db`);
+    });
+  } catch (error) {
+    console.error('❌ Failed to start server:', error);
+    process.exit(1);
+  }
 };
 
 startServer();
