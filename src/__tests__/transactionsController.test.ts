@@ -29,5 +29,16 @@ describe('TransactionsController', () => {
     jest.clearAllMocks();
   });
 
-  describe('')
+  describe('withdrawal', () => {
+    it('should be return 400 if withdrawal amount is missing', async () => {
+      mockReq.account = { id: 1 };
+
+      mockPool.query.mockResolvedValueOnce({ rows: [] });
+
+      await TransactionsController.withdrawal(mockReq, mockRes);
+
+      expect(mockRes.status).toHaveBeenCalledWith(400);
+      expect(mockRes.json).toHaveBeenCalledWith({ error: 'withdrawal is missing' });
+    });
+  });
 });
