@@ -165,8 +165,25 @@ describe('TransactionsController', () => {
   });
   describe('deposit', () => {
     it('should be return 400 if deposit is missing', async () => {
-      mockReq.account = { userId: 1 };
-      
+      mockReq.account = { id: 1 };
+
+      mockPool.query.mockResolvedValueOnce({ rows: [] });
+
+      await TransactionsController.deposit(mockReq, mockRes);
+
+      expect(mockRes.status).toHaveBeenCalledWith(400);
+      expect(mockRes.json).toHaveBeenCalledWith({ error: 'deposit is missing' });
+    });
+
+    it('should be return 400 if deposit is negative or equal to zero', async () => {
+      mockReq.account = { id: 1 };
+
+      mockPool.query.mockResolvedValueOnce({ rows: [] });
+
+      await TransactionsController.deposit(mockReq, mockRes);
+
+      expect(mockRes.status).toHaveBeenCalledWith(400);
+      expect(mockRes.json).toHaveBeenCalledWith({ error: 'deposit is missing' });
     });
   });
 });
