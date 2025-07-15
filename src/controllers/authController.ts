@@ -319,11 +319,11 @@ export class AuthController {
 
       values.push(userId);
 
-      const query = `UPDATE accounts SET ${fields.join(', ')} WHERE id = $${idx} RETURNING *`;
+      const query = `UPDATE users SET ${fields.join(', ')} WHERE id = $${idx} RETURNING *`;
       const result1 = await pool.query(query, values);
 
       res.json({
-        message: 'Account updated successfully',
+        message: 'User updated successfully',
         account: result1.rows[0],
       });
     } catch (error) {
