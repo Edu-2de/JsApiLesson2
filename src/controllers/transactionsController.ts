@@ -17,11 +17,15 @@ export class TransactionsController {
           a.id, a.account_type_id, a.balance, a.status
           fees.withdrawal_fee
           FROM accounts a
-          INNER JOIN interest_and_fees fees ON a.account_type_id = fees.id 
+          INNER JOIN interest_and_fees fees ON a. = fees.id 
         WHERE a.id = $1`,
         [accountId]
       );
       const account = result.rows[0];
+
+      if (account.status != 'active') {
+        res.status(400).json({ error: 'The account must be active for this action' });
+      }
 
       const { withdrawal } = req.body;
       if (!withdrawal) {
@@ -30,7 +34,7 @@ export class TransactionsController {
       }
 
       if (withdrawal === 0 || withdrawal < 0) {
-        res.status(400).json({ error: 'withdrawal cannot be negative or equal to zero ' });
+        res.status(400).json({ error: 'withdrawal cannot be negative or equal to zero' });
         return;
       }
 
@@ -50,7 +54,7 @@ export class TransactionsController {
       const transaction_number = `005-${Date.now().toString().slice(-5)}-${Math.floor(Math.random() * 10)}`;
 
       const result2 = await pool.query(
-        `INSERT INTO transactions (account_id, transaction_type, amount, reference_number, created_at) VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP) RETURNING *`,
+        `INSERT INTO transactions (account_id, transaction_type, withdrawal, reference_number, created_at) VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP) RETURNING *`,
         [accountId, 'withdrawal', totalWithdrawal, transaction_number]
       );
 
@@ -60,8 +64,8 @@ export class TransactionsController {
       res.status(201).json({
         message: 'Withdrawal successfully',
         balance: newBalance_result.balance,
-        transaction: transaction,
-        fee: newBalance_result.withdrawal_fee,
+        transaction: 'withdrawal',
+        fee: fee,
       });
     } catch (error) {
       res.status(500).json({
@@ -84,6 +88,10 @@ export class TransactionsController {
         accountId,
       ]);
       const account = result.rows[0];
+
+      if (account.status != 'active') {
+        res.status(400).json({ error: 'The account must be active for this action' });
+      }
 
       const { deposit } = req.body;
       if (!deposit) {
@@ -145,8 +153,8 @@ export class TransactionsController {
       );
 
       const account = result.rows[0];
-      if(account.status != 'active'){
-        res.status(404).json({error: 'You need an active account to make transfers'});
+      if (account.status != 'active') {
+        res.status(404).json({ error: 'You need an active account to make transfers' });
         return;
       }
 
@@ -165,8 +173,8 @@ export class TransactionsController {
       }
 
       const account1 = result1.rows[0];
-      if(account1.status != 'active'){
-        res.status(404).json({error: 'This account you are trying to transfer is not active!'});
+      if (account1.status != 'active') {
+        res.status(404).json({ error: 'This account you are trying to transfer is not active!' });
         return;
       }
 
@@ -208,13 +216,13 @@ export class TransactionsController {
 
       res.status(201).json({
         message: 'transfer successfully',
-        shipping_account : accountId,
+        shipping_account: accountId,
         destination_account: account_transfer,
         amount: amount,
         fee: fee_value,
-        shipping_account_balance : newBalance,
-        destination_account_balance : newBalance1
-      })
+        shipping_account_balance: newBalance,
+        destination_account_balance: newBalance1,
+      });
     } catch (error) {
       res.status(500).json({
         message: 'Error during transfer',
