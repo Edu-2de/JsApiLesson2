@@ -1,159 +1,192 @@
 # JsApiLesson2
 
-## Descrição
+## Overview
 
-Este projeto é uma aplicação fullstack de exemplo, composta por um backend em Node.js com Express e Prisma (conectado ao PostgreSQL) e um frontend em React (Next.js) com Tailwind CSS. O objetivo é demonstrar a estrutura de um sistema moderno de autenticação, cadastro de usuários e exibição de produtos em um carrossel.
-
----
-
-## Tecnologias Utilizadas
-
-### Backend
-- **Node.js**
-- **Express**
-- **Prisma ORM**
-- **PostgreSQL**
-- **JWT (jsonwebtoken)**
-- **bcrypt**
-- **CORS**
-
-### Frontend
-- **React (Next.js)**
-- **Tailwind CSS**
-- **react-icons**
+JsApiLesson2 is a RESTful API for managing users, accounts, and financial transactions (withdrawals, deposits, transfers) in a banking system. The project is built with Node.js, Express, and PostgreSQL, featuring authentication, authorization, and robust business logic for account operations.
 
 ---
 
-## Estrutura de Pastas
+## Features
 
-```
-backend/
-  src/
-    controllers/
-      authController.js
-    models/
-      User.js
-    routes/
-      authRoutes.js
-    app.js
-  prisma/
-    schema.prisma
-  .env
-frontend/
-  src/
-    components/
-      Header.tsx
-      Hero.tsx
-      ProductsCarrousel.tsx
-    app/
-      page.tsx
-  tailwind.config.js
-  ...
-```
+- **User Management**
+  - Register, login, update, and delete users
+  - Password hashing with bcrypt
+  - Role-based access control (user, admin)
+
+- **Account Management**
+  - Register, update, block, close, and activate accounts
+  - Account types with limits and fees
+  - Admin and owner access controls
+
+- **Transactions**
+  - Withdrawals with fee calculation and balance validation
+  - Deposits
+  - Transfers between accounts with fee and double balance update
+  - Transaction history
+
+- **Authentication & Authorization**
+  - JWT-based authentication
+  - Middleware for protected routes and role checks
+
+- **Database**
+  - PostgreSQL schema with foreign keys and constraints
+  - Safe deletion rules (`ON DELETE SET NULL` for historical integrity)
+
+- **Testing**
+  - Jest unit tests for controllers and business logic
+
+- **Scripts**
+  - Password hash generator (`scripts/generatePasswords.js`)
 
 ---
 
-## Como rodar o projeto
+## Getting Started
 
-### Pré-requisitos
+### Prerequisites
 
-- Node.js (v18+)
+- Node.js (v18+ recommended)
 - PostgreSQL
-- npm
 
-### 1. Clone o repositório
+### Installation
 
-```
-git clone https://github.com/seu-usuario/JsApiLesson2.git
-cd JsApiLesson2
-```
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/yourusername/JsApiLesson2.git
+   cd JsApiLesson2
+   ```
 
-### 2. Configuração do Backend
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-#### Instale as dependências
+3. **Configure environment variables**
 
-```
-cd backend
-npm install
-```
+   Create a `.env` file in the root directory:
+   ```
+   DB_HOST=localhost
+   DB_PORT=5432
+   DB_USER=your_db_user
+   DB_PASSWORD=your_db_password
+   DB_NAME=your_db_name
+   JWT_SECRET=your_jwt_secret
+   ```
 
-#### Configure o banco de dados
+4. **Set up the database**
 
-- Crie um banco PostgreSQL.
-- Copie o arquivo `.env.example` para `.env` e configure a variável `DATABASE_URL`:
-
-```
-DATABASE_URL="postgresql://usuario:senha@localhost:5432/nomedobanco"
-JWT_SECRET="sua_chave_secreta"
-```
-
-#### Configure o Prisma
-
-```
-npx prisma migrate dev --name init
-```
-
-#### Inicie o servidor
-
-```
-npm run dev
-```
-
-O backend estará rodando em `http://localhost:4000`.
+   - Run the SQL schema:
+     ```bash
+     psql -U your_db_user -d your_db_name -f src/database/sql/schema.sql
+     ```
 
 ---
 
-### 3. Configuração do Frontend
+## Usage
 
-Abra outro terminal e vá para a pasta do frontend:
+### Start the server
 
-```
-cd ../frontend
-npm install
-```
-
-#### Inicie o frontend
-
-```
-npm run dev
+```bash
+npm start
 ```
 
-O frontend estará rodando em `http://localhost:3000`.
+### API Endpoints
+
+#### Auth Routes (`/auth`)
+- `POST /auth/login` — User login
+- `POST /auth/register` — User registration
+- `GET /auth/` — Get own user info (auth required)
+- `PATCH /auth/` — Update own user info (auth required)
+- `DELETE /auth/` — Delete own user (auth required)
+- `GET /auth/admin/:userId` — Get user by ID (admin only)
+- `PATCH /auth/admin/:userId` — Update user by ID (admin only)
+- `DELETE /auth/admin/:userId` — Delete user by ID (admin only)
+
+#### Account Routes (`/account`)
+- `POST /account/login` — Account login
+- `POST /account/register` — Account registration
+- `GET /account/myaccount` — Get own account info (auth required)
+- `PATCH /account/myaccount/close` — Close own account (owner/admin)
+- `PATCH /account/myaccount/active` — Activate own account (owner/admin)
+- `DELETE /account/myaccount` — Delete own account (owner/admin)
+- `GET /account/admin/:accountId` — Get account by ID (admin only)
+- `PATCH /account/admin/:accountId` — Update account by ID (admin only)
+- `PATCH /account/admin/block/:accountId` — Block account (admin only)
+- `PATCH /account/admin/close/:accountId` — Close account (admin only)
+- `PATCH /account/admin/active/:accountId` — Activate account (admin only)
+- `DELETE /account/admin/:accountId` — Delete account by ID (admin only)
+- `GET /account/admin/all` — Get all accounts (admin only)
+
+#### Transactions Routes (`/transactions`)
+- `POST /transactions/withdrawal` — Withdraw from account (auth required)
+- `POST /transactions/deposit` — Deposit to account (auth required)
+- `POST /transactions/transfer` — Transfer between accounts (auth required)
 
 ---
 
-## Funcionalidades
+## Scripts
 
-- Cadastro e login de usuários com autenticação JWT
-- Hash de senha com bcrypt
-- Carrossel de produtos com navegação infinita
-- Interface responsiva e clean com Tailwind CSS
-- Separação clara de responsabilidades (controllers, models, routes, services, utils)
+### Generate Password Hashes
 
----
-
-## Endpoints principais (Backend)
-
-- `POST /api/auth/register` — Cadastro de usuário
-- `POST /api/auth/login` — Login de usuário
+Use the script to generate bcrypt hashes for passwords:
+```bash
+node scripts/generatePasswords.js
+```
 
 ---
 
-## Scripts úteis
+## Testing
 
-- `npm run dev` — Inicia o servidor em modo desenvolvimento (nodemon)
-- `npx prisma studio` — Interface visual para o banco de dados Prisma
-
----
-
-## Observações 
-
-- Certifique-se de que o banco de dados está rodando antes de iniciar o backend.
-- Para adicionar mais modelos/tabelas, edite o arquivo `prisma/schema.prisma` e rode `npx prisma migrate dev`.
-- O frontend consome a API do backend para autenticação e exibição de produtos.
+Run unit tests with Jest:
+```bash
+npm test
+```
 
 ---
 
-## Licença
+## Project Structure
 
-Este projeto é apenas para fins educacionais e recreativos
+```
+src/
+  controllers/         # Business logic for users, accounts, transactions
+  middleware/          # Auth and account middlewares
+  routes/              # API route definitions
+  database/
+    sql/               # SQL schema and seed files
+  __tests__/           # Jest unit tests
+scripts/
+  generatePasswords.js # Password hash generator
+.env                   # Environment variables
+```
+
+---
+
+## Security Notes
+
+- Passwords are hashed with bcrypt before storing.
+- JWT is used for authentication.
+- Role-based access ensures only authorized actions are allowed.
+- Database constraints prevent orphaned records and ensure data integrity.
+
+---
+
+## License
+
+MIT
+
+---
+
+## Author
+
+Your Name — [your.email@example.com](mailto:your.email@example.com)
+
+---
+
+## Contributing
+
+Pull requests are welcome! For major changes, please open an issue first to discuss what you would like to change.
+
+---
+
+## Contact
+
+For questions or support, open an issue or contact the author.
