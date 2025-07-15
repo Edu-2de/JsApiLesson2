@@ -660,13 +660,13 @@ describe('AccountController', () => {
     });
   });
 
-  describe('BlockAccountId', () => {
+  describe('blockAccountId', () => {
     it('should be return 404 if account not exists', async () => {
       mockReq.params = { accountId: 1 };
 
       mockPool.query.mockResolvedValueOnce({ rows: [] });
 
-      await AccountController.BlockAccountId(mockReq, mockRes);
+      await AccountController.blockAccountId(mockReq, mockRes);
 
       expect(mockRes.status).toHaveBeenCalledWith(404);
       expect(mockRes.json).toHaveBeenCalledWith({ error: 'Account not found' });
@@ -694,7 +694,7 @@ describe('AccountController', () => {
 
       mockPool.query.mockResolvedValueOnce({ rows: [mockAccount] });
 
-      await AccountController.BlockAccountId(mockReq, mockRes);
+      await AccountController.blockAccountId(mockReq, mockRes);
 
       expect(mockRes.status).toHaveBeenCalledWith(400);
       expect(mockRes.json).toHaveBeenCalledWith({ error: 'This account is already blocked' });
@@ -730,7 +730,7 @@ describe('AccountController', () => {
         ],
       });
 
-      await AccountController.BlockAccountId(mockReq, mockRes);
+      await AccountController.blockAccountId(mockReq, mockRes);
 
       expect(mockRes.status).toHaveBeenCalledWith(201);
       expect(mockRes.json).toHaveBeenCalledWith({
@@ -738,9 +738,22 @@ describe('AccountController', () => {
         account: {
           id: 1,
           status: 'blocked',
-          account_number: "001-12345-6"
+          account_number: '001-12345-6',
         },
       });
+    });
+  });
+
+  describe('closeAccountId', () => {
+    it('should be return 404 if account not exists', async () => {
+      mockReq.params = { accountId: 1 };
+
+      mockPool.query.mockResolvedValueOnce({ rows: [] });
+
+      await AccountController.closeAccountId(mockReq, mockRes);
+
+      expect(mockRes.status).toHaveBeenCalledWith(404);
+      expect(mockRes.json).toHaveBeenCalledWith({ error: 'Account not found' });
     });
   });
 });
