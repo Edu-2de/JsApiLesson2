@@ -454,4 +454,33 @@ export class AuthController {
       });
     }
   };
+
+  static deleteUserById = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { userId } = req.params;
+      if (!userId) {
+        res.status(400).json({ error: 'userId is missing on params' });
+        return;
+      }
+
+      const result = await pool.query(`SELECT * FROM users WHERE id = $1`, [userId]);
+      if (result.rows.length === 0) {
+        res.status(404).json({ error: 'user not found in database' });
+        return;
+      }
+
+      const user = result.rows[0];
+      const result1 = await pool.query(`DELETE FROM users WHERE id = $1`);
+
+      res.status(200).json({
+        message: 'User deleted successfully',
+        user: user,
+      });
+    } catch (error) {
+      res.status(500).json({
+        message: 'Error deleting user',
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+  };
 }
