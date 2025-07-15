@@ -30,7 +30,7 @@ export class TransactionsController {
       }
 
       if (withdrawal === 0 || withdrawal < 0) {
-        res.status(400).json({ error: 'withdrawal cannot be negative or equal to zero ' });
+        res.status(400).json({ error: 'withdrawal cannot be negative or equal to zero' });
         return;
       }
 

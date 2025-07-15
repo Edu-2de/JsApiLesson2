@@ -63,7 +63,7 @@ describe('TransactionsController', () => {
 
       mockPool.query.mockResolvedValueOnce({ rows: [mockAccount] });
 
-      mockReq.body = { withdrawal: 0 };
+      mockReq.body = { withdrawal: -1 };
 
       await TransactionsController.withdrawal(mockReq, mockRes);
 
