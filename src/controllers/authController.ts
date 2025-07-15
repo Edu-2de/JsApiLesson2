@@ -314,6 +314,23 @@ export class AuthController {
         res.status(400).json({ message: 'No fields to update' });
         return;
       }
-    } catch (error) {}
+
+      fields.push(`updated_at = CURRENT_TIMESTAMP`);
+
+      values.push(userId);
+
+      const query = `UPDATE accounts SET ${fields.join(', ')} WHERE id = $${idx} RETURNING *`;
+      const result1 = await pool.query(query, values);
+
+      res.json({
+        message: 'Account updated successfully',
+        account: result1.rows[0],
+      });
+    } catch (error) {
+      res.status(500).json({
+        message: 'Error updating user',
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
   };
 }
