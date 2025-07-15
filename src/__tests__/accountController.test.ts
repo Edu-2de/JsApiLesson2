@@ -998,7 +998,14 @@ describe('AccountController', () => {
 
   describe('activeAccount', () => {
     it('should be return 404 if account not exists', async () => {
-      
+      mockReq.account = { id: 1 };
+
+      mockPool.query.mockResolvedValueOnce({ rows: [] });
+
+      await AccountController.activeAccount(mockReq, mockRes);
+
+      expect(mockRes.status).toHaveBeenCalledWith(404);
+      expect(mockRes.json).toHaveBeenCalledWith({ error: 'Account not found' });
     });
   });
 });
