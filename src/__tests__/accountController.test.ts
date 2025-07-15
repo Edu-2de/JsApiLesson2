@@ -1008,7 +1008,7 @@ describe('AccountController', () => {
       expect(mockRes.json).toHaveBeenCalledWith({ error: 'Account not found' });
     });
 
-    it('should be return 400 if account is already active!', async () => {
+    it('should be return 400 if account is already active', async () => {
       mockReq.account = { id: 1 };
       const mockAccount = {
         id: 1,
@@ -1034,6 +1034,34 @@ describe('AccountController', () => {
 
       expect(mockRes.status).toHaveBeenCalledWith(400);
       expect(mockRes.json).toHaveBeenCalledWith({ error: 'This account is already active!' });
+    });
+
+    it('should be return 400 if account is blocked', async () => {
+      mockReq.account = { id: 1 };
+      const mockAccount = {
+        id: 1,
+        balance: 0.0,
+        account_number: '001-12345-6',
+        status: 'blocked',
+        user: {
+          name: 'Miguel',
+          email: 'miguel@gmail.com',
+          age: 20,
+          role: 'user',
+        },
+        account_type: {
+          type: 'current',
+          daily_withdrawal_limit: 1000.0,
+          daily_transfer_limit: 5000.0,
+        },
+      };
+
+      mockPool.query.mockResolvedValueOnce({ rows: [mockAccount] });
+
+      await AccountController.activeAccount(mockReq, mockRes);
+
+      expect(mockRes.status).toHaveBeenCalledWith(400);
+      expect(mockRes.json).toHaveBeenCalledWith({ error: 'You do not have permission for this action!' });
     });
   });
 });
