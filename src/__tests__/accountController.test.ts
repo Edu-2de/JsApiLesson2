@@ -417,7 +417,7 @@ describe('AccountController', () => {
       expect(mockRes.json).toHaveBeenCalledWith({ message: 'Account not found' });
     });
 
-    it('should be return 400 if account_type_id or status is missing', async () => {
+    it('should be return 400 if if there are no fields to update', async () => {
       mockReq.params = { accountId: '1' };
 
       const mockAccount = {
@@ -440,12 +440,12 @@ describe('AccountController', () => {
 
       mockPool.query.mockResolvedValueOnce({ rows: [mockAccount] });
 
-      mockReq.body = { account_type_id: 1 };
+      mockReq.body = { a: 1 };
 
       await AccountController.updateAccountById(mockReq, mockRes);
 
       expect(mockRes.status).toHaveBeenCalledWith(400);
-      expect(mockRes.json).toHaveBeenCalledWith({ message: 'account_type_id and status are required' });
+      expect(mockRes.json).toHaveBeenCalledWith({ message: 'No fields to update' });
     });
 
     it('should be return 400 if account_type_id not exists', async () => {
