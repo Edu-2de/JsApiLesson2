@@ -309,6 +309,11 @@ export class AuthController {
         fields.push(`role = $${idx++}`);
         values.push(role);
       }
+
+      if (fields.length === 0) {
+        res.status(400).json({ message: 'No fields to update' });
+        return;
+      }
     } catch (error) {}
   };
 }
