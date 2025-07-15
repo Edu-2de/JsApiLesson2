@@ -10,8 +10,12 @@ router.post('/register', AuthController.register);
 // -------- need login account or owner/admin access -----------
 router.get('/profile', AuthMiddleware.authenticateToken ,AuthController.getUser);
 
+router.patch('/update', AuthMiddleware.authenticateToken, AuthController.updateUser);
+
 // -------- need admin access -----------
 router.get('/admin/:userId', AuthMiddleware.requireAdmin, AuthController.getUserById);
+
+router.patch('/admin/update/:userId', AuthMiddleware.requireAdmin, AuthController.updateUserById)
 
 
 export default router;
