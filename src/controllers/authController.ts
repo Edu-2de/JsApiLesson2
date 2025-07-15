@@ -336,4 +336,121 @@ export class AuthController {
       });
     }
   };
+
+  static updateUser = async (req: any, res: Response): Promise<void> => {
+    try {
+      const userId = req.user.id;
+      if (!userId) {
+        res.status(400).json({ error: 'userId is missing on params' });
+        return;
+      }
+
+      const result = await pool.query(`SELECT * FROM users Where id = $1`, [userId]);
+      if (result.rows.length === 0) {
+        res.status(400).json({ error: 'this user not exists' });
+        return;
+      }
+
+      const user = result.rows[0];
+
+      const { name, email, age, password } = req.body;
+
+      if (name && name === user.name) {
+        res.status(400).json({ error: 'this is already the user name' });
+        return;
+      }
+
+      if (email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+          res.status(400).json({ message: 'Invalid email format' });
+          return;
+        }
+
+        const result_email = await pool.query(`SELECT * FROM users Where email = $1`, [email]);
+        if (result_email.rows.length != 0) {
+          res.status(400).json({ error: 'this email already have an account!' });
+          return;
+        }
+
+        if (email === user.email) {
+          res.status(400).json({ error: 'this email already belongs to this user' });
+          return;
+        }
+      }
+
+      if (age) {
+        if (age > 98 || age < 12) {
+          res.status(400).json({ message: 'Age must be between 12 and 98' });
+          return;
+        }
+
+        if (age === user.age) {
+          res.status(400).json({ error: 'this is already the user age' });
+          return;
+        }
+      }
+
+      if (password) {
+        if (password.length < 6) {
+          res.status(400).json({ message: 'Password must be at least 6 characters long' });
+          return;
+        }
+
+        if (password === user.password) {
+          res.status(400).json({ error: 'this is already the user password' });
+          return;
+        }
+
+
+      }
+
+      const fields = [];
+      const values = [];
+      let idx = 1;
+
+      if (name) {
+        fields.push(`name = $${idx++}`);
+        values.push(name);
+      }
+
+      if (email) {
+        fields.push(`email = $${idx++}`);
+        values.push(email);
+      }
+
+      if (age) {
+        fields.push(`age = $${idx++}`);
+        values.push(age);
+      }
+
+      if (password) {
+        fields.push(`password_hash = $${idx++}`);
+        const hashedPassword = await bcrypt.hash(password, 10);
+        values.push(hashedPassword);
+      }
+
+      if (fields.length === 0) {
+        res.status(400).json({ message: 'No fields to update' });
+        return;
+      }
+
+      fields.push(`updated_at = CURRENT_TIMESTAMP`);
+
+      values.push(userId);
+
+      const query = `UPDATE users SET ${fields.join(', ')} WHERE id = $${idx} RETURNING *`;
+      const result1 = await pool.query(query, values);
+
+      res.json({
+        message: 'User updated successfully',
+        user: result1.rows[0],
+      });
+    } catch (error) {
+      res.status(500).json({
+        message: 'Error updating user',
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+  };
 }
