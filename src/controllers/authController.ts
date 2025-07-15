@@ -284,6 +284,26 @@ export class AuthController {
       const fields = [];
       const values = [];
       let idx = 1;
+
+      if (name) {
+        fields.push(`name = $${idx++}`);
+        values.push(name);
+      }
+
+      if (email) {
+        fields.push(`email = $${idx++}`);
+        values.push(email);
+      }
+
+      if (age) {
+        fields.push(`age = $${idx++}`);
+        values.push(age);
+      }
+
+      if (password) {
+        fields.push(`password = $${idx++}`);
+        values.push(password);
+      }
     } catch (error) {}
   };
 }
