@@ -274,6 +274,8 @@ export class AuthController {
           res.status(400).json({ error: 'this is already the user password' });
           return;
         }
+
+
       }
 
       if (role && role !== 'full_access' && role !== 'limit_access' && role !== 'user') {
@@ -301,8 +303,9 @@ export class AuthController {
       }
 
       if (password) {
-        fields.push(`password = $${idx++}`);
-        values.push(password);
+        fields.push(`password_hash = $${idx++}`);
+        const hashedPassword = await bcrypt.hash(password, 10);
+        values.push(hashedPassword);
       }
 
       if (role) {
@@ -324,7 +327,7 @@ export class AuthController {
 
       res.json({
         message: 'User updated successfully',
-        account: result1.rows[0],
+        user: result1.rows[0],
       });
     } catch (error) {
       res.status(500).json({
