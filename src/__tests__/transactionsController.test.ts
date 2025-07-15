@@ -211,6 +211,7 @@ describe('TransactionsController', () => {
       });
     });
   });
+  
   describe('deposit', () => {
     it('should be return 400 if deposit is missing', async () => {
       mockReq.account = { id: 1 };
