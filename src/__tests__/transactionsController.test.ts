@@ -243,6 +243,35 @@ describe('TransactionsController', () => {
       expect(mockRes.json).toHaveBeenCalledWith({ error: 'deposit is missing' });
     });
 
+    it('should be return 400 if the account is not active', async () => {
+      mockReq.account = { id: 1 };
+
+      const mockAccount = {
+        id: 1,
+        balance: 0.0,
+        account_number: '001-12345-6',
+        status: 'closed',
+        user: {
+          name: 'Miguel',
+          email: 'miguel@gmail.com',
+          age: 20,
+          role: 'user',
+        },
+        account_type: {
+          type: 'current',
+          daily_withdrawal_limit: 1000.0,
+          daily_transfer_limit: 5000.0,
+        },
+      };
+
+      mockPool.query.mockResolvedValueOnce({ rows: [mockAccount] });
+
+      await TransactionsController.deposit(mockReq, mockRes);
+
+      expect(mockRes.status).toHaveBeenCalledWith(400);
+      expect(mockRes.json).toHaveBeenCalledWith({ error: 'The account must be active for this action' });
+    });
+
     it('should be return 400 if deposit is negative or equal to zero', async () => {
       mockReq.account = { id: 1 };
       const mockAccount = {
