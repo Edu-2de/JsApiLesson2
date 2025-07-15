@@ -828,4 +828,8 @@ describe('AccountController', () => {
       });
     });
   });
+
+  describe('closeAccount', () => {
+    
+  })
 });
