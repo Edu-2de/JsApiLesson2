@@ -32,13 +32,61 @@ describe('TransactionsController', () => {
   describe('withdrawal', () => {
     it('should be return 400 if withdrawal amount is missing', async () => {
       mockReq.account = { id: 1 };
+      const mockAccount = {
+        id: 1,
+        balance: 0.0,
+        account_number: '001-12345-6',
+        status: 'active',
+        user: {
+          name: 'Miguel',
+          email: 'miguel@gmail.com',
+          age: 20,
+          role: 'user',
+        },
+        account_type: {
+          type: 'current',
+          daily_withdrawal_limit: 1000.0,
+          daily_transfer_limit: 5000.0,
+        },
+      };
 
-      mockPool.query.mockResolvedValueOnce({ rows: [] });
+      mockReq.body = {};
+
+      mockPool.query.mockResolvedValueOnce({ rows: [mockAccount] });
 
       await TransactionsController.withdrawal(mockReq, mockRes);
 
       expect(mockRes.status).toHaveBeenCalledWith(400);
       expect(mockRes.json).toHaveBeenCalledWith({ error: 'withdrawal is missing' });
+    });
+
+    it('should be return 400 if the account is not active', async () => {
+      mockReq.account = { id: 1 };
+
+      const mockAccount = {
+        id: 1,
+        balance: 0.0,
+        account_number: '001-12345-6',
+        status: 'closed',
+        user: {
+          name: 'Miguel',
+          email: 'miguel@gmail.com',
+          age: 20,
+          role: 'user',
+        },
+        account_type: {
+          type: 'current',
+          daily_withdrawal_limit: 1000.0,
+          daily_transfer_limit: 5000.0,
+        },
+      };
+
+      mockPool.query.mockResolvedValueOnce({ rows: [mockAccount] });
+
+      await TransactionsController.withdrawal(mockReq, mockRes);
+
+      expect(mockRes.status).toHaveBeenCalledWith(400);
+      expect(mockRes.json).toHaveBeenCalledWith({ error: 'The account must be active for this action' });
     });
 
     it('should be return 400 if withdrawal cannot be negative or equal to zero', async () => {
@@ -166,8 +214,28 @@ describe('TransactionsController', () => {
   describe('deposit', () => {
     it('should be return 400 if deposit is missing', async () => {
       mockReq.account = { id: 1 };
+      const mockAccount = {
+        id: 1,
+        balance: 10.0,
+        account_number: '001-12345-6',
+        status: 'active',
+        account_type_id: 1,
+        withdrawal_fee: 1.0,
+        user: {
+          name: 'Miguel',
+          email: 'miguel@gmail.com',
+          age: 20,
+          role: 'user',
+        },
+        account_type: {
+          id: 1,
+          type: 'current',
+          daily_withdrawal_limit: 1000.0,
+          daily_transfer_limit: 5000.0,
+        },
+      };
 
-      mockPool.query.mockResolvedValueOnce({ rows: [] });
+      mockPool.query.mockResolvedValueOnce({ rows: [mockAccount] });
 
       await TransactionsController.deposit(mockReq, mockRes);
 
@@ -177,10 +245,30 @@ describe('TransactionsController', () => {
 
     it('should be return 400 if deposit is negative or equal to zero', async () => {
       mockReq.account = { id: 1 };
+      const mockAccount = {
+        id: 1,
+        balance: 10.0,
+        account_number: '001-12345-6',
+        status: 'active',
+        account_type_id: 1,
+        withdrawal_fee: 1.0,
+        user: {
+          name: 'Miguel',
+          email: 'miguel@gmail.com',
+          age: 20,
+          role: 'user',
+        },
+        account_type: {
+          id: 1,
+          type: 'current',
+          daily_withdrawal_limit: 1000.0,
+          daily_transfer_limit: 5000.0,
+        },
+      };
 
       mockReq.body = { deposit: -1 };
 
-      mockPool.query.mockResolvedValueOnce({ rows: [] });
+      mockPool.query.mockResolvedValueOnce({ rows: [mockAccount] });
 
       await TransactionsController.deposit(mockReq, mockRes);
 
