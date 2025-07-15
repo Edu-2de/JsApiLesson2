@@ -755,16 +755,33 @@ describe('AccountController', () => {
       expect(mockRes.status).toHaveBeenCalledWith(404);
       expect(mockRes.json).toHaveBeenCalledWith({ error: 'Account not found' });
     });
-    
-    it('should be return 404 if account not exists', async () => {
-      mockReq.params = { accountId: 1 };
 
-      mockPool.query.mockResolvedValueOnce({ rows: [] });
+    it('should be return 400 if account is already closed or is blocked', async () => {
+      mockReq.params = { accountId: 1 };
+      const mockAccount = {
+        id: 1,
+        balance: 0.0,
+        account_number: '001-12345-6',
+        status: 'blocked',
+        user: {
+          name: 'Miguel',
+          email: 'miguel@gmail.com',
+          age: 20,
+          role: 'user',
+        },
+        account_type: {
+          type: 'current',
+          daily_withdrawal_limit: 1000.0,
+          daily_transfer_limit: 5000.0,
+        },
+      };
+
+      mockPool.query.mockResolvedValueOnce({ rows: [mockAccount] });
 
       await AccountController.closeAccountId(mockReq, mockRes);
 
-      expect(mockRes.status).toHaveBeenCalledWith(404);
-      expect(mockRes.json).toHaveBeenCalledWith({ error: 'Account not found' });
+      expect(mockRes.status).toHaveBeenCalledWith(400);
+      expect(mockRes.json).toHaveBeenCalledWith({ error: 'This account is already closed or is blocked!' });
     });
   });
 });
