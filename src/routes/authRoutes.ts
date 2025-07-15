@@ -8,14 +8,17 @@ router.post('/login', AuthController.login);
 router.post('/register', AuthController.register);
 
 // -------- need login account or owner/admin access -----------
-router.get('/profile', AuthMiddleware.authenticateToken ,AuthController.getUser);
+router.get('/', AuthMiddleware.authenticateToken, AuthController.getUser);
 
-router.patch('/update', AuthMiddleware.authenticateToken, AuthController.updateUser);
+router.patch('/', AuthMiddleware.authenticateToken, AuthController.updateUser);
+
+router.delete('/', AuthMiddleware.authenticateToken, AuthController.deleteUser);
 
 // -------- need admin access -----------
 router.get('/admin/:userId', AuthMiddleware.requireAdmin, AuthController.getUserById);
 
-router.patch('/admin/update/:userId', AuthMiddleware.requireAdmin, AuthController.updateUserById)
+router.patch('/admin/:userId', AuthMiddleware.requireAdmin, AuthController.updateUserById);
 
+router.delete('/admin/:userId', AuthMiddleware.requireAdmin, AuthController.deleteUserById);
 
 export default router;
