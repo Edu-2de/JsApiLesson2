@@ -177,7 +177,7 @@ MIT
 
 ## Author
 
-Your Name — [your.email@example.com](mailto:your.email@example.com)
+Eduardo — [edupaim1712@gmail.com](mailto:edupaim1712@gmail.com)
 
 ---
 
