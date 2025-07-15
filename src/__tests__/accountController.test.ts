@@ -417,7 +417,7 @@ describe('AccountController', () => {
       expect(mockRes.json).toHaveBeenCalledWith({ message: 'Account not found' });
     });
 
-    it('should be return 400 if account_type_id or status is missing', async () => {
+    it('should be return 400 if if there are no fields to update', async () => {
       mockReq.params = { accountId: '1' };
 
       const mockAccount = {
@@ -440,12 +440,12 @@ describe('AccountController', () => {
 
       mockPool.query.mockResolvedValueOnce({ rows: [mockAccount] });
 
-      mockReq.body = { account_type_id: 1 };
+      mockReq.body = { a: 1 };
 
       await AccountController.updateAccountById(mockReq, mockRes);
 
       expect(mockRes.status).toHaveBeenCalledWith(400);
-      expect(mockRes.json).toHaveBeenCalledWith({ message: 'account_type_id and status are required' });
+      expect(mockRes.json).toHaveBeenCalledWith({ message: 'No fields to update' });
     });
 
     it('should be return 400 if account_type_id not exists', async () => {
@@ -578,124 +578,6 @@ describe('AccountController', () => {
     });
   });
 
-  describe('updateAccount', () => {
-    it('should be return 404 if account not exists', async () => {
-      mockReq.account = { accountId: 1 };
-
-      mockPool.query.mockResolvedValueOnce({ rows: [] });
-
-      await AccountController.updateAccount(mockReq, mockRes);
-
-      expect(mockRes.status).toHaveBeenCalledWith(404);
-      expect(mockRes.json).toHaveBeenCalledWith({ message: 'Account not found' });
-    });
-
-    it('should be return 404 if account not exists', async () => {
-      mockReq.account = { accountId: 1 };
-
-      const mockAccount = {
-        id: 1,
-        balance: 0.0,
-        account_number: '001-12345-6',
-        status: 'active',
-        user: {
-          name: 'Miguel',
-          email: 'miguel@gmail.com',
-          age: 20,
-          role: 'user',
-        },
-        account_type: {
-          type: 'current',
-          daily_withdrawal_limit: 1000.0,
-          daily_transfer_limit: 5000.0,
-        },
-      };
-
-      mockPool.query.mockResolvedValueOnce({ rows: [mockAccount] });
-
-      mockReq.body = {};
-      await AccountController.updateAccount(mockReq, mockRes);
-
-      expect(mockRes.status).toHaveBeenCalledWith(400);
-      expect(mockRes.json).toHaveBeenCalledWith({ message: 'status are required' });
-    });
-
-    it('should be return 400 if status not exists', async () => {
-      mockReq.account = { accountId: 1 };
-
-      const mockAccount = {
-        id: 1,
-        balance: 0.0,
-        account_number: '001-12345-6',
-        status: 'active',
-        user: {
-          name: 'Miguel',
-          email: 'miguel@gmail.com',
-          age: 20,
-          role: 'user',
-        },
-        account_type: {
-          type: 'current',
-          daily_withdrawal_limit: 1000.0,
-          daily_transfer_limit: 5000.0,
-        },
-      };
-
-      mockPool.query.mockResolvedValueOnce({ rows: [mockAccount] });
-
-      mockReq.body = { status: 'error' };
-      await AccountController.updateAccount(mockReq, mockRes);
-
-      expect(mockRes.status).toHaveBeenCalledWith(400);
-      expect(mockRes.json).toHaveBeenCalledWith({ message: 'This status does not exist' });
-    });
-
-    it('should return success response with new account data', async () => {
-      mockReq.account = { accountId: 1 };
-
-      const mockAccount = {
-        id: 1,
-        balance: 0.0,
-        account_number: '001-12345-6',
-        status: 'active',
-        user: {
-          name: 'Miguel',
-          email: 'miguel@gmail.com',
-          age: 20,
-          role: 'user',
-        },
-        account_type: {
-          type: 'current',
-          daily_withdrawal_limit: 1000.0,
-          daily_transfer_limit: 5000.0,
-        },
-      };
-
-      mockPool.query.mockResolvedValueOnce({ rows: [mockAccount] });
-
-      mockReq.body = { status: 'blocked' };
-
-      mockPool.query.mockResolvedValueOnce({
-        rows: [
-          {
-            status: 'blocked',
-            updated_at: '2025',
-          },
-        ],
-      });
-
-      await AccountController.updateAccount(mockReq, mockRes);
-
-      expect(mockRes.json).toHaveBeenCalledWith({
-        message: 'Account updated successfully',
-        account: {
-          status: 'blocked',
-          updated_at: '2025',
-        },
-      });
-    });
-  });
-
   describe('deleteAccountById', () => {
     it('should be return 404 if account not exists', async () => {
       mockReq.params = { accountId: 1 };
@@ -775,6 +657,103 @@ describe('AccountController', () => {
       await AccountController.deleteAccount(mockReq, mockRes);
 
       expect(mockRes.json).toHaveBeenCalledWith({ message: 'Account deleted successfully' });
+    });
+  });
+
+  describe('blockAccountId', () => {
+    it('should be return 404 if account not exists', async () => {
+      mockReq.params = { accountId: 1 };
+
+      mockPool.query.mockResolvedValueOnce({ rows: [] });
+
+      await AccountController.blockAccountId(mockReq, mockRes);
+
+      expect(mockRes.status).toHaveBeenCalledWith(404);
+      expect(mockRes.json).toHaveBeenCalledWith({ error: 'Account not found' });
+    });
+
+    it('should be return 400 if account is already blocked', async () => {
+      mockReq.params = { accountId: 1 };
+      const mockAccount = {
+        id: 1,
+        balance: 0.0,
+        account_number: '001-12345-6',
+        status: 'blocked',
+        user: {
+          name: 'Miguel',
+          email: 'miguel@gmail.com',
+          age: 20,
+          role: 'user',
+        },
+        account_type: {
+          type: 'current',
+          daily_withdrawal_limit: 1000.0,
+          daily_transfer_limit: 5000.0,
+        },
+      };
+
+      mockPool.query.mockResolvedValueOnce({ rows: [mockAccount] });
+
+      await AccountController.blockAccountId(mockReq, mockRes);
+
+      expect(mockRes.status).toHaveBeenCalledWith(400);
+      expect(mockRes.json).toHaveBeenCalledWith({ error: 'This account is already blocked' });
+    });
+
+    it('should return success response', async () => {
+      mockReq.params = { accountId: 1 };
+      const mockAccount = {
+        id: 1,
+        balance: 0.0,
+        account_number: '001-12345-6',
+        status: 'active',
+        user: {
+          name: 'Miguel',
+          email: 'miguel@gmail.com',
+          age: 20,
+          role: 'user',
+        },
+        account_type: {
+          type: 'current',
+          daily_withdrawal_limit: 1000.0,
+          daily_transfer_limit: 5000.0,
+        },
+      };
+
+      mockPool.query.mockResolvedValueOnce({ rows: [mockAccount] }).mockResolvedValueOnce({
+        rows: [
+          {
+            id: 1,
+            status: 'blocked',
+            updated_at: '2025',
+          },
+        ],
+      });
+
+      await AccountController.blockAccountId(mockReq, mockRes);
+
+      expect(mockRes.status).toHaveBeenCalledWith(201);
+      expect(mockRes.json).toHaveBeenCalledWith({
+        message: 'Account blocked successfully',
+        account: {
+          id: 1,
+          status: 'blocked',
+          account_number: '001-12345-6',
+        },
+      });
+    });
+  });
+
+  describe('closeAccountId', () => {
+    it('should be return 404 if account not exists', async () => {
+      mockReq.params = { accountId: 1 };
+
+      mockPool.query.mockResolvedValueOnce({ rows: [] });
+
+      await AccountController.closeAccountId(mockReq, mockRes);
+
+      expect(mockRes.status).toHaveBeenCalledWith(404);
+      expect(mockRes.json).toHaveBeenCalledWith({ error: 'Account not found' });
     });
   });
 });

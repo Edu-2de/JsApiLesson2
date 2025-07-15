@@ -413,7 +413,7 @@ export class AccountController {
     }
   };
 
-  static BlockAccountId = async (req: Request, res: Response): Promise<void> => {
+  static blockAccountId = async (req: Request, res: Response): Promise<void> => {
     try {
       const { accountId } = req.params;
 
@@ -460,7 +460,7 @@ export class AccountController {
     }
   };
 
-  static CloseAccountId = async (req: Request, res: Response): Promise<void> => {
+  static closeAccountId = async (req: Request, res: Response): Promise<void> => {
     try {
       const { accountId } = req.params;
 
@@ -507,7 +507,7 @@ export class AccountController {
     }
   };
 
-  static CloseAccount = async (req: any, res: Response): Promise<void> => {
+  static closeAccount = async (req: any, res: Response): Promise<void> => {
     try {
       const accountId = req.account.id;
 
@@ -559,7 +559,7 @@ export class AccountController {
     }
   };
 
-  static ActiveAccountId = async (req: Request, res: Response): Promise<void> => {
+  static activeAccountId = async (req: Request, res: Response): Promise<void> => {
     try {
       const { accountId } = req.params;
 
@@ -606,7 +606,7 @@ export class AccountController {
     }
   };
 
-  static ActiveAccount = async (req: any, res: Response): Promise<void> => {
+  static activeAccount = async (req: any, res: Response): Promise<void> => {
     try {
       const accountId = req.account.id;
 
