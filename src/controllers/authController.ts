@@ -274,8 +274,6 @@ export class AuthController {
           res.status(400).json({ error: 'this is already the user password' });
           return;
         }
-
-
       }
 
       if (role && role !== 'full_access' && role !== 'limit_access' && role !== 'user') {
@@ -401,8 +399,11 @@ export class AuthController {
           res.status(400).json({ error: 'this is already the user password' });
           return;
         }
+      }
 
-
+      if ('role' in req.body) {
+        res.status(403).json({ error: 'You cannot update your role' });
+        return;
       }
 
       const fields = [];
