@@ -262,6 +262,19 @@ export class AuthController {
 
         if (age === user.age) {
           res.status(400).json({ error: 'this is already the user age' });
+          return;
+        }
+      }
+
+      if (password) {
+        if (password.length < 6) {
+          res.status(400).json({ message: 'Password must be at least 6 characters long' });
+          return;
+        }
+
+        if (password === user.password) {
+          res.status(400).json({ error: 'this is already the user password' });
+          return;
         }
       }
 
