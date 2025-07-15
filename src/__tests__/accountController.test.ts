@@ -659,4 +659,17 @@ describe('AccountController', () => {
       expect(mockRes.json).toHaveBeenCalledWith({ message: 'Account deleted successfully' });
     });
   });
+
+  describe('BlockAccountId', () => {
+    it('should be return 404 if account not exists', async () => {
+      mockReq.params = { accountId: 1 };
+
+      mockPool.query.mockResolvedValueOnce({ rows: [] });
+
+      await AccountController.BlockAccountId(mockReq, mockRes);
+
+      expect(mockRes.status).toHaveBeenCalledWith(404);
+      expect(mockRes.json).toHaveBeenCalledWith({ error: 'Account not found' });
+    });
+  });
 });
