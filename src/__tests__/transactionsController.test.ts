@@ -211,7 +211,7 @@ describe('TransactionsController', () => {
       });
     });
   });
-  
+
   describe('deposit', () => {
     it('should be return 400 if deposit is missing', async () => {
       mockReq.account = { id: 1 };
@@ -364,6 +364,40 @@ describe('TransactionsController', () => {
         type: 'deposit',
         amount: 50.0,
       });
+    });
+  });
+
+  describe('transfer', () => {
+    it('should be return 404 if account is not active', async () => {
+      mockReq.account = { id: 1 };
+
+      const mockAccount = {
+        id: 1,
+        balance: 10.0,
+        account_number: '001-12345-6',
+        status: 'closed',
+        account_type_id: 1,
+        withdrawal_fee: 1.0,
+        user: {
+          name: 'Miguel',
+          email: 'miguel@gmail.com',
+          age: 20,
+          role: 'user',
+        },
+        account_type: {
+          id: 1,
+          type: 'current',
+          daily_withdrawal_limit: 1000.0,
+          daily_transfer_limit: 5000.0,
+        },
+      };
+
+      mockPool.query.mockResolvedValueOnce({ rows: [mockAccount] });
+
+      await TransactionsController.transfer(mockReq, mockRes);
+
+      expect(mockRes.status).toHaveBeenCalledWith(404);
+      expect(mockRes.json).toHaveBeenCalledWith({ error: 'You need an active account to make transfers' });
     });
   });
 });
