@@ -23,6 +23,10 @@ export class TransactionsController {
       );
       const account = result.rows[0];
 
+      if (account.status != 'active') {
+        res.status(400).json({ error: 'The account must be active for this action' });
+      }
+
       const { withdrawal } = req.body;
       if (!withdrawal) {
         res.status(400).json({ error: 'withdrawal is missing' });
@@ -85,6 +89,10 @@ export class TransactionsController {
       ]);
       const account = result.rows[0];
 
+      if (account.status != 'active') {
+        res.status(400).json({ error: 'The account must be active for this action' });
+      }
+
       const { deposit } = req.body;
       if (!deposit) {
         res.status(400).json({ error: 'deposit is missing' });
@@ -145,8 +153,8 @@ export class TransactionsController {
       );
 
       const account = result.rows[0];
-      if(account.status != 'active'){
-        res.status(404).json({error: 'You need an active account to make transfers'});
+      if (account.status != 'active') {
+        res.status(404).json({ error: 'You need an active account to make transfers' });
         return;
       }
 
@@ -165,8 +173,8 @@ export class TransactionsController {
       }
 
       const account1 = result1.rows[0];
-      if(account1.status != 'active'){
-        res.status(404).json({error: 'This account you are trying to transfer is not active!'});
+      if (account1.status != 'active') {
+        res.status(404).json({ error: 'This account you are trying to transfer is not active!' });
         return;
       }
 
@@ -208,13 +216,13 @@ export class TransactionsController {
 
       res.status(201).json({
         message: 'transfer successfully',
-        shipping_account : accountId,
+        shipping_account: accountId,
         destination_account: account_transfer,
         amount: amount,
         fee: fee_value,
-        shipping_account_balance : newBalance,
-        destination_account_balance : newBalance1
-      })
+        shipping_account_balance: newBalance,
+        destination_account_balance: newBalance1,
+      });
     } catch (error) {
       res.status(500).json({
         message: 'Error during transfer',
