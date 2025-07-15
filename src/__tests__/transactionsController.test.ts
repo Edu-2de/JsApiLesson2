@@ -122,12 +122,10 @@ describe('TransactionsController', () => {
           type: 'current',
           daily_withdrawal_limit: 1000.0,
           daily_transfer_limit: 5000.0,
-        }
+        },
       };
 
-      const mockFee = {
-
-      }
+      const mockFee = {};
 
       mockPool.query.mockResolvedValueOnce({ rows: [mockAccount] });
 
@@ -163,6 +161,12 @@ describe('TransactionsController', () => {
         transaction: 'withdrawal',
         fee: 0.05,
       });
+    });
+  });
+  describe('deposit', () => {
+    it('should be return 400 if deposit is missing', async () => {
+      mockReq.account = { userId: 1 };
+      
     });
   });
 });
