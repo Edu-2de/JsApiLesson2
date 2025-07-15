@@ -755,5 +755,16 @@ describe('AccountController', () => {
       expect(mockRes.status).toHaveBeenCalledWith(404);
       expect(mockRes.json).toHaveBeenCalledWith({ error: 'Account not found' });
     });
+    
+    it('should be return 404 if account not exists', async () => {
+      mockReq.params = { accountId: 1 };
+
+      mockPool.query.mockResolvedValueOnce({ rows: [] });
+
+      await AccountController.closeAccountId(mockReq, mockRes);
+
+      expect(mockRes.status).toHaveBeenCalledWith(404);
+      expect(mockRes.json).toHaveBeenCalledWith({ error: 'Account not found' });
+    });
   });
 });
