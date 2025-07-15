@@ -460,13 +460,50 @@ describe('TransactionsController', () => {
 
       mockReq.body = { amount: 5.0, account_transfer: 2 };
 
+      mockPool.query.mockResolvedValueOnce({ rows: [] });
+
+
+      await TransactionsController.transfer(mockReq, mockRes);
+
+      expect(mockRes.status).toHaveBeenCalledWith(404);
+      expect(mockRes.json).toHaveBeenCalledWith({ error: 'This account_transfer not exists' });
+    });
+
+    it('should be return 404 if the user not have balance enough for the transference', async () => {
+      mockReq.account = { id: 1 };
+
+      const mockAccount = {
+        id: 1,
+        balance: 10.0,
+        account_number: '001-12345-6',
+        status: 'active',
+        account_type_id: 1,
+        transfer_fee: 0.50,
+        user: {
+          name: 'Miguel',
+          email: 'miguel@gmail.com',
+          age: 20,
+          role: 'user',
+        },
+        account_type: {
+          id: 1,
+          type: 'current',
+          daily_withdrawal_limit: 1000.0,
+          daily_transfer_limit: 5000.0,
+        },
+      };
+
+      mockPool.query.mockResolvedValueOnce({ rows: [mockAccount] });
+
+      mockReq.body = { amount: 30.0, account_transfer: 2 };
+
       const mockAccount1 = {
         id: 2,
         balance: 10.0,
         account_number: '001-14545-6',
         status: 'active',
         account_type_id: 1,
-        withdrawal_fee: 1.0,
+        transfer_fee: 0.50,
         user: {
           name: 'Lucas',
           email: 'lucasl@gmail.com',
@@ -481,13 +518,13 @@ describe('TransactionsController', () => {
         },
       };
 
-      mockPool.query.mockResolvedValueOnce({ rows: [] });
+      mockPool.query.mockResolvedValueOnce({ rows: [mockAccount1] });
 
 
       await TransactionsController.transfer(mockReq, mockRes);
 
       expect(mockRes.status).toHaveBeenCalledWith(404);
-      expect(mockRes.json).toHaveBeenCalledWith({ error: 'This account_transfer not exists' });
+      expect(mockRes.json).toHaveBeenCalledWith({ error: 'You do not have balance enough for this transfer' });
     });
   });
 });
