@@ -47,7 +47,7 @@ describe('TransactionsController', () => {
         id: 1,
         balance: 0.0,
         account_number: '001-12345-6',
-        status: 'blocked',
+        status: 'active',
         user: {
           name: 'Miguel',
           email: 'miguel@gmail.com',
@@ -77,7 +77,7 @@ describe('TransactionsController', () => {
         id: 1,
         balance: 10.0,
         account_number: '001-12345-6',
-        status: 'blocked',
+        status: 'active',
         user: {
           name: 'Miguel',
           email: 'miguel@gmail.com',
@@ -108,7 +108,7 @@ describe('TransactionsController', () => {
         id: 1,
         balance: 10.0,
         account_number: '001-12345-6',
-        status: 'blocked',
+        status: 'active',
         account_type_id: 1,
         withdrawal_fee: 1.0,
         user: {
@@ -178,12 +178,74 @@ describe('TransactionsController', () => {
     it('should be return 400 if deposit is negative or equal to zero', async () => {
       mockReq.account = { id: 1 };
 
+      mockReq.body = { deposit: -1 };
+
       mockPool.query.mockResolvedValueOnce({ rows: [] });
 
       await TransactionsController.deposit(mockReq, mockRes);
 
       expect(mockRes.status).toHaveBeenCalledWith(400);
-      expect(mockRes.json).toHaveBeenCalledWith({ error: 'deposit is missing' });
+      expect(mockRes.json).toHaveBeenCalledWith({ error: 'deposit cannot be negative or equal to zero' });
+    });
+
+    it('should return success response', async () => {
+      mockReq.account = { id: 1 };
+
+      const mockAccount = {
+        id: 1,
+        balance: 10.0,
+        account_number: '001-12345-6',
+        status: 'active',
+        account_type_id: 1,
+        withdrawal_fee: 1.0,
+        user: {
+          name: 'Miguel',
+          email: 'miguel@gmail.com',
+          age: 20,
+          role: 'user',
+        },
+        account_type: {
+          id: 1,
+          type: 'current',
+          daily_withdrawal_limit: 1000.0,
+          daily_transfer_limit: 5000.0,
+        },
+      };
+
+      mockPool.query.mockResolvedValueOnce({ rows: [mockAccount] });
+
+      mockReq.body = { deposit: 50.0 };
+
+      mockPool.query.mockResolvedValueOnce({
+        rows: [
+          {
+            balance: 60.0,
+            updated_at: 2025,
+          },
+        ],
+      });
+
+      mockPool.query.mockResolvedValueOnce({
+        rows: [
+          {
+            account_id: 1,
+            transaction_type: 'deposit',
+            amount: 50.0,
+            reference_number: '006-2025',
+            created_at: '2025',
+          },
+        ],
+      });
+
+      await TransactionsController.deposit(mockReq, mockRes);
+
+      expect(mockRes.status).toHaveBeenCalledWith(201);
+      expect(mockRes.json).toHaveBeenCalledWith({
+        message: 'Deposit successfully',
+        balance: 60.0,
+        type: 'deposit',
+        amount: 50.0,
+      });
     });
   });
 });
