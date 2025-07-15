@@ -911,4 +911,10 @@ describe('AccountController', () => {
       });
     });
   });
+
+  describe('activeAccountId', () => {
+    it('should be return 404 if account not exists', async() => {
+      
+    })
+  })
 });
