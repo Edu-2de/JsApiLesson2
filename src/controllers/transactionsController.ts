@@ -234,13 +234,12 @@ export class TransactionsController {
   };
 
   static getTransactions = async (req: AccountAuthRequest, res: Response): Promise<void> => {
-    try{
-      if(!req.account){
-        res.status(400).json({})
+    try {
+      if (!req.account) {
+        res.status(400).json({ error: 'Account information is missing.' });
+        return;
       }
-      const accountId = req.account.id
-    }catch(error){
-
-    }
+      const accountId = req.account.id;
+    } catch (error) {}
   };
 }
