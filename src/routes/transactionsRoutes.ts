@@ -10,4 +10,6 @@ router.post('/deposit', AccountMiddleware.authenticateToken, TransactionsControl
 
 router.post('/transfer', AccountMiddleware.authenticateToken, TransactionsController.transfer);
 
+router.get('/', AccountMiddleware.authenticateToken, TransactionsController.getTransactions);
+
 export default router;
