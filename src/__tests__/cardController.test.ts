@@ -283,7 +283,7 @@ describe('CardController.test', () => {
       expect(mockRes.json).toHaveBeenCalledWith({ error: 'Card_number is missing!' });
     });
 
-    it('should be return 400 if the card not exist', async () => {
+    it('should be a successfully response', async () => {
       mockReq.account = { id: 1 };
       const mockAccount = {
         id: 1,
@@ -308,14 +308,25 @@ describe('CardController.test', () => {
 
       mockPool.query.mockResolvedValueOnce({ rows: [mockAccount] });
 
-      mockReq.body = {card_number: '010-2025'}
+      mockReq.body = { card_number: '010-2025' };
+      const mockCard = {
+        account_id: 1,
+        card_number: '010-2025',
+        card_type: 'credit',
+        expiry_date: '07/2030',
+        cvv: 345,
+        created_at: 2025,
+      };
 
-      mockPool.query.mockResolvedValueOnce({ rows: [] });
-
+      mockPool.query.mockResolvedValueOnce({ rows: [mockCard] });
+      mockPool.query.mockResolvedValueOnce({ rows: [mockCard] });   
       await CardController.deleteCard(mockReq, mockRes);
 
-      expect(mockRes.status).toHaveBeenCalledWith(400);
-      expect(mockRes.json).toHaveBeenCalledWith({ error: 'This card not exists' });
+      expect(mockRes.status).toHaveBeenCalledWith(200);
+      expect(mockRes.json).toHaveBeenCalledWith({
+        message: 'Card deleted successfully',
+        card: mockCard,
+      });
     });
   });
 });
