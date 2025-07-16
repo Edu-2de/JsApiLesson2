@@ -10,6 +10,6 @@ router.post('/transfer', AccountMiddleware.authenticateToken, TransactionsContro
 
 router.get('/', AccountMiddleware.authenticateToken, TransactionsController.getTransactions);
 
-router.get('/', AccountMiddleware.requireAdmin, TransactionsController.getAllTransactions);
+router.get('/admin', AccountMiddleware.requireAdmin, TransactionsController.getAllTransactions);
 
 export default router;
