@@ -86,9 +86,29 @@ export class CardController {
         res.status(400).json({ error: 'This account not exist' });
         return;
       }
-      
-      const account = result.rows[0];
 
+      const account = result.rows[0];
+      if (account.status !== 'active') {
+        res.status(400).json({ error: 'The account must be active for this action' });
+        return;
+      }
+
+      const { card_number } = req.body;
+      if (!card_number) {
+        res.status(400).json({ error: 'Card_number is missing!' });
+        return;
+      }
+      const result_card_number = await pool.query(`SELECT card_number FROM cards WHERE card_number = $1`, [
+        card_number,
+      ]);
+      if (result_card_number.rows.length === 0) {
+        res.status(400).json({ error: 'This card not exists' });
+        return;
+      }
+
+      const deleteCard = await pool.query(`DELETE FROM cards WHERE card_number = $1 RETURNING *`, [card_number]);
+
+      
     } catch (error) {}
   };
 }
