@@ -8,4 +8,5 @@ router.post('/', AccountMiddleware.authenticateToken, CardController.createCard)
 
 router.delete('/', AccountMiddleware.authenticateToken, CardController.deleteCard);
 
+router.get('/', AccountMiddleware.authenticateToken, CardController.getCards)
 export default router;
