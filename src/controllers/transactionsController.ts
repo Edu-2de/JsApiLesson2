@@ -245,19 +245,28 @@ export class TransactionsController {
         `SELECT 
           a.id, a.account_type_id, a.balance, a.status
           tr.*
-          FROM accounts ac
+          FROM accounts a
           INNER JOIN transactions tr ON a.id = tr.account_id 
         WHERE a.id = $1
         ORDER BY a.created_at DESC LIMIT 50`,
         [accountId]
       );
 
-      const transactions = result.rows[0];
-      if(transactions.rows.length === 0){
-        res.status(400).json({error: 'This account does not have any transaction'})
+      const transactions = result.rows;
+      if (transactions.length === 0) {
+        res.status(400).json({ error: 'This account does not have any transaction' });
       }
 
-      
+      const resultTransfers = await pool.query(
+        `SELECT 
+          t.*
+          tr.*
+          FROM transfers t
+          INNER JOIN transactions tr ON t.transaction_id = tr.id 
+        WHERE tr.account_id = $1
+        ORDER BY a.created_at DESC LIMIT 50`,
+        [accountId]
+      );
     } catch (error) {}
   };
 }
