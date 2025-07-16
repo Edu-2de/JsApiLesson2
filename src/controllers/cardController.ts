@@ -83,7 +83,7 @@ export class CardController {
       ]);
 
       if (result.rows.length === 0) {
-        res.status(400).json({ error: 'This account not exist' });
+        res.status(400).json({ error: 'This card does not exist' });
         return;
       }
 
@@ -108,7 +108,7 @@ export class CardController {
 
       const deleteCard = await pool.query(`DELETE FROM cards WHERE card_number = $1 RETURNING *`, [card_number]);
 
-      res.status(201).json({
+      res.status(200).json({
         message: 'Card deleted successfully',
         card: deleteCard.rows[0],
       });
