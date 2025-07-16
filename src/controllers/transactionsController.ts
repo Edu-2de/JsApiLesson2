@@ -247,9 +247,17 @@ export class TransactionsController {
           tr.*
           FROM accounts ac
           INNER JOIN transactions tr ON a.id = tr.account_id 
-        WHERE a.id = $1`,
+        WHERE a.id = $1
+        ORDER BY a.created_at DESC LIMIT 50`,
         [accountId]
       );
+
+      const transactions = result.rows[0];
+      if(transactions.rows.length === 0){
+        res.status(400).json({error: 'This account does not have any transaction'})
+      }
+
+      
     } catch (error) {}
   };
 }
