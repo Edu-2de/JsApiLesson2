@@ -319,13 +319,73 @@ describe('CardController.test', () => {
       };
 
       mockPool.query.mockResolvedValueOnce({ rows: [mockCard] });
-      mockPool.query.mockResolvedValueOnce({ rows: [mockCard] });   
+      mockPool.query.mockResolvedValueOnce({ rows: [mockCard] });
       await CardController.deleteCard(mockReq, mockRes);
 
       expect(mockRes.status).toHaveBeenCalledWith(200);
       expect(mockRes.json).toHaveBeenCalledWith({
         message: 'Card deleted successfully',
         card: mockCard,
+      });
+    });
+  });
+
+  describe('getCards', () => {
+    it('should return 400 if account is missing', async () => {
+      mockReq.account = undefined;
+
+      await CardController.getCards(mockReq, mockRes);
+
+      expect(mockRes.status).toHaveBeenCalledWith(400);
+      expect(mockRes.json).toHaveBeenCalledWith({ error: 'Account is missing!' });
+    });
+
+    it('should return 200 and empty array if no cards found', async () => {
+      mockReq.account = { id: 1 };
+      mockPool.query.mockResolvedValueOnce({ rows: [] });
+
+      await CardController.getCards(mockReq, mockRes);
+
+      expect(mockRes.status).toHaveBeenCalledWith(200);
+      expect(mockRes.json).toHaveBeenCalledWith({
+        cards: [],
+        message: 'This account does not have cards',
+      });
+    });
+
+    it('should return 200 and cards array if cards exist', async () => {
+      mockReq.account = { id: 1 };
+      const mockCards = [
+        {
+          account_id: 1,
+          card_number: '010-2025',
+          card_type: 'credit',
+          expiry_date: '07/2030',
+          cvv: 345,
+          created_at: '2025-01-01T00:00:00Z',
+        },
+      ];
+      mockPool.query.mockResolvedValueOnce({ rows: mockCards });
+
+      await CardController.getCards(mockReq, mockRes);
+
+      expect(mockRes.status).toHaveBeenCalledWith(200);
+      expect(mockRes.json).toHaveBeenCalledWith({
+        cards: mockCards,
+        message: undefined,
+      });
+    });
+
+    it('should return 500 if an error occurs', async () => {
+      mockReq.account = { id: 1 };
+      mockPool.query.mockRejectedValueOnce(new Error('DB error'));
+
+      await CardController.getCards(mockReq, mockRes);
+
+      expect(mockRes.status).toHaveBeenCalledWith(500);
+      expect(mockRes.json).toHaveBeenCalledWith({
+        message: 'Error during getting account cards',
+        error: 'DB error',
       });
     });
   });
