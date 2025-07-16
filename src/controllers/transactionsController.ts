@@ -267,6 +267,20 @@ export class TransactionsController {
         ORDER BY a.created_at DESC LIMIT 50`,
         [accountId]
       );
-    } catch (error) {}
+      let transfer = ['This account does not have transfers'];
+      if (resultTransfers.rows.length != 0) {
+        transfer = resultTransfers.rows;
+      }
+
+      res.status(201).json({
+        transaction: transactions,
+        transfers: transfer,
+      });
+    } catch (error) {
+      res.status(500).json({
+        message: 'Error during getting account transactions',
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
   };
 }
