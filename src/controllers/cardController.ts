@@ -108,7 +108,15 @@ export class CardController {
 
       const deleteCard = await pool.query(`DELETE FROM cards WHERE card_number = $1 RETURNING *`, [card_number]);
 
-      
-    } catch (error) {}
+      res.status(201).json({
+        message: 'Card deleted successfully',
+        card: deleteCard.rows[0],
+      });
+    } catch (error) {
+      res.status(500).json({
+        message: 'Error during card deleting',
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
   };
 }
