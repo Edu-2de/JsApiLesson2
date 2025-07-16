@@ -83,7 +83,7 @@ export class CardController {
       ]);
 
       if (result.rows.length === 0) {
-        res.status(400).json({ error: 'This card does not exist' });
+        res.status(400).json({ error: 'This account does not exist' });
         return;
       }
 
