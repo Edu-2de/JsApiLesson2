@@ -235,7 +235,10 @@ export class TransactionsController {
 
   static getTransactions = async (req: AccountAuthRequest, res: Response): Promise<void> => {
     try{
-      
+      if(!req.account){
+        res.status(400).json({})
+      }
+      const accountId = req.account.id
     }catch(error){
 
     }
