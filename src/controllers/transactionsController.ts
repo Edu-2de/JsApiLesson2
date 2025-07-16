@@ -267,8 +267,10 @@ export class TransactionsController {
       const transfers = resultTransfers.rows;
 
       res.status(200).json({
-        transactions,
-        transfers,
+        transactions: {
+          transactions: transactions,
+          transfers: transfers,
+        },
         message:
           transactions.length === 0 && transfers.length === 0
             ? 'This account does not have any transaction or transfer'
@@ -284,14 +286,13 @@ export class TransactionsController {
 
   static getAllTransactions = async (req: AccountAuthRequest, res: Response): Promise<void> => {
     try {
-
       const result = await pool.query(
         `SELECT 
           a.id, a.account_type_id, a.balance, a.status,
           tr.*
           FROM accounts a
           INNER JOIN transactions tr ON a.id = tr.account_id 
-        ORDER BY tr.created_at DESC LIMIT 50`,
+        ORDER BY tr.created_at DESC LIMIT 50`
       );
 
       const transactions = result.rows;
@@ -302,13 +303,15 @@ export class TransactionsController {
           tr.*
           FROM transfers t
           INNER JOIN transactions tr ON t.transaction_id = tr.id 
-        ORDER BY tr.created_at DESC LIMIT 50`,
+        ORDER BY tr.created_at DESC LIMIT 50`
       );
       const transfers = resultTransfers.rows;
 
       res.status(200).json({
-        transactions,
-        transfers,
+        transactions: {
+          transactions: transactions,
+          transfers: transfers,
+        },
         message:
           transactions.length === 0 && transfers.length === 0
             ? 'This account does not have any transaction or transfer'
