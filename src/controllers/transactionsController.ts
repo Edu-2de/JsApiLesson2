@@ -240,6 +240,16 @@ export class TransactionsController {
         return;
       }
       const accountId = req.account.id;
+
+      const result = await pool.query(
+        `SELECT 
+          a.id, a.account_type_id, a.balance, a.status
+          tr.*
+          FROM accounts ac
+          INNER JOIN transactions tr ON a.id = tr.account_id 
+        WHERE a.id = $1`,
+        [accountId]
+      );
     } catch (error) {}
   };
 }
