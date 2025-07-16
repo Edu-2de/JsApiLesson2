@@ -70,7 +70,15 @@ export class CardController {
     }
   };
 
-  static deleteCard = async(req: AccountAuthRequest, res: Response): Promise<void> => {
+  static deleteCard = async (req: AccountAuthRequest, res: Response): Promise<void> => {
+    try {
+      if (!req.account) {
+        res.status(400).json({ error: 'Account is missing!' });
+        return;
+      }
+      const accountId = req.account.id;
 
-  }
+      
+    } catch (error) {}
+  };
 }
