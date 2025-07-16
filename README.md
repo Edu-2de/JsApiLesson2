@@ -9,30 +9,36 @@ JsApiLesson2 is a RESTful API for managing users, accounts, and financial transa
 ## Features
 
 - **User Management**
+
   - Register, login, update, and delete users
   - Password hashing with bcrypt
   - Role-based access control (user, admin)
 
 - **Account Management**
+
   - Register, update, block, close, and activate accounts
   - Account types with limits and fees
   - Admin and owner access controls
 
 - **Transactions**
+
   - Withdrawals with fee calculation and balance validation
   - Deposits
   - Transfers between accounts with fee and double balance update
   - Transaction history
 
 - **Authentication & Authorization**
+
   - JWT-based authentication
   - Middleware for protected routes and role checks
 
 - **Database**
+
   - PostgreSQL schema with foreign keys and constraints
   - Safe deletion rules (`ON DELETE SET NULL` for historical integrity)
 
 - **Testing**
+
   - Jest unit tests for controllers and business logic
 
 - **Scripts**
@@ -50,12 +56,14 @@ JsApiLesson2 is a RESTful API for managing users, accounts, and financial transa
 ### Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/yourusername/JsApiLesson2.git
    cd JsApiLesson2
    ```
 
 2. **Install dependencies**
+
    ```bash
    npm install
    ```
@@ -63,6 +71,7 @@ JsApiLesson2 is a RESTful API for managing users, accounts, and financial transa
 3. **Configure environment variables**
 
    Create a `.env` file in the root directory:
+
    ```
    DB_HOST=localhost
    DB_PORT=5432
@@ -92,6 +101,7 @@ npm start
 ### API Endpoints
 
 #### Auth Routes (`/auth`)
+
 - `POST /auth/login` — User login
 - `POST /auth/register` — User registration
 - `GET /auth/` — Get own user info (auth required)
@@ -102,6 +112,7 @@ npm start
 - `DELETE /auth/admin/:userId` — Delete user by ID (admin only)
 
 #### Account Routes (`/account`)
+
 - `POST /account/login` — Account login
 - `POST /account/register` — Account registration
 - `GET /account/myaccount` — Get own account info (auth required)
@@ -117,6 +128,7 @@ npm start
 - `GET /account/admin/all` — Get all accounts (admin only)
 
 #### Transactions Routes (`/transactions`)
+
 - `POST /transactions/withdrawal` — Withdraw from account (auth required)
 - `POST /transactions/deposit` — Deposit to account (auth required)
 - `POST /transactions/transfer` — Transfer between accounts (auth required)
@@ -128,6 +140,7 @@ npm start
 ### Generate Password Hashes
 
 Use the script to generate bcrypt hashes for passwords:
+
 ```bash
 node scripts/generatePasswords.js
 ```
@@ -137,6 +150,7 @@ node scripts/generatePasswords.js
 ## Testing
 
 Run unit tests with Jest:
+
 ```bash
 npm test
 ```
