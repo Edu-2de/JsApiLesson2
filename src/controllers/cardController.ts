@@ -5,7 +5,7 @@ import { AccountAuthRequest } from '../middleware/accountMiddleware';
 const JWT_SECRET = process.env.JWT_SECRET || '';
 
 export class CardController {
-  static createCard = async (req: AccountAuthRequest, res: Response) => {
+  static createCard = async (req: AccountAuthRequest, res: Response): Promise<void> => {
     try {
       if (!req.account) {
         res.status(400).json({ error: 'Account is missing!' });
@@ -69,4 +69,8 @@ export class CardController {
       });
     }
   };
+
+  static deleteCard = async(req: AccountAuthRequest, res: Response): Promise<void> => {
+
+  }
 }
