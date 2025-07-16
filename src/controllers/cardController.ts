@@ -127,6 +127,11 @@ export class CardController {
         return;
       }
       const accountId = req.account.id;
+
+      const result = await pool.query(
+        `SELECT id, account_type_id, balance, status FROM accounts WHERE id = $1`,
+        [accountId]
+      )
     } catch (error) {}
   };
 }
