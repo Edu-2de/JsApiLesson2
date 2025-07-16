@@ -169,7 +169,8 @@ describe('CardController.test', () => {
         cvv: 345,
         created_at: 2025,
       };
-      mockPool.query.mockResolvedValueOnce({ rows: [] }); 
+      mockPool.query.mockResolvedValueOnce({ rows: [] });
+
       mockPool.query.mockResolvedValueOnce({ rows: [mockCard] });
 
       await CardController.createCard(mockReq, mockRes);
