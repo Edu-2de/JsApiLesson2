@@ -133,5 +133,59 @@ describe('CardController.test', () => {
       expect(mockRes.status).toHaveBeenCalledWith(400);
       expect(mockRes.json).toHaveBeenCalledWith({ error: 'This type of card not exist' });
     });
+
+    it('should be return a successfully response, with card data', async () => {
+      mockReq.account = { id: 1 };
+      const mockAccount = {
+        id: 1,
+        balance: 10.0,
+        account_number: '001-12345-6',
+        status: 'active',
+        account_type_id: 1,
+        transfer_fee: 1.0,
+        user: {
+          name: 'Miguel',
+          email: 'miguel@gmail.com',
+          age: 20,
+          role: 'user',
+        },
+        account_type: {
+          id: 1,
+          type: 'current',
+          daily_withdrawal_limit: 1000.0,
+          daily_transfer_limit: 5000.0,
+        },
+      };
+
+      mockPool.query.mockResolvedValueOnce({ rows: [mockAccount] });
+
+      mockReq.body = { card_type: 'credit' };
+
+      const mockCard = {
+        account_id: 1,
+        card_number: '010-2025',
+        card_type: 'credit',
+        expiry_date: '07/2030',
+        cvv: 345,
+        created_at: 2025,
+      };
+      mockPool.query.mockResolvedValueOnce({ rows: [] }); 
+      mockPool.query.mockResolvedValueOnce({ rows: [mockCard] });
+
+      await CardController.createCard(mockReq, mockRes);
+
+      expect(mockRes.status).toHaveBeenCalledWith(201);
+      expect(mockRes.json).toHaveBeenCalledWith({
+        message: 'Card created successfully',
+        card: {
+          account_id: 1,
+          card_number: '010-2025',
+          card_type: 'credit',
+          expiry_date: '07/2030',
+          cvv: 345,
+          created_at: 2025,
+        },
+      });
+    });
   });
 });
