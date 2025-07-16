@@ -36,9 +36,7 @@ export class AccountController {
       const account = result.rows[0];
 
       if (account.status !== 'active') {
-        res.status(401).json({
-          message: 'Account is blocked or closed!',
-        });
+        res.status(401).json({ message: 'Account is blocked or closed!' });
         return;
       }
 

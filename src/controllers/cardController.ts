@@ -15,14 +15,22 @@ export class CardController {
       const accountId = req.account.id;
 
       const result = await pool.query(
-        `SELECT 
-          a.id, a.account_type_id, a.balance, a.status
-          fees.withdrawal_fee
-          FROM accounts a
-          INNER JOIN interest_and_fees fees ON a. = fees.id 
-        WHERE a.id = $1`,
+        `SELECT id, account_type_id, balance, status FROM accounts WHERE id = $1`,
         [accountId]
       );
+
+      if (result.rows.length === 0) {
+        res.status(400).json({ error: 'This account not exist' });
+        return;
+      }
+
+      const account = result.rows[0];
+
+      if(account.status !== 'active'){
+        res.status(400).json({ error: 'The account must be active for this action' });
+        return;
+      }
+
     } catch (error) {}
   };
 }
