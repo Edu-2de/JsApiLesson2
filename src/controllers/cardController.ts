@@ -129,7 +129,7 @@ export class CardController {
       const accountId = req.account.id;
 
       const result = await pool.query(
-        `SELECT id, account_type_id, balance, status FROM accounts WHERE id = $1`,
+        `SELECT * FROM cards WHERE account_id = $1`,
         [accountId]
       )
     } catch (error) {}
