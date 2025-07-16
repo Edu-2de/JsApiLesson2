@@ -25,6 +25,7 @@ export class TransactionsController {
 
       if (account.status != 'active') {
         res.status(400).json({ error: 'The account must be active for this action' });
+        return;
       }
 
       const { withdrawal } = req.body;
@@ -91,6 +92,7 @@ export class TransactionsController {
 
       if (account.status != 'active') {
         res.status(400).json({ error: 'The account must be active for this action' });
+        return;
       }
 
       const { deposit } = req.body;

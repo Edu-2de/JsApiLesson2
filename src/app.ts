@@ -7,6 +7,7 @@ import { setupDatabase, testConnection } from './database/setup';
 import accountRoutes from './routes/accountRoutes';
 import authRoutes from './routes/authRoutes';
 import transactionsRoutes from './routes/transactionsRoutes';
+import cardRoutes from './routes/cardRoutes';
 
 dotenv.config();
 const app = express();
@@ -29,6 +30,7 @@ const startServer = async () => {
     app.use('/account', accountRoutes);
     app.use('/user', authRoutes);
     app.use('/transaction', transactionsRoutes);
+    app.use('/cardRoutes', cardRoutes);
 
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
