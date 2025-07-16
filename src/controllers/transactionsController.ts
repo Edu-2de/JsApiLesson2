@@ -234,6 +234,10 @@ export class TransactionsController {
   };
 
   static getTransactions = async (req: AccountAuthRequest, res: Response): Promise<void> => {
-    
+    try{
+      
+    }catch(error){
+
+    }
   };
 }
