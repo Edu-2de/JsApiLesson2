@@ -60,7 +60,7 @@ export class CardController {
 
       res.status(201).json({
         message: 'Card created successfully',
-        card: result_card,
+        card: result_card.rows[0],
       });
     } catch (error) {
       res.status(500).json({
