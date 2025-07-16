@@ -78,7 +78,17 @@ export class CardController {
       }
       const accountId = req.account.id;
 
+      const result = await pool.query(`SELECT id, account_type_id, balance, status FROM accounts WHERE id = $1`, [
+        accountId,
+      ]);
+
+      if (result.rows.length === 0) {
+        res.status(400).json({ error: 'This account not exist' });
+        return;
+      }
       
+      const account = result.rows[0];
+
     } catch (error) {}
   };
 }
