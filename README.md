@@ -2,7 +2,7 @@
 
 ## Overview
 
-JsApiLesson2 is a RESTful API for managing users, accounts, and financial transactions (withdrawals, deposits, transfers) in a banking system. The project is built with Node.js, Express, and PostgreSQL, featuring authentication, authorization, and robust business logic for account operations.
+JsApiLesson2 is a RESTful API for managing users, accounts, cards, and financial transactions (withdrawals, deposits, transfers) in a banking system. The project is built with Node.js, Express, and PostgreSQL, featuring authentication, authorization, robust business logic, and a full test suite.
 
 ---
 
@@ -13,19 +13,29 @@ JsApiLesson2 is a RESTful API for managing users, accounts, and financial transa
   - Register, login, update, and delete users
   - Password hashing with bcrypt
   - Role-based access control (user, admin)
+  - Admin can manage any user
 
 - **Account Management**
 
-  - Register, update, block, close, and activate accounts
-  - Account types with limits and fees
+  - Register, update, block, close, activate, and delete accounts
+  - Account types with configurable limits and fees
   - Admin and owner access controls
+  - Safe deletion rules (`ON DELETE SET NULL` for historical integrity)
+
+- **Card Management**
+
+  - Create, list, and delete cards for accounts
+  - Unique card number and CVV generation
+  - Card types: credit, debit, prepaid
+  - Expiry date calculation
 
 - **Transactions**
 
   - Withdrawals with fee calculation and balance validation
   - Deposits
   - Transfers between accounts with fee and double balance update
-  - Transaction history
+  - Transaction and transfer history (last 50 per account)
+  - All transaction types are auditable
 
 - **Authentication & Authorization**
 
@@ -35,11 +45,12 @@ JsApiLesson2 is a RESTful API for managing users, accounts, and financial transa
 - **Database**
 
   - PostgreSQL schema with foreign keys and constraints
-  - Safe deletion rules (`ON DELETE SET NULL` for historical integrity)
+  - Safe deletion and referential integrity
 
 - **Testing**
 
   - Jest unit tests for controllers and business logic
+  - 80+ tests covering all main features
 
 - **Scripts**
   - Password hash generator (`scripts/generatePasswords.js`)
@@ -119,6 +130,10 @@ npm start
 - `PATCH /account/myaccount/close` — Close own account (owner/admin)
 - `PATCH /account/myaccount/active` — Activate own account (owner/admin)
 - `DELETE /account/myaccount` — Delete own account (owner/admin)
+- `GET /account/myaccount/cards` — List cards for own account
+- `POST /account/myaccount/cards` — Create card for own account
+- `DELETE /account/myaccount/cards` — Delete card for own account
+- `GET /account/myaccount/transactions` — List transactions and transfers for own account
 - `GET /account/admin/:accountId` — Get account by ID (admin only)
 - `PATCH /account/admin/:accountId` — Update account by ID (admin only)
 - `PATCH /account/admin/block/:accountId` — Block account (admin only)
@@ -127,11 +142,18 @@ npm start
 - `DELETE /account/admin/:accountId` — Delete account by ID (admin only)
 - `GET /account/admin/all` — Get all accounts (admin only)
 
+#### Card Routes (`/account/myaccount/cards`)
+
+- `GET /account/myaccount/cards` — List all cards for the authenticated user's account
+- `POST /account/myaccount/cards` — Create a new card for the authenticated user's account
+- `DELETE /account/myaccount/cards` — Delete a card by card number for the authenticated user's account
+
 #### Transactions Routes (`/transactions`)
 
 - `POST /transactions/withdrawal` — Withdraw from account (auth required)
 - `POST /transactions/deposit` — Deposit to account (auth required)
 - `POST /transactions/transfer` — Transfer between accounts (auth required)
+- `GET /transactions/myaccount` — Get transaction and transfer history for own account
 
 ---
 
@@ -161,7 +183,7 @@ npm test
 
 ```
 src/
-  controllers/         # Business logic for users, accounts, transactions
+  controllers/         # Business logic for users, accounts, cards, transactions
   middleware/          # Auth and account middlewares
   routes/              # API route definitions
   database/
@@ -180,6 +202,7 @@ scripts/
 - JWT is used for authentication.
 - Role-based access ensures only authorized actions are allowed.
 - Database constraints prevent orphaned records and ensure data integrity.
+- Sensitive actions require authentication and/or admin privileges.
 
 ---
 
