@@ -132,12 +132,15 @@ export class CardController {
         `SELECT 
           *
           FROM cards WHERE account_id = $1
-        ORDER BY tr.created_at DESC LIMIT 50`,
+        ORDER BY created_at DESC LIMIT 50`,
         [accountId]
       );
 
       if (result.rows.length === 0) {
-        res.status(400).json({ error: 'This account does not have cards!' });
+        res.status(200).json({
+          cards: [],
+          message: 'This account does not have cards',
+        });
         return;
       }
 
