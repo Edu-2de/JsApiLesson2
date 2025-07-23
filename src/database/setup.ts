@@ -6,7 +6,7 @@ export const checkIfTablesExist = async () => {
   try {
     const result = await pool.query(`
       SELECT EXISTS(
-        SELECT FROM JsApiLesson2_schema.tables
+        SELECT FROM information_schema.tables
         WHERE table_schema = 'public'
         AND table_name = 'users');
       `);
